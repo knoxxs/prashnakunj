@@ -1,14 +1,11 @@
 <?
-/**
-* Login class
-*/
 
 require_once './initialize_database.php';
+
 class Login
 { 
 	var $username;
 	var $password;
-	var 
 
 	function __construct($username,$password)
 	{

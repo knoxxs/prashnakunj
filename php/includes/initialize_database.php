@@ -1,5 +1,6 @@
 <?
-require_once ('../zebra/Zebra_Database.php');
+require_once ('./zebra/Zebra_Database.php');
+
 class Database{
 
 	function __construct(){
