@@ -6,8 +6,8 @@ class Comment{
 
 	private $userName, $voteValue, $timeStamp, $commentString, $upVote, $downVote, $reportAbuseCount, $db;
 
-	public function __construct($keyword){
-
+	public function __construct($keyword, $QID, $userName, $timeStamp){
+		
 	}
 }
 
