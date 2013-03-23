@@ -224,14 +224,6 @@ class User{
 		return (new Profile($this->userName));
 	}
 
-	public function json(){
-
-	}
-
-	//TODO: First need to create Register class , then recieve all parameters and just add to database
-	public static function add(){
-
-	}
 
 	//TODO: Need to check password before
 	/**
