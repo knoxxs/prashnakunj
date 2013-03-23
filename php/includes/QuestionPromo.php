@@ -2,18 +2,18 @@
 
 require_once './initialize_database.php';
 
+define('requetesdUser', $_SESSION['userName']);
 
 class QuestionPromo
 { 
-	private $QID, $userName, $string, $timeStamp, $voteUp, $voteDown, $difficultyLevel, $tagList, $ruserName, $alreadyVoted;
+	private $QID, $userName, $string, $timeStamp, $voteUp, $voteDown, $difficultyLevel, $tagList, $alreadyVoted;
 
-	public function __construct($QID, $userName, $string, $timeStamp, $difficultyLevel, $ruserName){
-		$this->$QID = $QID;
-		$this->$userName = $userName;
-		$this->$string = $string;
-		$this->$timeStamp = $timeStamp;
-		$this->$difficultyLevel = $difficultyLevel;
-		$this->ruserName = $ruserName;
+	public function __construct($QID, $userName, $string, $timeStamp, $difficultyLevel){
+		$this->QID = $QID;
+		$this->userName = $userName;
+		$this->string = $string;
+		$this->timeStamp = $timeStamp;
+		$this->difficultyLevel = $difficultyLevel;
 		//fetching Votes
 		$db = $this->getDb();
 		$db->query("SELECT userName,nature FROM QuestionVotes WHERE QID=?",array($QID));
@@ -27,7 +27,7 @@ class QuestionPromo
 			}else{
 				$voteDown += 1;
 			}
-			if($value['userName'] == $this->ruserName){
+			if($value['userName'] == requetesdUser){
 				$alreadyVoted = true;
 			}
 		}
@@ -43,6 +43,18 @@ class QuestionPromo
 			array_push($tagList, $value2['tagName']);
 		}
 		$this->tagList = $tagList;
+	}
+
+	public function __destruct(){
+
+	}
+
+	/**
+	 * object summary
+	 * @return string [description]
+	 */
+	public function __toString(){
+		return print_r($this);
 	}
 
 	private function getDb(){
@@ -132,6 +144,16 @@ class QuestionPromo
 	public function setTagList($tagList)
 	{
 	    $this->tagList = $tagList;
+	}
+
+	public function getAlreadyVoted()
+	{
+	    return $this->alreadyVoted;
+	}
+	
+	public function setAlreadyVoted($alreadyVoted)
+	{
+	    $this->alreadyVoted = $alreadyVoted;
 	}	
 }
 

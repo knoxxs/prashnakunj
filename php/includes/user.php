@@ -146,7 +146,7 @@ class User{
 			$records = $db->fetch_assoc_all();
 
 			foreach ($records as $key => $value){
-				array_push($this->watchLaterList['list'], new QuestionPromo( $value['QID'], $value['userName'], $value['string'], $value['timeStamp'], $value['difficultyLevel'], $this->userName) );
+				array_push($this->watchLaterList['list'], new QuestionPromo( $value['QID'], $value['userName'], $value['string'], $value['timeStamp'], $value['difficultyLevel']) );
 			}
 			
 			return 200;
@@ -170,7 +170,7 @@ class User{
 			$records = $db->fetch_assoc_all();
 
 			foreach ($records as $key => $value){
-				array_push($this->favList['list'], new QuestionPromo( $value['QID'], $value['userName'], $value['string'], $value['timeStamp'], $value['difficultyLevel'], $this->userName) );
+				array_push($this->favList['list'], new QuestionPromo( $value['QID'], $value['userName'], $value['string'], $value['timeStamp'], $value['difficultyLevel']) );
 			}
 			
 			return 200;
@@ -194,7 +194,7 @@ class User{
 			$records = $db->fetch_assoc_all();
 
 			foreach ($records as $key => $value){
-				array_push($this->historyList['list'], new QuestionPromo( $value['QID'], $value['userName'], $value['string'], $value['timeStamp'], $value['difficultyLevel'], $this->userName) );
+				array_push($this->historyList['list'], new QuestionPromo( $value['QID'], $value['userName'], $value['string'], $value['timeStamp'], $value['difficultyLevel']) );
 			}
 			
 			return 200;
