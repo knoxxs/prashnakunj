@@ -1,12 +1,8 @@
 <?
 
-require_once './initialize_database.php';
-
-define('requetesdUser', $_SESSION['userName']);
-
-class QuestionPromo
+class QuestionPromo extends Base
 { 
-	private $QID, $userName, $string, $timeStamp, $voteUp, $voteDown, $difficultyLevel, $tagList, $alreadyVoted;
+	private $QID, $userName, $string, $timeStamp, $voteUp, $voteDown, $difficultyLevel, $tagList, $alreadyVoted, $requestedUser;
 
 	public function __construct($QID, $userName, $string, $timeStamp, $difficultyLevel){
 		$this->QID = $QID;
@@ -14,6 +10,8 @@ class QuestionPromo
 		$this->string = $string;
 		$this->timeStamp = $timeStamp;
 		$this->difficultyLevel = $difficultyLevel;
+		$this->requestedUser = $_SESSION['user']->getUserName();
+
 		//fetching Votes
 		$db = $this->getDb();
 		$db->query("SELECT userName,nature FROM QuestionVotes WHERE QID=?",array($QID));
@@ -27,7 +25,7 @@ class QuestionPromo
 			}else{
 				$voteDown += 1;
 			}
-			if($value['userName'] == requetesdUser){
+			if($value['userName'] == $this->requestedUser){
 				$alreadyVoted = true;
 			}
 		}
@@ -55,15 +53,6 @@ class QuestionPromo
 	 */
 	public function __toString(){
 		return print_r($this);
-	}
-
-	private function getDb(){
-		if(!isset($this->db)){
-			$this->db = (new Database())->connectToDatabase();
-			return $this->db;
-		}else{
-			return $this->db;
-		}
 	}
 
 	public function getQID()
@@ -156,6 +145,4 @@ class QuestionPromo
 	    $this->alreadyVoted = $alreadyVoted;
 	}	
 }
-
-$qp = new QuestionPromo( 'q2', 'uname2', 'questionString1', 'ts', 'easy', 'uname');
 ?>
