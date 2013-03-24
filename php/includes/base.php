@@ -47,6 +47,11 @@ class Base{
 		return json_encode($this->result);
 	}
 
+	public static function isLoggedIn(){
+		return (isset($_SESSION['user']) && !empty($_SESSION['user']) );
+	}
+
+
 }
 
 ?>
