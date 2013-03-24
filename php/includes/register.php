@@ -81,10 +81,6 @@ class Register extends Base{
 			'areasOfExpertise' => $this->areasOfExpertise));
 	}
 
-	public function toJson(){
-		parent::toJson();
-	}
-
 	public function register(){
 		if($this->validateData()){
 			$temp = $this->isUserNameOrEmailCommon();
@@ -120,7 +116,7 @@ class Register extends Base{
 			$this->head['status'] = 203;
 		}
 
-		//TODO:decide how to return
+		return true;
 	}
 
 }
