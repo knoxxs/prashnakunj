@@ -1,12 +1,10 @@
 <?
-
-require_once './initialize_database.php';
-require_once './QuestionPromo.php';
+require_once __DIR__.'/QuestionPromo.php';
 define('MORE_SIZE', 10);
 define('DEFAULT_TYPE', 'timestamp');
 
 class User{ 
-	private $userName, $firstname, $lastname, $reputation, $favList, $watchLaterList, $historyList, $subscriptionList, $db;
+	private $userName, $firstname, $lastname, $reputation, $favList, $watchLaterList, $historyList, $subscriptionList, $db, $isReviewer;
 
 	/**
 	 * [__construct description]
@@ -23,18 +21,25 @@ class User{
 		
 		$this->watchLaterList['type'] = DEFAULT_TYPE;
 		$this->watchLaterList['list'] = array();
-		$this->fetchWatchLaterList();
+		//$this->fetchWatchLaterList();
 		
 		$this->favList['type'] = DEFAULT_TYPE;
 		$this->favList['list'] = array();
-		$this->fetchFavList();
+		//$this->fetchFavList();
 
 		$this->historyList['type'] = DEFAULT_TYPE;
 		$this->historyList['list'] = array();
-		$this->fetchHistoryList();
+		//$this->fetchHistoryList();
 
 		$this->subscriptionList = array();
-		$this->fetchSubscriptionList();
+		//$this->fetchSubscriptionList();
+
+		$db->query('SELECT userName From Reviewer WHERE userName=?',array($this->userName));
+		if($db->returned_rows == 1){
+			$this->isReviewer = true;
+		}else{
+			$this->isReviewer = false;
+		}
 	}
 
 
@@ -124,6 +129,17 @@ class User{
 	public function addSubscriptionItem($item){
 		
 	}
+
+	public function getIsReviewer()
+	{
+	    return $this->isReviewer;
+	}
+	
+	public function setIsReviewer($isReviewer)
+	{
+	    $this->isReviewer = $isReviewer;
+	}
+	
 
 	/**
 	 * fetch watchLaterList more items based on sortType
@@ -236,6 +252,3 @@ class User{
 		return (new Database())->connectToDatabase()->query('DELETE FROM user WHERE userName=?',array($userName));
 	}
 }
-
-$user = new User('uname2');
-print_r($user->getWatchLaterList());
