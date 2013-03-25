@@ -5,13 +5,11 @@ require_once __DIR__.'/initialize_database.php';
 class Base{
 
 	protected $status, $statusMessage;
-	protected $result = array("head" => array(), "body" => array());
-	protected $head = array("status" => "", "message" => "" );
-	protected $body = array();
+	private $db;
+	public $result = array("head" => array("status" => "", "message" => "" ), "body" => array());
 
 	function __construct(){
-		$this->result['head'] = &$this->head;
-		$this->result['body'] = &$this->body;
+		$db = null;
 	}
 
 	protected function getDb(){

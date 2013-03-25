@@ -28,35 +28,35 @@ class Login extends Base
 				$nrows = $db->returned_rows;
 
 				if($nrows==0){
-					$this->head['status'] = 404;
-					$this->head['message'] = 'Wrong Username';
+					$this->result['head']['status'] = 404;
+					$this->result['head']['message'] = 'Wrong Username';
 				}
 				else if($nrows==1){
 					if($this->password == $records[0]['password']){
-						$this->head['status'] = 200;
+						$this->result['head']['status'] = 200;
 
 						$this->user = new User($this->userName);
-						$_SESSION['user'] = $this->user;
+						$_SESSION['user'] = serialize($this->user);
 					}
 					else{
-						$this->head['status'] = 404;
-						$this->head['message'] = 'Wrong Password';
+						$this->result['head']['status'] = 404;
+						$this->result['head']['message'] = 'Wrong Password';
 					}
 				}else{
 					//TODO:LOG this is a server/data fault
 				}
 			}else{
-				if($_SESSION['user']->getUserName() == $this->userName){
-					$this->head['status'] = 200;
-					$this->head['message'] = 'Already Logged in';
+				if(unserialize($_SESSION['user'])->getUserName() == $this->userName){
+					$this->result['head']['status'] = 200;
+					$this->result['head']['message'] = 'Already Logged in';
 				}else{
 					$this->logout();
-					$this->head['status'] = 409;
-					$this->head['message'] = 'Already logged with another account, logging out';
+					$this->result['head']['status'] = 409;
+					$this->result['head']['message'] = 'Already logged with another account, logging out';
 				}
 			}
 		}else{
-			$this->head['status'] = 203;
+			$this->result['head']['status'] = 203;
 		}
 		return true;
 	}
@@ -64,19 +64,19 @@ class Login extends Base
 	public function logout(){
 		if($this->validateVar($this->userName)){
 			if($this->isLoggedIn()){
-				if($_SESSION['user']->getUserName() == $this->userName){
+				if(unserialize($_SESSION['user'])->getUserName() == $this->userName){
 					session_destroy();
-					$this->head['status'] = 200;
+					$this->result['head']['status'] = 200;
 				}else{
 					session_destroy();
-					$this->head['status'] = 409;
-					$this->head['message'] = 'Logged in with another account, logging out';
+					$this->result['head']['status'] = 409;
+					$this->result['head']['message'] = 'Logged in with another account, logging out';
 				}
 			}else {
-				$this->head['status'] = 405;
+				$this->result['head']['status'] = 405;
 			}
 		}else{
-			$this->head['status'] = 203;			
+			$this->result['head']['status'] = 203;			
 		}
 	
 		return true;
@@ -84,13 +84,17 @@ class Login extends Base
 
 	public function toJson(){
 		if($this->validateVar($_SESSION)){
-			$this->body['firstName'] = $_SESSION['user']->getFirstName();
-			$this->body['lastName'] = $_SESSION['user']->getLastName();
-			$this->body['reputation'] = $_SESSION['user']->getReputation();
-			$this->body['isReviewer'] = $_SESSION['user']->getIsReviewer();
+			$this->result['body']['firstName'] = unserialize($_SESSION['user'])->getFirstName();
+			$this->result['body']['lastName'] = unserialize($_SESSION['user'])->getLastName();
+			$this->result['body']['reputation'] = unserialize($_SESSION['user'])->getReputation();
+			$this->result['body']['isReviewer'] = unserialize($_SESSION['user'])->getIsReviewer();
 		}
 		return json_encode($this->result);
 	}
 
 }
+
+// $login = new Login('uname5', 'password');
+// $login->login();
+// echo $login->toJson();
 ?>

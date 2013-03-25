@@ -1,12 +1,13 @@
 <?
 
-require_once __DIR__.'/includes/initialize_database.php';
+require_once __DIR__.'/includes/base.php';
 
 define('PATH_REGEX_PATTERN',"!\/([^\/]+)!");
-define('PATH',$_SERVER['PATH_INFO']);
+session_start();
+//TODO: Need to handle if PATH_INFO doesnot exist
+preg_match_all(PATH_REGEX_PATTERN, $_SERVER['PATH_INFO'], $regMatches);
 
-preg_match_all(PATH_REGEX_PATTERN, PATH, $regMatches);
-
+$base = new Base();
 $result = '';
 
 //TODO: session_start placing for minimizing auto serializing errors, cuurently only placed in login constructor
@@ -52,6 +53,58 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 				}
 			}else{
 				$result = json_encode( array('head' => array('status' => 206, 'message'=>'Only '.sizeof($_POST).' fields received, required 1'), 'body' => '') );
+			}
+			break;
+
+		case 'list':
+			if( isset($regMatches[1][1]) && ( !empty($regMatches[1][1]) ) ){
+				if($base->isLoggedIn()){
+					if( isset($regMatches[1][2]) && ( !empty($regMatches[1][2]) ) ){
+						$type = $regMatches[1][2];
+						switch($regMatches[1][1]) {
+							case 'favourite':
+								require_once __DIR__.'/includes/user.php';
+								$user = unserialize($_SESSION['user']);
+								$list = $user->getFavListArray($type);
+								$base->result = $user->result;
+								$base->result['body'] = $list;
+								$result = json_encode($base->result);
+								break;
+							case 'watchLater':
+								require_once __DIR__.'/includes/user.php';
+								$user = unserialize($_SESSION['user']);
+								$list = $user->getWatchLaterListArray($type);
+								$base->result = $user->result;
+								$base->result['body'] = $list;
+								$result = json_encode($base->result);
+								break;
+							case 'history':
+								require_once __DIR__.'/includes/user.php';
+								$user = unserialize($_SESSION['user']);
+								$list = $user->getHistoryListArray($type);
+								$base->result = $user->result;
+								$base->result['body'] = $list;
+								$result = json_encode($base->result);
+								break;
+							default:
+								$result = json_encode( array('head' => array('status' => 400, 'message'=>'No such list'), 'body' => '') );
+								break;
+						}
+					}elseif($regMatches[1][1] == 'subscriptionList'){
+								require_once __DIR__.'/includes/user.php';
+								$user = unserialize($_SESSION['user']);
+								$list = $user->getSubscriptionList();
+								$base->result = $user->result;
+								$base->result['body'] = $list;
+								$result = json_encode($base->result);
+					}else{
+						$result = json_encode( array('head' => array('status' => 400, 'message'=>'No sorttype specified'), 'body' => '') );
+					}
+				}else{
+					$result = json_encode( array('head' => array('status' => 401, 'message'=>''), 'body' => '') );
+				}
+			}else{
+				$result = json_encode( array('head' => array('status' => 400, 'message'=>'No list specified'), 'body' => '') );
 			}
 			break;
 		

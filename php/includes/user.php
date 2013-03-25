@@ -3,7 +3,7 @@ require_once __DIR__.'/QuestionPromo.php';
 define('MORE_SIZE', 10);
 define('DEFAULT_TYPE', 'timestamp');
 
-class User{ 
+class User extends Base{ 
 	private $userName, $firstname, $lastname, $reputation, $favList, $watchLaterList, $historyList, $subscriptionList, $db, $isReviewer;
 
 	/**
@@ -11,6 +11,8 @@ class User{
 	 * @param [type] $userName [description]
 	 */
 	public function __construct($userName){
+		parent::__construct();
+
 		$this->userName = $userName;
 		$db = $this->getDb();
 		$db->query("SELECT firstname, lastname,reputation FROM User WHERE userName=?",array($userName));
@@ -43,30 +45,6 @@ class User{
 	}
 
 
-	public function __destruct(){
-
-	}
-
-	/**
-	 * object summary
-	 * @return string [description]
-	 */
-	public function __toString(){
-		return print_r($this);
-	}
-
-	/**
-	 * check whether db is already connected. If not then makes a connection 
-	 * @return DbObject Zebra databse object
-	 */
-	private function getDb(){
-		if(!isset($this->db)){
-			$this->db = (new Database())->connectToDatabase();
-			return $this->db;
-		}else{
-			return $this->db;
-		}
-	}
 
 	/**
 	 * validate the type parameter
@@ -89,19 +67,67 @@ class User{
 		return $this->lastname;
 	}					
 
-	public function getFavList(){
-		return $this->favList;
+	public function getFavList($type){
+		if($type != $this->favList['type']){
+			$this->fetchFavList($type);
+		}elseif(count($this->favList['list']) == 0){
+			$this->fetchFavList();
+		}
+
+		return $this->favList['list'];
 	}
 
-	public function getWatchLaterList(){
-		return $this->watchLaterList;
+	public function getFavListArray($type){
+		$list = $this->getFavList($type);
+		$jsonList=array();
+		foreach ($list as $key => $value) {
+			array_push($jsonList, $value->toArray());
+		}
+		return $jsonList;
 	}
 
-	public function getHistoryList(){
-		return $this->historyList;
+	public function getWatchLaterList($type){
+		if($type != $this->watchLaterList['type']){
+			$this->fetchWatchLaterList($type);
+		}elseif(count($this->watchLaterList['list']) == 0){
+			$this->fetchWatchLaterList();
+		}
+
+		return $this->watchLaterList['list'];
+	}
+
+	public function getWatchLaterListArray($type){
+		$list = $this->getWatchLaterList($type);
+		$jsonList=array();
+		foreach ($list as $key => $value) {
+			array_push($jsonList, $value->toArray());
+		}
+		return $jsonList;
+	}
+
+	public function getHistoryList($type){
+		if($type != $this->historyList['type']){
+			$this->fetchHistoryList($type);
+		}elseif(count($this->historyList['list']) == 0){
+			$this->fetchHistoryList();
+		}
+
+		return $this->historyList['list'];
+	}
+
+	public function getHistoryListArray($type){
+		$list = $this->getHistoryList($type);
+		$jsonList=array();
+		foreach ($list as $key => $value) {
+			array_push($jsonList, $value->toArray());
+		}
+		return $jsonList;
 	}
 
 	public function getSubscriptionList(){
+		if(count($this->subscriptionList) == 0){
+			$this->fetchSubscriptionList();
+		}
 		return $this->subscriptionList;
 	}
 
@@ -149,7 +175,7 @@ class User{
 	public function fetchWatchLaterList($type = DEFAULT_TYPE){
 		if($this->typeValidation($type)){
 			if($type == $this->watchLaterList['type']){
-				$len = count($this->watchLaterList);
+				$len = count($this->watchLaterList['list']);
 			}else{
 				$len = 0;
 				$this->watchLaterList['type'] = $type;
@@ -165,16 +191,17 @@ class User{
 				array_push($this->watchLaterList['list'], new QuestionPromo( $value['QID'], $value['userName'], $value['string'], $value['timeStamp'], $value['difficultyLevel']) );
 			}
 			
-			return 200;
+			$this->result['head']['status'] = 200;
 		}else{
-			return 400;//badRequest due to wrong type
+			$this->result['head']['status'] = 400;
+			$this->result['head']['message'] = 'unkown type';
 		}
 	}
 
 	public function fetchFavList($type = DEFAULT_TYPE){
 		if($this->typeValidation($type)){
 			if($type == $this->favList['type']){
-				$len = count($this->favList);
+				$len = count($this->favList['list']);
 			}else{
 				$len = 0;
 				$this->favList['type'] = $type;
@@ -189,16 +216,17 @@ class User{
 				array_push($this->favList['list'], new QuestionPromo( $value['QID'], $value['userName'], $value['string'], $value['timeStamp'], $value['difficultyLevel']) );
 			}
 			
-			return 200;
+			$this->result['head']['status'] = 200;
 		}else{
-			return 400;
+			$this->result['head']['status'] = 400;
+			$this->result['head']['message'] = 'unkown type';
 		}
 	}
 
 	public function fetchHistoryList($type = DEFAULT_TYPE){
 		if($this->typeValidation($type)){
 			if($type == $this->historyList['type']){
-				$len = count($this->historyList);
+				$len = count($this->historyList['list']);
 			}else{
 				$len = 0;
 				$this->historyList['type'] = $type;
@@ -213,9 +241,10 @@ class User{
 				array_push($this->historyList['list'], new QuestionPromo( $value['QID'], $value['userName'], $value['string'], $value['timeStamp'], $value['difficultyLevel']) );
 			}
 			
-			return 200;
+			$this->result['head']['status'] = 200;
 		}else{
-			return 400;
+			$this->result['head']['status'] = 400;
+			$this->result['head']['message'] = 'unkown type';
 		}
 	}
 
@@ -228,8 +257,7 @@ class User{
 			array_push($tagList, $value['tagName']);
 		}
 		$this->subscriptionList = $tagList;
-
-		return 200;
+		$this->result['head']['status'] = 200;
 	}
 
 	/**

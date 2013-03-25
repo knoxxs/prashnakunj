@@ -2,7 +2,7 @@
 
 class QuestionPromo extends Base
 { 
-	private $QID, $userName, $string, $timeStamp, $voteUp, $voteDown, $difficultyLevel, $tagList, $alreadyVoted, $requestedUser;
+	private $QID, $userName, $string, $timeStamp, $voteUp, $voteDown, $difficultyLevel, $tagList, $alreadyVoted, $alreadyFav, $requestedUser;
 
 	public function __construct($QID, $userName, $string, $timeStamp, $difficultyLevel){
 		$this->QID = $QID;
@@ -10,7 +10,7 @@ class QuestionPromo extends Base
 		$this->string = $string;
 		$this->timeStamp = $timeStamp;
 		$this->difficultyLevel = $difficultyLevel;
-		$this->requestedUser = $_SESSION['user']->getUserName();
+		$this->requestedUser = unserialize($_SESSION['user'])->getUserName();
 
 		//fetching Votes
 		$db = $this->getDb();
@@ -34,13 +34,20 @@ class QuestionPromo extends Base
 		$this->alreadyVoted = $alreadyVoted;
 
 		//fetching Tags
-		$db->query('SELECT tagName FROM Encompass WHERE QID=?',array($QID));
+		$db->query('SELECT tagName FROM Encompass WHERE QID=?',array($this->QID));
 		$tagList = array();
 		$records2 = $db->fetch_assoc_all();
 		foreach ($records2 as $key2 => $value2) {
 			array_push($tagList, $value2['tagName']);
 		}
 		$this->tagList = $tagList;
+
+		$db->query('SELECT QID FROM Favourites WHERE QID=? AND userName=?',array($this->QID, $this->requestedUser));
+		if($db->returned_rows == 1){
+			$this->alreadyFav = true;
+		}else{
+			$this->alreadyFav = false;
+		}
 	}
 
 	public function __destruct(){
@@ -143,6 +150,22 @@ class QuestionPromo extends Base
 	public function setAlreadyVoted($alreadyVoted)
 	{
 	    $this->alreadyVoted = $alreadyVoted;
-	}	
+	}
+
+	public function toArray(){
+		$object = array();
+		$object['QID'] = $this->QID;
+		$object['userName'] = $this->userName;
+		$object['string'] = $this->string;
+		$object['timeStamp'] = $this->timeStamp;
+		$object['voteUp'] = $this->voteUp;
+		$object['voteDown'] = $this->voteDown;
+		$object['difficultyLevel'] = $this->difficultyLevel;
+		$object['alreadyVoted'] = $this->alreadyVoted;
+		$object['alreadyFav'] = $this->alreadyFav;
+		$object['tagList'] = $this->tagList;
+
+		return ($object);
+	}
 }
 ?>
