@@ -1,11 +1,13 @@
 <?php
 
-class QuestionComment extends Base
+class SuggestionComment extends Base
 {
-	private $QID, $userName, $string, $timeStamp, $voteUp, $voteDown, $alreadyVoted, $requestedUser;
+	private $QID, $suggestionUserName, $suggestionTimeStamp, $userName, $string, $timeStamp, $voteUp, $voteDown, $alreadyVoted, $requestedUser;
 
-	public function __construct($QID, $userName, $string, $timeStamp){
+	public function __construct($QID, $suggestionUserName, $suggestionTimeStamp, $string, $userName, $timeStamp){
 		$this->QID = $QID;
+		$this->suggestionUserName = $suggestionUserName;
+		$this->suggestionTimeStamp = $suggestionTimeStamp;
 		$this->userName = $userName;
 		$this->string = $string;
 		$this->timeStamp = $timeStamp;
@@ -17,7 +19,7 @@ class QuestionComment extends Base
 
 		//fetching Votes
 		$db = $this->getDb();
-		$db->query("SELECT userName,nature FROM QuestionCommentVotes WHERE QID=? AND commentUserName=? AND commentTimeStamp=?",array($this->QID, $this->userName, $this->timeStamp));
+		$db->query("SELECT userName,nature FROM SuggestionCommentVotes WHERE QID=? AND suggestionUserName=? AND suggestionTimeStamp=? AND suggestionCommentUserName=? AND suggestionCommentTimeStamp=?",array($this->QID, $this->suggestionUserName, $this->suggestionTimeStamp, $this->userName, $this->timeStamp));
 		$alreadyVoted = 0;
 		$voteUp = 0;
 		$voteDown = 0;
@@ -46,6 +48,5 @@ class QuestionComment extends Base
 		$this->voteDown = $voteDown;
 		$this->alreadyVoted = $alreadyVoted;
 	}
-
 }
 ?>

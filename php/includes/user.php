@@ -1,7 +1,5 @@
 <?php
 require_once __DIR__.'/QuestionPromo.php';
-define('MORE_SIZE', 10);
-define('DEFAULT_TYPE', 'timestamp');
 
 class User extends Base{ 
 	private $userName, $firstname, $lastname, $reputation, $favList, $watchLaterList, $historyList, $subscriptionList, $db, $isReviewer;
@@ -190,7 +188,7 @@ class User extends Base{
 			}
 			else
 			{
-				$db->query("SELECT QID,userName,string,timeStamp,difficultyLevel FROM Question NATURAL JOIN (SELECT qid FROM Watch WHERE userName=?) as W LIMIT " . $len . "," . MORE_SIZE , array($this->userName));
+				$db->query("SELECT QID,userName,string,timeStamp,difficultyLevel FROM Question NATURAL JOIN (SELECT qid FROM Watch WHERE userName=?) as W ", array($this->userName));
 			}
 			$records = $db->fetch_assoc_all();
 
@@ -200,6 +198,7 @@ class User extends Base{
 			if($type == 'popularity')
 			{
 				usort($this->watchLaterList['list'], "QuestionPromo::compareVoteUp");
+				$this->watchLaterList['list'] = array_slice($this->watchLaterList['list'], 0, $len + MORE_SIZE);
 			}
 
 			$this->result['head']['status'] = 200;
@@ -226,7 +225,7 @@ class User extends Base{
 			}
 			else
 			{
-				$db->query("SELECT QID,userName,string,timeStamp,difficultyLevel FROM Question NATURAL JOIN (SELECT qid FROM Favourites WHERE userName=?) as W LIMIT " . $len . "," . MORE_SIZE , array($this->userName));
+				$db->query("SELECT QID,userName,string,timeStamp,difficultyLevel FROM Question NATURAL JOIN (SELECT qid FROM Favourites WHERE userName=?) as W ", array($this->userName));
 			}
 			$records = $db->fetch_assoc_all();
 
@@ -236,6 +235,7 @@ class User extends Base{
 			if($type == 'popularity')
 			{
 				usort($this->favList['list'], "QuestionPromo::compareVoteUp");
+				$this->favList['list'] = array_slice($this->favList['list'], 0, $len + MORE_SIZE);
 			}
 						
 			$this->result['head']['status'] = 200;
@@ -262,7 +262,7 @@ class User extends Base{
 			}
 			else
 			{
-				$db->query("SELECT QID,userName,string,timeStamp,difficultyLevel FROM Question NATURAL JOIN (SELECT qid FROM Views WHERE userName=?) as W LIMIT " . $len . "," . MORE_SIZE , array($this->userName));
+				$db->query("SELECT QID,userName,string,timeStamp,difficultyLevel FROM Question NATURAL JOIN (SELECT qid FROM Views WHERE userName=?) as W ", array($this->userName));
 			}
 			$records = $db->fetch_assoc_all();
 
@@ -272,6 +272,7 @@ class User extends Base{
 			if($type == 'popularity')
 			{
 				usort($this->historyList['list'], "QuestionPromo::compareVoteUp");
+				$this->historyList['list'] = array_slice($this->historyList['list'], 0, $len + MORE_SIZE);
 			}
 
 			$this->result['head']['status'] = 200;

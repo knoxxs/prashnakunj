@@ -1,6 +1,8 @@
 <?php
 
 require_once __DIR__.'/initialize_database.php';
+define('MORE_SIZE', 10);
+define('DEFAULT_TYPE', 'timestamp');
 
 class Base{
 
