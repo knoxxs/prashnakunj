@@ -69,7 +69,9 @@ class QuestionTitle extends Base
 		$db->query('SELECT QID FROM Favourites WHERE QID=? AND userName=?',array($this->QID, $this->requestedUser));
 		if($db->returned_rows == 1){
 			$this->alreadyFav = true;
-		}else{
+		}
+		else
+		{
 			$this->alreadyFav = false;
 		}
 	}

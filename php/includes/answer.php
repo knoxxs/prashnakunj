@@ -1,19 +1,21 @@
 <?php
 
+require_once __DIR__.'/includes/base.php';
+
 class Answer  extends Base
 {
-	private $QID, $string, $timeStamp, $voteUp, $voteDown, $commentList, $commentListType, $suggestionUsedList, $reportAbuseCount, $requestedUser, $alreadyVoted, $reviewerID;
+	private $QID, $string, $answerTimeStamp, $voteUp, $voteDown, $commentList, $commentListType, $suggestionUsedList, $reportAbuseCount, $requestedUser, $alreadyVoted, $reviewerID;
 
 	public function __construct($QID, $string, $timeStamp, $reviewerID){
 		$this->QID = $QID;
 		$this->string = $string;
-		$this->timeStamp = $timeStamp;
+		$this->answerTimeStamp = $timeStamp;
 		$this->reviewerID = $reviewerID;
 		$this->requestedUser = unserialize($_SESSION['user'])->getUserName();
 
 		//fetching Votes
 		$db = $this->getDb();
-		$db->query("SELECT userName,nature FROM AnswerVotes WHERE QID=?",array($QID));
+		$db->query("SELECT userName,nature FROM AnswerVotes WHERE QID=? And timeStamp=? And reviewerID=?",array($this->QID, $this->answerTimeStamp, $this->reviewerID));
 		$alreadyVoted = false;
 		$voteUp = 0;
 		$voteDown = 0;
@@ -31,6 +33,16 @@ class Answer  extends Base
 		$this->voteUp = $voteUp;
 		$this->voteDown = $voteDown;
 		$this->alreadyVoted = $alreadyVoted;
+
+		//fetchingComment
+		$db->query("SELECT userName,string,timeStamp FROM AnswerComment WHERE QID=? And AnswerTimeStamp=? And reviewerID=?",array($this->QID, $this->answerTimeStamp, $this->reviewerID));
+		$commentList = array();
+		$records = $db->fetch_assoc_all();
+		foreach ($records as $key => $value) {
+			array_push($commentList, new AnswerComment($value['QID'], $value['reviewerID'], $value['answerTimeStamp'], $value['userName'], $value['timeStamp'], $value['string']));
+		}
+		$this->commentList = $commentList;
+
 	}
 
 	public function getQID()
@@ -83,6 +95,7 @@ class Answer  extends Base
 	    return $this->voteDown;
 	}
 	
+	/*
 	public function getCommentList()
 	{
 	    return $this->commentList;
@@ -93,9 +106,20 @@ class Answer  extends Base
 	    $this->commentListType = $commentListType;
 	}
 
-	public function getCommentListType($commentListType)
+	public function getCommentListType()
 	{
 	    return $this->commentListType;
+	}
+
+	public function getSuggestionUsedList()
+	{
+		return $this->suggestionUsedList;
+	}
+	*/
+
+	public function getReportAbuseCount()
+	{
+		return $this->reportAbuseCount;
 	}
 
 	public function getAlreadyVoted()
@@ -103,7 +127,12 @@ class Answer  extends Base
 	    return $this->alreadyVoted;
 	}
 	
-	public
+	public function addComment($commentString)
+	{
+		$db = $this->getDb();
+		$db->query("INSERT INTO userName,nature FROM AnswerVotes WHERE QID=? And timeStamp=? And reviewerID=?",array($this->QID, $this->timeStamp, $this->reviewerID));
+
+	}
 
 	public function toArray(){
 		$object = array();
