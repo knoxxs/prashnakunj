@@ -1,5 +1,8 @@
 <?php
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/dev
 require_once (__DIR__.'/zebra/Zebra_Database.php');
 
 class Database{

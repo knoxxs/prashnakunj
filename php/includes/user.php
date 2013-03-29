@@ -1,5 +1,8 @@
 <?php
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/dev
 require_once __DIR__.'/QuestionPromo.php';
 define('MORE_SIZE', 10);
 define('DEFAULT_TYPE', 'timestamp');
@@ -185,13 +188,28 @@ class User extends Base{
 			//Fetching Questions
 			$db = $this->getDb();
 			//SELECT SUM(nature),COUNT(nature) FROM (SELECT qid,string,timeStamp,difficultyLevel FROM Question NATURAL JOIN (SELECT qid FROM Watch WHERE userName='uname2') as W ORDER BY timestamp LIMIT 0,5) as Q JOIN QuestionVotes as QV ON Q.QID=QV.QID GROUP BY Q.QID
+<<<<<<< HEAD
 			$db->query("SELECT QID,userName,string,timeStamp,difficultyLevel FROM Question NATURAL JOIN (SELECT qid FROM Watch WHERE userName=?) as W ORDER BY " . $type . " DESC LIMIT " . $len . "," . MORE_SIZE , array($this->userName));
+=======
+			if($type != 'popularity')
+			{
+				$db->query("SELECT QID,userName,string,timeStamp,difficultyLevel FROM Question NATURAL JOIN (SELECT qid FROM Watch WHERE userName=?) as W ORDER BY " . $type . " LIMIT " . $len . "," . MORE_SIZE , array($this->userName));
+			}
+			else
+			{
+				$db->query("SELECT QID,userName,string,timeStamp,difficultyLevel FROM Question NATURAL JOIN (SELECT qid FROM Watch WHERE userName=?) as W LIMIT " . $len . "," . MORE_SIZE , array($this->userName));
+			}
+>>>>>>> origin/dev
 			$records = $db->fetch_assoc_all();
 
 			foreach ($records as $key => $value){
 				array_push($this->watchLaterList['list'], new QuestionPromo( $value['QID'], $value['userName'], $value['string'], $value['timeStamp'], $value['difficultyLevel']) );
 			}
-			
+			if($type == 'popularity')
+			{
+				usort($this->watchLaterList['list'], "QuestionPromo::compareVoteUp");
+			}
+
 			$this->result['head']['status'] = 200;
 		}else{
 			$this->result['head']['status'] = 400;
@@ -210,13 +228,28 @@ class User extends Base{
 			}
 			//Fetching Questions
 			$db = $this->getDb();
+<<<<<<< HEAD
 			$db->query("SELECT QID,userName,string,timeStamp,difficultyLevel FROM Question NATURAL JOIN (SELECT qid FROM Favourites WHERE userName=?) as W ORDER BY " . $type . " DESC LIMIT " . $len . "," . MORE_SIZE , array($this->userName));
+=======
+			if($type != 'popularity')
+			{
+				$db->query("SELECT QID,userName,string,timeStamp,difficultyLevel FROM Question NATURAL JOIN (SELECT qid FROM Favourites WHERE userName=?) as W ORDER BY " . $type . " LIMIT " . $len . "," . MORE_SIZE , array($this->userName));
+			}
+			else
+			{
+				$db->query("SELECT QID,userName,string,timeStamp,difficultyLevel FROM Question NATURAL JOIN (SELECT qid FROM Favourites WHERE userName=?) as W LIMIT " . $len . "," . MORE_SIZE , array($this->userName));
+			}
+>>>>>>> origin/dev
 			$records = $db->fetch_assoc_all();
 
 			foreach ($records as $key => $value){
 				array_push($this->favList['list'], new QuestionPromo( $value['QID'], $value['userName'], $value['string'], $value['timeStamp'], $value['difficultyLevel']) );
 			}
-			
+			if($type == 'popularity')
+			{
+				usort($this->favList['list'], "QuestionPromo::compareVoteUp");
+			}
+						
 			$this->result['head']['status'] = 200;
 		}else{
 			$this->result['head']['status'] = 400;
@@ -235,13 +268,28 @@ class User extends Base{
 			}
 			//Fetching Questions
 			$db = $this->getDb();
+<<<<<<< HEAD
 			$db->query("SELECT QID,userName,string,timeStamp,difficultyLevel FROM Question NATURAL JOIN (SELECT qid FROM Views WHERE userName=?) as W ORDER BY " . $type . " DESC LIMIT " . $len . "," . MORE_SIZE , array($this->userName));
+=======
+			if($type != 'popularity')
+			{
+				$db->query("SELECT QID,userName,string,timeStamp,difficultyLevel FROM Question NATURAL JOIN (SELECT qid FROM Views WHERE userName=?) as W ORDER BY " . $type . " LIMIT " . $len . "," . MORE_SIZE , array($this->userName));
+			}
+			else
+			{
+				$db->query("SELECT QID,userName,string,timeStamp,difficultyLevel FROM Question NATURAL JOIN (SELECT qid FROM Views WHERE userName=?) as W LIMIT " . $len . "," . MORE_SIZE , array($this->userName));
+			}
+>>>>>>> origin/dev
 			$records = $db->fetch_assoc_all();
 
 			foreach ($records as $key => $value){
 				array_push($this->historyList['list'], new QuestionPromo( $value['QID'], $value['userName'], $value['string'], $value['timeStamp'], $value['difficultyLevel']) );
 			}
-			
+			if($type == 'popularity')
+			{
+				usort($this->historyList['list'], "QuestionPromo::compareVoteUp");
+			}
+
 			$this->result['head']['status'] = 200;
 		}else{
 			$this->result['head']['status'] = 400;
