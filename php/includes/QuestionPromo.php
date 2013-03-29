@@ -1,4 +1,4 @@
-<?
+<?php
 
 class QuestionPromo extends Base
 { 
@@ -10,23 +10,37 @@ class QuestionPromo extends Base
 		$this->string = $string;
 		$this->timeStamp = $timeStamp;
 		$this->difficultyLevel = $difficultyLevel;
-		$this->requestedUser = unserialize($_SESSION['user'])->getUserName();
+		if($this->validateVar($_SESSION['user'])){
+			$this->requestedUser = unserialize($_SESSION['user'])->getUserName();
+		}else{
+			$this->requestedUser = null;
+		}
 
 		//fetching Votes
 		$db = $this->getDb();
 		$db->query("SELECT userName,nature FROM QuestionVotes WHERE QID=?",array($QID));
-		$alreadyVoted = false;
+		$alreadyVoted = 0;
 		$voteUp = 0;
 		$voteDown = 0;
 		$records = $db->fetch_assoc_all();
-		foreach ($records as $key => $value) {
-			if($value['nature'] > 0){
-				$voteUp += 1;
-			}else{
-				$voteDown += 1;
+		if(is_null($this->requestedUser)){
+			foreach ($records as $key => $value) {
+				if($value['nature'] > 0){
+					$voteUp += 1;
+				}else{
+					$voteDown += 1;
+				}
 			}
-			if($value['userName'] == $this->requestedUser){
-				$alreadyVoted = true;
+		}else{
+			foreach ($records as $key => $value) {
+				if($value['nature'] > 0){
+					$voteUp += 1;
+				}else{
+					$voteDown += 1;
+				}
+				if($value['userName'] == $this->requestedUser){
+					$alreadyVoted = $value['nature'];
+				}
 			}
 		}
 		$this->voteUp = $voteUp;
@@ -36,12 +50,13 @@ class QuestionPromo extends Base
 		//fetching Tags
 		$db->query('SELECT tagName FROM Encompass WHERE QID=?',array($this->QID));
 		$tagList = array();
-		$records2 = $db->fetch_assoc_all();
-		foreach ($records2 as $key2 => $value2) {
-			array_push($tagList, $value2['tagName']);
+		$records = $db->fetch_assoc_all();
+		foreach ($records as $key => $value) {
+			array_push($tagList, $value['tagName']);
 		}
 		$this->tagList = $tagList;
 
+		//fetching is alreadyFavourited
 		$db->query('SELECT QID FROM Favourites WHERE QID=? AND userName=?',array($this->QID, $this->requestedUser));
 		if($db->returned_rows == 1){
 			$this->alreadyFav = true;

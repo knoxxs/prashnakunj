@@ -1,4 +1,4 @@
-<?
+<?php
 
 require_once __DIR__.'/includes/base.php';
 
@@ -107,7 +107,21 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 				$result = json_encode( array('head' => array('status' => 400, 'message'=>'No list specified'), 'body' => '') );
 			}
 			break;
-		
+
+		case 'questions':
+			if(sizeof($_GET) == 4){
+				require_once __DIR__.'/includes/Question.php';
+				$login = new Login($_POST['userName']);
+				if($login->logout()){
+					$result = $login->toJson();
+				}else{
+					$result = json_encode( array('head' => array('status' => 500, 'message'=>''), 'body' => '') );
+				}
+			}else{
+				$result = json_encode( array('head' => array('status' => 206, 'message'=>'Only '.sizeof($_GET).' fields received, required 4'), 'body' => '') );
+			}
+			break;
+
 		default:
 			$result = json_encode( array('head' => array('status' => 400, 'message'=>'No such call'), 'body' => '') );
 			break;
