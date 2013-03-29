@@ -1,4 +1,4 @@
-<?
+<?php
 
 class QuestionPromo extends Base
 { 
@@ -167,5 +167,11 @@ class QuestionPromo extends Base
 
 		return ($object);
 	}
+
+	public static function compareVoteUp($a, $b){
+		return -($a->getVoteUp() - $b->getVoteUp());
+	}
+
+
 }
 ?>
