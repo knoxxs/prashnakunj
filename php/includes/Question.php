@@ -1,5 +1,7 @@
 <?php
 
+require_once __DIR__.'/QuestionTitle.php';
+
 class Question extends Base
 {
 	private $questionTitle, $bestAnswer, $answerList, $suggestionList;
@@ -9,7 +11,7 @@ class Question extends Base
 
 		//fetching answers
 		$db = $this->getDb();
-		$db->query("SELECT string,timeStamp,reviewerId FROM Answer WHERE QID = $QID ORDER BY timeStamp DESC LIMIT 0, 1");
+		$db->query("SELECT string,timeStamp,reviewerId FROM Answer WHERE QID = '$QID' ORDER BY timeStamp DESC LIMIT 0, 1");
 		$records = $db->fetch_assoc_all();
 		
 		$this->bestAnswer = null;
@@ -85,7 +87,7 @@ class Question extends Base
 		return $this->suggestionList['list'];
 	}
 
-	public function getAnswerListArray($type){
+	public function getSuggestionListArray($type){
 		$list = $this->getSuggestionList($type);
 		$jsonList=array();
 		foreach ($list as $key => $value) {
@@ -106,7 +108,7 @@ class Question extends Base
 			//Fetching Questions
 			$db = $this->getDb();
 			if($type != 'popularity'){
-				$db->query("SELECT string,userName,timeStamp,used,reviewerId FROM Suggestion WHERE QID = $QID ORDER BY $type DESC LIMIT $len, ".MORE_SIZE);
+				$db->query("SELECT string,userName,timeStamp,used,reviewerId FROM Suggestion WHERE QID = '$this->questionTitle->getQID()' ORDER BY $type DESC LIMIT $len, ".MORE_SIZE);
 			}else{
 				$db->query("SELECT string,timeStamp,reviewerId FROM Answer WHERE QID = $QID");
 			}
@@ -142,9 +144,9 @@ class Question extends Base
 
 		if($type != 'popularity'){
 			if(is_null($lastQuestionTime)){
-				$db = query("SELECT * FROM Question ORDER BY $type DESC LIMIT 0,$num");
+				$db->query("SELECT * FROM Question ORDER BY $type DESC LIMIT 0,$num");
 			}else{
-				$db = query("SELECT * FROM Question WHERE timestamp $condition $lastQuestionTime ORDER BY $type DESC LIMIT 0,$num");
+				$db->query("SELECT * FROM Question WHERE timestamp $condition $lastQuestionTime ORDER BY $type DESC LIMIT 0,$num");
 			}
 		}else{
 			if(is_null($lastQuestionTime)){

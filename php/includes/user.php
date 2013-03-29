@@ -42,17 +42,6 @@ class User extends Base{
 		}
 	}
 
-
-
-	/**
-	 * validate the type parameter
-	 * @param  [type] $type [description]
-	 * @return bool       [description]
-	 */
-	private function typeValidation($type){
-		return ($type == 'timestamp') or ($type == 'popularity') or ($type == 'difficultyLevel');
-	}
-
 	public function getUsername(){
 		return $this->userName;
 	}

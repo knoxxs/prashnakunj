@@ -111,11 +111,10 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 		case 'questions':
 			if(sizeof($_GET) == 4){
 				require_once __DIR__.'/includes/Question.php';
-				$login = new Login($_POST['userName']);
-				if($login->logout()){
-					$result = $login->toJson();
+				if( $base->validateVar($_GET['type']) && $base->validateVar($_GET['number']) && $base->validateVar($_GET['latestQuestionTime']) && $base->validateVar($_GET['scroll']) ){
+					$result = Question::getQuestions($_GET['type'], $_GET['number'], $_GET['latestQuestionTime'], $_GET['scroll']);
 				}else{
-					$result = json_encode( array('head' => array('status' => 500, 'message'=>''), 'body' => '') );
+					$result = json_encode( array('head' => array('status' => 206, 'message'=>'Incomplete field'), 'body' => '') );
 				}
 			}else{
 				$result = json_encode( array('head' => array('status' => 206, 'message'=>'Only '.sizeof($_GET).' fields received, required 4'), 'body' => '') );
