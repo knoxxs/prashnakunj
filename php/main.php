@@ -3,7 +3,7 @@
 require_once __DIR__.'/includes/base.php';
 
 define('PATH_REGEX_PATTERN',"!\/([^\/]+)!");
-session_start();
+@session_start();
 //TODO: Need to handle if PATH_INFO doesnot exist
 preg_match_all(PATH_REGEX_PATTERN, $_SERVER['PATH_INFO'], $regMatches);
 

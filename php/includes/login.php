@@ -8,7 +8,7 @@ class Login extends Base
 
 	function __construct($userName,$password='')
 	{
-		session_start();
+		@session_start();
 		parent::__construct();
 		$this->userName = $userName;
 		$this->password = md5($password);
