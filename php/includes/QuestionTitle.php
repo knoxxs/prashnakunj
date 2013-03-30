@@ -10,7 +10,7 @@ class QuestionTitle extends Base
 		$this->timeStamp = $timeStamp;
 		$this->difficultyLevel = $difficultyLevel;
 		$this->reviewer = $reviewer;
-		if($this->validateVar($_SESSION['user'])){
+		if($this->validateVar($_SESSION) && $this->validateVar($_SESSION['user'])){
 			$this->requestedUser = unserialize($_SESSION['user'])->getUserName();
 		}else{
 			$this->requestedUser = null;
@@ -57,14 +57,15 @@ class QuestionTitle extends Base
 		$this->tagList = $tagList;
 
 		//fetchingComment
-		$db->query('SELECT userName,string,timeStamp FROM QuestionComment WHERE QID=?',array($this->QID));
+		$db->query('SELECT userName,string,timeStamp FROM QuestionComment WHERE QID=? ORDER BY timeStamp DESC',array($this->QID));
 		$commentList = array();
 		$records = $db->fetch_assoc_all();
 		foreach ($records as $key => $value) {
-			array_push($commentList, new QuestionComment($value['userName'], $value['string'], $value['timeStamp']));
+			array_push($commentList, new QuestionComment($this->QID, $value['userName'], $value['string'], $value['timeStamp']));
 		}
 		$this->commentList = $commentList;
 
+		//fetching isAlredyFav
 		$db->query('SELECT QID FROM Favourites WHERE QID=? AND userName=?',array($this->QID, $this->requestedUser));
 		if($db->returned_rows == 1){
 			$this->alreadyFav = true;
@@ -74,6 +75,12 @@ class QuestionTitle extends Base
 			$this->alreadyFav = false;
 		}
 	}
+
+	public function getQID()
+	{
+	    return $this->QID;
+	}
+		
 }
 
 ?>

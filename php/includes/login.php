@@ -1,11 +1,5 @@
 <?php
-<<<<<<< HEAD
-<<<<<<< HEAD
 
-=======
->>>>>>> origin/dev
-=======
->>>>>>> origin/dev
 require_once __DIR__.'/base.php';
 require_once __DIR__.'/user.php';
 

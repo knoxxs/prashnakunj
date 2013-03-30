@@ -1,6 +1,8 @@
 <?php
 
 require_once __DIR__.'/initialize_database.php';
+define('MORE_SIZE', 10);
+define('DEFAULT_TYPE', 'timestamp');
 
 class Base{
 
@@ -21,7 +23,7 @@ class Base{
 		}
 	}
 
-	protected function validateVar($var){
+	public function validateVar($var){
 		return (isset($var) && (!empty($var)) );
 	}
 
@@ -49,6 +51,14 @@ class Base{
 		return (isset($_SESSION['user']) && !empty($_SESSION['user']) );
 	}
 
+	/**
+	 * validate the type parameter
+	 * @param  [type] $type [description]
+	 * @return bool       [description]
+	 */
+	protected function typeValidation($type){
+		return ($type == 'timestamp') or ($type == 'popularity') or ($type == 'difficultyLevel');
+	}
 
 }
 

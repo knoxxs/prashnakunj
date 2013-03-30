@@ -1,0 +1,960 @@
+{
+	"head":{
+		"status":"",
+		"message":""
+		},
+	"body":{}
+}
+
+404 -> unkonwn url
+
+//Register   api/register/       Post
+{
+	"firstName":"",
+	"lastName":"",
+	"userName":"",
+	"password":"",
+	"email":"",
+	"phone":,
+	"dob":"yyyy-mm-dd",
+	"gender":"",
+	"interest":", ,",
+	"country":"",
+	"city":"",
+	"state":"",
+	"qualification":"",
+	"affiliation":"",
+	"areasOfExpertise":", ,",
+	"securityQuestionID":,
+	"securityAnswer":"",
+	"reviewerKey":"",//should be -1 for normal user
+}
+
+203 -> invalid data
+300 -> repeated userName, email
+500 -> when database connectivity problem
+201 -> created
+206 -> partial data
+
+{
+	"head":{
+		"status":"",
+		"message":""
+		},
+	"body":{}
+}
+
+//Login   /api/login            Post
+{
+	"userName":"",
+	"password":""
+}
+
+{
+	"head":{
+		"status":"",
+		"message":""
+		},
+	"body":{
+		"firstName":"",
+		"lastName":"",
+		"reputation":"",
+		"isReviewer":""
+	}
+}
+200 -> OK (message if already logged in with same account)
+404 -> wrong username/password
+203 -> wrong formated data 
+206 -> partial data
+409 -> Already loggedin with another account, logout first
+
+//Logout 	/api/logout       POST
+{
+	"userName":""
+}
+
+{
+	"head":{
+		"status":"",
+		"message":""
+		},
+	"body":{
+		}
+}
+
+200 -> OK
+203 -> wrong formated data 
+206 -> partial data
+409 -> Already loggedin with another account, logout first
+405 -> Not allowed (not logged in)
+
+//Forgot Username
+{
+	"email":""
+}
+
+{
+	"head":{
+		"status":"",
+		"message":""
+		},
+	"body":{}
+}
+
+
+//Forgot Password
+{
+	"username":""
+}
+
+{
+	"head":{
+		"status":"",
+		"message":""
+		},
+	"body":{}
+}
+
+
+//Reset Password
+{
+	"username":"",
+	"password":"",
+	"securityQuestionID":"",
+	"securityAnswer":""
+
+}
+
+{
+	"head":{
+		"status":"",
+		"message":""
+		},
+	"body":{}
+}
+
+
+//viewLatestQuestion (trending)  /api/questions/   GET
+{
+	"type":"latest",
+	"number":"",
+	"lastQuestionTime":"",
+	"scroll":"",  //after, before
+}
+
+{
+	"head":{
+		"status":"",
+		"message":""
+		},
+	"body":{
+		"questions":[ {"question":{"id":"",
+						"questionString":"",
+						"author":"",
+						"posted":{"day":"",
+								"month":"",
+								"year":"",
+								"hour":"",
+								"minute":""},
+						"difficultyLevel":"",
+						"tags":[],
+						"favrouited":"",
+						"later":"",
+						"vote":{"upvote":"",
+								"downvote":""},
+						"comments":[{"id":"",
+									"commentString":"",
+									"author":"",
+									"posted":"",
+									"vote":{"upvote":"",
+										"downvote":""}
+									}],
+
+						},
+						"answer":{"id":"",
+								"answerString":"",
+								"posted":"",
+								"vote":{"upvote":"",
+									"downvote":""},
+								"comments":[{"id":"",
+									"commentString":"",
+									"author":"",
+									"posted":"",
+									"vote":{"upvote":"",
+										"downvote":""}
+									}],},
+						"suggestions":[{"id":"",
+										"suggestionString":"",
+										"author":"",
+										"posted":{"day":"",
+												"month":"",
+												"year":"",
+												"hour":"",
+												"minute":""},
+										"reviewed":"",
+										"used":"",
+										"vote":{"upvote":"",
+												"downvote":""},
+										"comments":[{"id":"",
+													"commentString":"",
+													"author":"",
+													"posted":"",
+													"vote":{"upvote":"",
+														"downvote":""}
+													}],
+										}]
+					},{
+
+					}
+					]
+			}
+}
+
+
+//More Latest Question         /api/question/      GET
+{
+	"type":"latest",
+	"num":"",
+	"LastQuestionTime":"",
+	"scroll":""  //after, before
+}
+
+//QuestionForTag              /api/question              GET
+{
+	"type":"tag",
+	"tag":[],
+	"haveAnswer":"",
+	"difficult":[], //easy ,medium, hard
+	"order":"",  //popularity(default), time, numberOfSuggestion, modificationCount
+	"lastQuestionID":""
+}
+
+{
+	"head":{
+		"status":"",
+		"message":""
+		},
+	"body":{"questions":["......"
+		]
+	}
+}
+
+//More QuestionForTag
+
+{
+	"type":"tag",
+	"tag":[],
+	"haveAnswer":"",
+	"difficult":[], //easy ,medium, hard
+	"order":"",  //popularity(default), time, numberOfSuggestion, modificationCount
+	"lastQuestionID":""	
+}
+
+//ID based Question              /api/question/              GET
+{
+	"type":"id",
+	"id":""
+}
+
+
+{
+	"head":{
+		"status":"",
+		"message":""
+		},
+	"body":{
+		"question":{"question":{"id":"",
+						"questionString":"",
+						"author":"",
+						"posted":{"day":"",
+								"month":"",
+								"year":"",
+								"hour":"",
+								"minute":""},
+						"difficultyLevel":"",
+						"tags":[],
+						"favrouited":"",
+						"later":"",
+						"vote":{"upvote":"",
+								"downvote":"",
+								"voted":"" },// n/u/d
+						"comments":[{"id":"",
+									"commentString":"",
+									"author":"",
+									"posted":"",
+									"vote":{"upvote":"",
+											"downvote":"",
+											"voted":"" }// n/u/d
+									}],
+
+						},
+						"answer":{"id":"",
+								"answerString":"",
+								"posted":"",
+								"vote":{"upvote":"",
+										"downvote":"",
+										"voted":"" },// n/u/d
+								"comments":[{"id":"",
+									"commentString":"",
+									"author":"",
+									"posted":"",
+									"vote":{"upvote":"",
+											"downvote":"",
+											"voted":"" }// n/u/d
+									}],},
+						"suggestions":[{"id":"",
+										"suggestionString":"",
+										"author":"",
+										"posted":{"day":"",
+												"month":"",
+												"year":"",
+												"hour":"",
+												"minute":""},
+										"reviewed":"",
+										"used":"",
+										"vote":{"upvote":"",
+												"downvote":"",
+												"voted":"" },// n/u/d
+										"comments":[{"id":"",
+													"commentString":"",
+													"author":"",
+													"posted":"",
+													"vote":{"upvote":"",
+													"downvote":"",
+													"voted":"" }// n/u/d
+													}],
+										}]
+					}
+	}
+}
+//by default suggestion will be sorted via popularity
+//by default comment will be sorted via time and this can't be change
+
+
+//Natural Language Search         /api/search     GET
+{
+	"searchString":"",
+	"tags":[],
+	"haveAnswer":"",
+	"difficultyLevel":[],
+	"order":"",
+	"lastQuestionID":""
+}
+
+{
+	"head":{
+		"status":"",
+		"message":""
+		},
+	"body":{
+		"questions":["...."]
+	}
+}
+
+///////////////////////////////////////
+Question ID - 		QID
+BEST ANSWER ID - 	QID_A0
+ANSWER ID - 		QID_A[n]
+SUGGESTION ID -		QID_S[n]
+Q comment ID - 		QID_C[n]
+Answer comment ID -	QID_A[n]_C[n]
+Suggestion cmnt ID- QID_S[n]_C[n]
+////////////////////////////////////////
+
+//More suggestion           //api/moreSuggestion      GET
+{
+	"id":"", //qid
+	"lastSuggestionID":"",
+	"sortType":"" //popularity, time
+}
+
+{
+	"head":{
+		"status":"",
+		"message":""
+		},
+	"body":{
+		"suggestions":["...."]
+	}
+}
+
+//More Comment 			/api/moreComment      GET
+{
+	"id":"",
+	"lastCommentID":
+}
+{
+	"head":{
+		"status":"",
+		"message":""
+		},
+	"body":{"comments":["....."]}
+}
+
+//answer history
+{
+	"id":""//qid
+}
+
+{
+	"head":{
+		"status":"",
+		"message":""
+		},
+	"body":{"answers":[{
+				"answerString":"",
+				"author":"",//if author is also the current user(viewer)
+				"posted":"",
+				"vote":{"upvote":"",
+						"downvote":"",
+						"voted":"" },// n/u/d
+				"comments":["....."]
+			}, {
+
+			}]}
+}
+
+//Sort Suggestion 		/api/sortSuggestion      GET
+{
+	"id":"" , //qid
+	"sortType":"" //popularity, time
+}
+{
+	"head":{
+		"status":"",
+		"message":""
+		},
+	"body":{"suggestions":["....."]
+		}
+}
+
+//vote          /api/vote         GET
+{
+	"id":"",
+	"voteType":"",//  u/d
+
+}
+
+{
+	"head":{
+		"status":"",
+		"message":""
+		},
+	"body":{
+	}
+}
+
+
+//report abuse         /api/abuse            GET
+{
+	"id":"",
+	"comment":""
+}
+
+{
+	"head":{
+		"status":"",
+		"message":""
+		},
+	"body":{
+	}
+}
+
+
+
+//add/remove to list             /api/addToList         GET
+{
+	"id":"",//question ID
+	"listType":""//f,l
+}
+
+{
+	"head":{
+		"status":"",
+		"message":""
+		},
+	"body":{
+	}
+}
+
+
+//post a suggestion      /api/post/suggestion     POST
+{
+	"id":"", //qid
+	"suggestionString":""
+}
+
+{
+	"head":{
+		"status":"",
+		"message":""
+		},
+	"body":{
+		"id":""
+	}
+}
+
+
+//post a comment 		/api/post/comment       POST 
+{
+	"id":"",
+	"commentString":""
+}
+{
+	"head":{
+		"status":"",
+		"message":""
+		},
+	"body":{
+		"id":""
+	}
+}
+
+
+//post a question 			/api/post/question      POST
+{
+	"question":{"question":{"id":"",
+						"questionString":"",
+						// "author":"",
+						// "posted":{"day":"",
+						// 		"month":"",
+						// 		"year":"",
+						// 		"hour":"",
+						// 		"minute":""},
+						"difficultyLevel":"",
+						"tags":[],
+						}
+				}
+}
+
+{
+	"head":{
+		"status":"",
+		"message":""
+		},
+	"body":{
+		"id":""
+	}
+}
+
+
+//modify question       /api/question/modify		POST           //untill its get reviewed except comments and answer
+{
+	"id":"",
+	"modificationString":"",
+	"tags":[],
+	"difficultyLevel":""
+}
+
+{
+	"head":{
+		"status":"",
+		"message":""
+		},
+	"body":{
+	}
+}
+
+//modify suggestion       /api/suggestion/modify		POST           //untill its get reviewed except comments and answer
+{
+	"id":"",
+	"modificationString":"",
+}
+
+{
+	"head":{
+		"status":"",
+		"message":""
+		},
+	"body":{
+	}
+}
+
+//modify a comment      /api/comment/modify        POST
+{
+	"id":"",
+	"modificationString":""
+}
+
+{
+	"head":{
+		"status":"",
+		"message":""
+		},
+	"body":{
+		"id":""
+	}
+}
+
+//Dashboard notification       /api/notification        GET
+{
+
+}
+
+{
+	"head":{
+		"status":"",
+		"message":""
+		},
+	"body":{
+		"num":"",
+		"notificatoins":[{
+						"question":{"id":"",
+						"questionString":"",
+						"author":"",
+						"posted":{"day":"",
+								"month":"",
+								"year":"",
+								"hour":"",
+								"minute":""},
+						"difficultyLevel":"",
+						"tags":[],
+						}
+				}]
+	}
+}
+
+
+//Dashboard subscriptions           /api/subscriptions       GET
+{
+
+}
+
+{
+	"head":{
+		"status":"",
+		"message":""
+		},
+	"body":{
+		"tags":[]
+	}
+}
+
+//list number          /api/list/num        GET
+{
+
+}
+
+{
+	"head":{
+		"status":"",
+		"message":""
+		},
+	"body":{
+		"numF":"",
+		"numL":"",
+		"numH":"",
+		"numRH":""		
+	}
+}
+
+
+//IN FUTURE SCOPE
+//favourite notification num          /api/fav/notification/num   GET
+{
+
+}
+
+{
+	"head":{
+		"status":"",
+		"message":""
+		},
+	"body":{
+		"num":""
+	}
+}
+
+//retrieve list         /api/list/listName/sortType         GET
+{
+	
+}
+400 -> no list specified or wrongly specified
+401 -> Not logged in
+500 -> Internal server error
+
+{
+	"head":{
+		"status":"",
+		"message":""
+		},
+	"body":["QuestionPromo array"]
+}
+
+
+//retrieve profile     /api/profile        GET
+{
+
+}
+
+{
+	"head":{
+		"status":"",
+		"message":""
+		},
+	"body":{
+		"email":"",
+		"phoneNo":"",
+		"dob":{"Day":"", "Month":"", "Year":""},
+		"gender":"",
+		"interest":["", ""],
+		"country":"",
+		"city":"",
+		"state":"",
+		"qualification":"",
+		"affiliation":"",
+		"aresOfExpertise":[],
+		"securityQuestionID":"",
+		"securityAnswer":"",
+	}
+}
+
+//profile edit    /api/profile/edit       POST
+{
+	"first":"",
+	"last":"",
+	"username":"",
+	"password":"",
+	"email":"",
+	"phoneNo":"",
+	"dob":{"Day":"", "Month":"", "Year":""},
+	"gender":"",
+	"interest":["", ""],
+	"country":"",
+	"city":"",
+	"state":"",
+	"qualification":"",
+	"affiliation":"",
+	"aresOfExpertise":[],
+	"securityQuestionID":"",
+	"securityAnswer":"",
+}
+
+{
+	"head":{
+		"status":"",
+		"message":""
+		},
+	"body":{
+	}
+}
+
+//subscribe a tag       /api/tag/subscribe      GET
+{
+	"tag":""
+}
+
+{
+	"head":{
+		"status":"",
+		"message":""
+		},
+	"body":{
+	}
+}
+
+//unsubscribe a tag      /api/tag/unsubscribe        GET
+{
+	"tag":""
+}
+
+{
+	"head":{
+		"status":"",
+		"message":""
+		},
+	"body":{
+	}
+}
+//for reviewer first need to check with the tags associated with the reviewer key(cant delete them)
+
+
+
+//retrieve to br reviewed         /api/toBeReviewed        GET
+{
+
+}
+
+{
+	"head":{
+		"status":"",
+		"message":""
+		},
+	"body":{
+		"tagBasedList":[{
+			"tag":"",
+			"questions":[{"id":"",
+						"questionString":"",
+						"author":"",
+						"posted":{"day":"",
+								"month":"",
+								"year":"",
+								"hour":"",
+								"minute":""},
+						"difficultyLevel":"",
+						"tags":[],
+						},{
+
+						}]
+			}]
+	}
+}
+
+//for reviewer
+//ID based Question              /api/question/              GET
+{
+	"type":"idAndLock",
+	"id":""
+}
+
+
+{
+	"head":{
+		"status":"",//one status should show is this question is locked or not
+		"message":""
+		},
+	"body":{
+		"question":{"question":{"id":"",
+						"questionString":"",
+						"author":"",
+						"posted":{"day":"",
+								"month":"",
+								"year":"",
+								"hour":"",
+								"minute":""},
+						"difficultyLevel":"",
+						"tags":[],
+						"favrouited":"",
+						"later":"",
+						"vote":{"upvote":"",
+								"downvote":"",
+								"voted":"" },// n/u/d
+						"comments":[{"id":"",
+									"commentString":"",
+									"author":"",
+									"posted":"",
+									"vote":{"upvote":"",
+											"downvote":"",
+											"voted":"" }// n/u/d
+									}],
+
+						},
+						"answer":{"id":"",
+								"answerString":"",
+								"posted":"",
+								"vote":{"upvote":"",
+										"downvote":"",
+										"voted":"" },// n/u/d
+								"comments":[{"id":"",
+									"commentString":"",
+									"author":"",
+									"posted":"",
+									"vote":{"upvote":"",
+											"downvote":"",
+											"voted":"" }// n/u/d
+									}],},
+						"suggestions":[{"id":"",
+										"suggestionString":"",
+										"author":"",
+										"posted":{"day":"",
+												"month":"",
+												"year":"",
+												"hour":"",
+												"minute":""},
+										"reviewed":"",
+										"used":"",
+										"vote":{"upvote":"",
+												"downvote":"",
+												"voted":"" },// n/u/d
+										"comments":[{"id":"",
+													"commentString":"",
+													"author":"",
+													"posted":"",
+													"vote":{"upvote":"",
+													"downvote":"",
+													"voted":"" }// n/u/d
+													}],
+										}]
+					}
+	}
+}
+
+
+//save revision           /api/review        POST
+{
+	"id":"",//qid
+	"reviewedSuggestionsID":[],
+	"usedSuggestionsID":[],
+	"answerString":[]
+}
+
+{
+	"head":{
+		"status":"",
+		"message":""
+		},
+	"body":{
+		"isModified":"",//best answer
+		"id":""
+	}
+}
+
+//modify Answer (without review anything)        /api/answer         POST
+{
+	"id":"",//qid
+	"answerString":""
+}
+
+{
+	"head":{
+		"status":"",
+		"message":""
+		},
+	"body":{
+		"id":""
+	}
+}
+
+//ID based Question(for reviewer via review page)             /api/question/              GET
+{
+	"type":"id",
+	"id":"",
+	"isReviewer":""
+}
+
+
+{
+	"head":{
+		"status":"",
+		"message":""
+		},
+	"body":{
+		"question":{"...."},
+		"answers":[{
+				"answerString":"",
+				"author":"",//if author is also the current user(viewer)
+				"posted":"",
+				"vote":{"upvote":"",
+						"downvote":"",
+						"voted":"" },// n/u/d
+				"comments":["....."]
+			}, {
+
+			}]
+	}
+}
+//check at backend whether user is reviewer and also find his written answer
+
+
+//quiz auto
+{
+	"tags":"",
+	"num":"",
+	"difficultyLevel":"",
+	
+	"key":"",
+}
+
+//help forum
+
+//admin
