@@ -5,6 +5,7 @@ class QuestionComment extends Base
 	private $QID, $userName, $string, $timeStamp, $voteUp, $voteDown, $alreadyVoted, $requestedUser;
 
 	public function __construct($QID, $userName, $string, $timeStamp){
+		parent::__construct();
 		$this->QID = $QID;
 		$this->userName = $userName;
 		$this->string = $string;

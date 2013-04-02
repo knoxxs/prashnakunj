@@ -110,7 +110,7 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 
 		case 'questions':
 			if(sizeof($_GET) == 4){
-				require_once __DIR__.'/includes/Question.php';
+				require_once __DIR__.'/includes/question.php';
 				if( $base->validateVar($_GET['type']) && $base->validateVar($_GET['number']) && $base->validateVar($_GET['latestQuestionTime']) && $base->validateVar($_GET['scroll']) ){
 					$result = Question::getQuestions($_GET['type'], $_GET['number'], $_GET['latestQuestionTime'], $_GET['scroll']);
 				}else{

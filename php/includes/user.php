@@ -1,8 +1,8 @@
 <?php
-require_once __DIR__.'/QuestionPromo.php';
+require_once __DIR__.'/questionPromo.php';
 
 class User extends Base{ 
-	private $userName, $firstname, $lastname, $reputation, $favList, $watchLaterList, $historyList, $subscriptionList, $db, $isReviewer;
+	protected $userName, $firstname, $lastname, $reputation, $favList, $watchLaterList, $historyList, $subscriptionList;
 
 	/**
 	 * [__construct description]
@@ -33,13 +33,6 @@ class User extends Base{
 
 		$this->subscriptionList = array();
 		//$this->fetchSubscriptionList();
-
-		$db->query('SELECT userName From Reviewer WHERE userName=?',array($this->userName));
-		if($db->returned_rows == 1){
-			$this->isReviewer = true;
-		}else{
-			$this->isReviewer = false;
-		}
 	}
 
 	public function getUsername(){
@@ -141,18 +134,7 @@ class User extends Base{
 
 	public function addSubscriptionItem($item){
 		
-	}
-
-	public function getIsReviewer()
-	{
-	    return $this->isReviewer;
-	}
-	
-	public function setIsReviewer($isReviewer)
-	{
-	    $this->isReviewer = $isReviewer;
-	}
-	
+	}	
 
 	/**
 	 * fetch watchLaterList more items based on sortType
@@ -273,11 +255,11 @@ class User extends Base{
 
 	public function fetchSubscriptionList(){
 		$db = $this->getDb();
-		$db->query('SELECT tagName FROM Subscribe WHERE userName=?',array($this->userName));
+		$db->query('SELECT name,parent FROM Subscribe WHERE userName=?',array($this->userName));
 		$tagList = array();
 		$records = $db->fetch_assoc_all();
 		foreach ($records as $key => $value) {
-			array_push($tagList, $value['tagName']);
+			array_push($tagList, array("name" => $value['name'], "parent" => $value['name']));
 		}
 		$this->subscriptionList = $tagList;
 		$this->result['head']['status'] = 200;

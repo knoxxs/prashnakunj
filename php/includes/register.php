@@ -28,6 +28,7 @@ class Register extends Base{
 		$this->reviewerKey = $reviewerKey;
 		$this->interests = $interests;
 		$this->reputation = 0;
+
 	}
 
 	private function validateData(){

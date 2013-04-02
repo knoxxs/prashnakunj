@@ -1,12 +1,16 @@
 <?php
 
-require_once __DIR__.'/QuestionTitle.php';
+require_once __DIR__.'/questionTitle.php';
+require_once __DIR__.'/answer.php';
+require_once __DIR__.'/suggestion.php';
 
 class Question extends Base
 {
 	private $questionTitle, $bestAnswer, $answerList, $suggestionList;
 
 	public function __construct($QID, $string, $timeStamp, $difficultyLevel, $userName, $reviewer){
+		parent::__construct();
+		
 		$this->questionTitle = new QuestionTitle($QID, $string, $timeStamp, $difficultyLevel, $userName, $reviewer);
 
 		//fetching answers
@@ -110,7 +114,7 @@ class Question extends Base
 			if($type != 'popularity'){
 				$db->query("SELECT string,userName,timeStamp,used,reviewerId FROM Suggestion WHERE QID = '$this->questionTitle->getQID()' ORDER BY $type DESC LIMIT $len, ".MORE_SIZE);
 			}else{
-				$db->query("SELECT string,timeStamp,reviewerId FROM Answer WHERE QID = $QID");
+				$db->query("SELECT string,userName,timeStamp,used,reviewerId FROM Suggestion WHERE QID = '$this->questionTitle->getQID()'");
 			}
 			$records = $db->fetch_assoc_all();
 

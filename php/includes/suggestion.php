@@ -1,10 +1,13 @@
 <?php
 
+require_once __DIR__.'/suggestionComment.php';
+
 class Suggestion extends Base
 {
 	private $QID, $userName, $timeStamp, $string, $used, $reviwerId, $requestedUser, $alreadyVoted, $commentList;
 
 	public function __construct($QID, $userName, $timeStamp, $string, $used, $reviewerId){
+		parent::__construct();
 		$this->QID = $QID;
 		$this->userName = $userName;
 		$this->string = $string;

@@ -7,6 +7,7 @@ class AnswerComment extends Base
 	private $QID, $userName, $string, $timeStamp, $voteUp, $voteDown, $alreadyVoted, $requestedUser, $reviewerID;
 
 	public function __construct($QID, $reviewerID, $answerTimeStamp, $userName, $timeStamp, $string){
+		parent::__construct();
 		$this->QID = $QID;
 		$this->reviewerID = $reviewerID;
 		$this->answerTimeStamp = $answerTimeStamp;

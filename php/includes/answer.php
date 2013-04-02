@@ -1,12 +1,14 @@
 <?php
 
 require_once __DIR__.'/includes/base.php';
+require_once __DIR__.'/answerComment.php';
 
 class Answer  extends Base
 {
 	private $QID, $string, $answerTimeStamp, $voteUp, $voteDown, $commentList, $commentListType, $suggestionUsedList, $reportAbuseCount, $requestedUser, $alreadyVoted, $reviewerID;
 
 	public function __construct($QID, $string, $timeStamp, $reviewerID){
+		parent::__construct();
 		$this->QID = $QID;
 		$this->string = $string;
 		$this->answerTimeStamp = $timeStamp;

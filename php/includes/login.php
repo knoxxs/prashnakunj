@@ -2,10 +2,11 @@
 
 require_once __DIR__.'/base.php';
 require_once __DIR__.'/user.php';
+require_once __DIR__.'/reviewer.php';
 
 class Login extends Base
 { 
-	private $userName, $password, $user;
+	private $userName, $password, $user, $isReviewer;
 
 	function __construct($userName,$password='')
 	{
@@ -14,6 +15,7 @@ class Login extends Base
 		$this->userName = $userName;
 		$this->password = md5($password);
 		$user = null;
+		$this->isReviewer = false;
 	}
 	
 	public function validateData(){
@@ -36,8 +38,20 @@ class Login extends Base
 					if($this->password == $records[0]['password']){
 						$this->result['head']['status'] = 200;
 
-						$this->user = new User($this->userName);
-						$_SESSION['user'] = serialize($this->user);
+						//checking isReviewer
+						$db->query('SELECT userName From Reviewer WHERE userName=?',array($this->userName));
+						if($db->returned_rows == 1){
+							$this->isReviewer = true;
+							$_SESSION['isReviewer'] = $this->isReviewer;
+							$this->user = new Reviewer($this->userName);
+							$_SESSION['user'] = serialize($this->user);
+
+						}else{
+							$this->isReviewer = false;
+							$_SESSION['isReviewer'] = $this->isReviewer;
+							$this->user = new User($this->userName);
+							$_SESSION['user'] = serialize($this->user);
+						}
 					}
 					else{
 						$this->result['head']['status'] = 404;
@@ -88,7 +102,7 @@ class Login extends Base
 			$this->result['body']['firstName'] = unserialize($_SESSION['user'])->getFirstName();
 			$this->result['body']['lastName'] = unserialize($_SESSION['user'])->getLastName();
 			$this->result['body']['reputation'] = unserialize($_SESSION['user'])->getReputation();
-			$this->result['body']['isReviewer'] = unserialize($_SESSION['user'])->getIsReviewer();
+			$this->result['body']['isReviewer'] = $_SESSION['isReviewer'];
 		}
 		return json_encode($this->result);
 	}

@@ -6,12 +6,11 @@ define('DEFAULT_TYPE', 'timestamp');
 
 class Base{
 
-	protected $status, $statusMessage;
-	private $db;
+	protected $status, $statusMessage,$db;
 	public $result = array("head" => array("status" => "", "message" => "" ), "body" => array());
 
 	function __construct(){
-		$db = null;
+		$this->db = null;
 	}
 
 	protected function getDb(){

@@ -1,9 +1,12 @@
 <?php
 
+require_once __DIR__.'/questionComment.php';
+
 class QuestionTitle extends Base
 {
 	private $QID, $string, $timeStamp, $difficultyLevel, $userName, $reviewer, $voteUp, $voteDown, $alreadyVoted, $alreadyFav, $tagList, $commentList, $requestedUser;
 	public function __construct($QID, $string, $timeStamp, $difficultyLevel, $userName, $reviewer){
+		parent::__construct();
 		$this->QID = $QID;
 		$this->userName = $userName;
 		$this->string = $string;

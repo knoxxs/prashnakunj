@@ -5,6 +5,7 @@ class SuggestionComment extends Base
 	private $QID, $suggestionUserName, $suggestionTimeStamp, $userName, $string, $timeStamp, $voteUp, $voteDown, $alreadyVoted, $requestedUser;
 
 	public function __construct($QID, $suggestionUserName, $suggestionTimeStamp, $string, $userName, $timeStamp){
+		parent::__construct();
 		$this->QID = $QID;
 		$this->suggestionUserName = $suggestionUserName;
 		$this->suggestionTimeStamp = $suggestionTimeStamp;

@@ -5,6 +5,7 @@ class QuestionPromo extends Base
 	private $QID, $userName, $string, $timeStamp, $voteUp, $voteDown, $difficultyLevel, $tagList, $alreadyVoted, $alreadyFav, $requestedUser;
 
 	public function __construct($QID, $userName, $string, $timeStamp, $difficultyLevel){
+		parent::__construct();
 		$this->QID = $QID;
 		$this->userName = $userName;
 		$this->string = $string;
