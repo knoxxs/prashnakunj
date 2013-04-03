@@ -255,11 +255,11 @@ class User extends Base{
 
 	public function fetchSubscriptionList(){
 		$db = $this->getDb();
-		$db->query('SELECT name,parent FROM Subscribe WHERE userName=?',array($this->userName));
+		$db->query('SELECT tagName FROM Subscribe WHERE userName=?',array($this->userName));
 		$tagList = array();
 		$records = $db->fetch_assoc_all();
 		foreach ($records as $key => $value) {
-			array_push($tagList, array("name" => $value['name'], "parent" => $value['name']));
+			array_push($tagList, $value['name']);
 		}
 		$this->subscriptionList = $tagList;
 		$this->result['head']['status'] = 200;

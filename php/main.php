@@ -1,5 +1,4 @@
 <?php
-
 require_once __DIR__.'/includes/base.php';
 
 define('PATH_REGEX_PATTERN',"!\/([^\/]+)!");
@@ -11,7 +10,6 @@ $base = new Base();
 $result = '';
 
 //TODO: session_start placing for minimizing auto serializing errors, cuurently only placed in login constructor
-
 if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 	switch ($regMatches[1][0]) {
 		case 'register':
