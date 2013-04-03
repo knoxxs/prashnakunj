@@ -1,6 +1,8 @@
 <?php
 require_once __DIR__.'/includes/base.php';
 
+header('Access-Control-Allow-Origin: *');
+
 define('PATH_REGEX_PATTERN',"!\/([^\/]+)!");
 @session_start();
 //TODO: Need to handle if PATH_INFO doesnot exist
@@ -36,7 +38,7 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 					$result = json_encode( array('head' => array('status' => 500, 'message'=>''), 'body' => '') );
 				}
 			}else{
-				$result = json_encode( array('head' => array('status' => 206, 'message'=>'Only '.sizeof($_POST).' fields received, required 2'), 'body' => 'aa') );
+				$result = json_encode( array('head' => array('status' => 200, 'message'=>'Only '.sizeof($_POST).' fields received, required 2'), 'body' => '') );
 			}
 			break;
 
