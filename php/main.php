@@ -36,7 +36,7 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 					$result = json_encode( array('head' => array('status' => 500, 'message'=>''), 'body' => '') );
 				}
 			}else{
-				$result = json_encode( array('head' => array('status' => 206, 'message'=>'Only '.sizeof($_POST).' fields received, required 2'), 'body' => '') );
+				$result = json_encode( array('head' => array('status' => 206, 'message'=>'Only '.sizeof($_POST).' fields received, required 2'), 'body' => 'aa') );
 			}
 			break;
 
@@ -66,7 +66,7 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 								if( isset($regMatches[1][2]) && ( !empty($regMatches[1][2]) ) && ($regMatches[1][2] == 'more') ){
 									$user->fetchFavListArray($type);
 								}
-								$list = $user->getFavListArray($type);
+								$list = $user->getFavListArray($typelgonm);
 								$base->result = $user->result;
 								$base->result['body'] = $list;
 								$result = json_encode($base->result);
