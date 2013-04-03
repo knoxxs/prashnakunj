@@ -65,6 +65,7 @@ class Reviewer extends User{
 		//Fetching Questions
 		$db = $this->getDb();
 		foreach($this->tagList as $key => $value){
+			//TODO: REMOVE those notifications which are already locked
 			$db->query("SELECT QID,suggestionUserName,suggestionTimeStamp FROM Comprehend WHERE name=? AND parent=?", array($value['name'], $value['parent']));
 			$records = $db->fetch_assoc_all();
 			foreach ($records as $key2 => $value2){

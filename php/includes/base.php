@@ -3,14 +3,17 @@
 require_once __DIR__.'/initialize_database.php';
 define('MORE_SIZE', 10);
 define('DEFAULT_TYPE', 'timestamp');
+define('DEFAULT_TIME_DELAY_FOR_LOCK', 1800);
+define('DEFAULT_SLEEP_TIME', 30);
 
 class Base{
 
-	protected $status, $statusMessage,$db;
+	protected $status, $statusMessage, $db, $lockOn;
 	public $result = array("head" => array("status" => "", "message" => "" ), "body" => array());
 
 	function __construct(){
 		$this->db = null;
+		$this->lockOn = false;
 	}
 
 	protected function getDb(){
@@ -59,6 +62,27 @@ class Base{
 		return ($type == 'timestamp') or ($type == 'popularity') or ($type == 'difficultyLevel');
 	}
 
+	public function isLockOn()
+	{
+	    return $this->lockOn;
+	}
+	
+	public function lockOff(){
+		$this->lockOn = false;
+	}
+
+	public function runMonitor(){
+		
+		$startTime = time();
+    	while($this->isLockOn){
+        	if(time() - $startTime > DEFAULT_TIME_DELAY_FOR_LOCK){
+        		$review = unserialize($_SESSION['locked']);
+        		return $review->unLockReview();
+        	}
+       		sleep(DEFAULT_SLEEP_TIME);
+    	}
+    	return true;
+	}
 }
 
 ?>
