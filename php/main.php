@@ -121,6 +121,60 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 			}
 			break;
 
+		case 'question':
+			if( isset($regMatches[1][1]) && ( !empty($regMatches[1][1]) ) ){
+				if($base->isLoggedIn()){
+					switch($regMatches[1][1]){
+						case 'post':
+							if(sizeof($_POST) == 3){
+								require_once __DIR__.'/includes/Question.php';
+								$assignQID = Question::generateQID();
+								$user = unserialize($_SESSION['user']);
+								$insertStatus = Question::addQuestion(array(
+									'assignQID' => '$assignQID', 
+									'newString' => '$_POST['questionString']',
+									'difficultyLevel' => '$_POST['difficultyLevel']', 
+									'user' => '$user'));
+								// ADD tags to encompass table for the question added
+							}
+							else{
+								$result = json_encode( array('head' => array('status' => 206, 'message'=>'Only '.sizeof($_POST).' fields received, required 3'), 'body' => '') );
+							}
+
+						case 'questioncomment':
+							if( isset($regMatches[1][2]) && ( !empty($regMatches[1][2]) ) ){
+								switch ($regMatches[1][2]) {
+									case 'post':
+										if(sizeof($_POST) == 2){
+											require_once __DIR__.'/includes/QuestionComment.php';
+											$user = unserialize($_SESSION['user']);
+											$insertStatus = QuestionComment::
+										}
+										break;
+									
+									default:
+										# code...
+										break;
+								}
+							}
+							break;
+
+
+					}				
+				}
+			if(sizeof($_POST) == 2){
+				require_once __DIR__.'/includes/login.php';
+				$login = new Login($_POST['userName'], $_POST['password']);
+				if($login->login()){
+					$result = $login->toJson();
+				}else{
+					$result = json_encode( array('head' => array('status' => 500, 'message'=>''), 'body' => '') );
+				}
+			}else{
+				$result = json_encode( array('head' => array('status' => 206, 'message'=>'Only '.sizeof($_POST).' fields received, required 2'), 'body' => '') );
+			}
+			break;
+//  case question ends here and please make changes for the same.
 		default:
 			$result = json_encode( array('head' => array('status' => 400, 'message'=>'No such call'), 'body' => '') );
 			break;
