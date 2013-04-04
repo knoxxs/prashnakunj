@@ -24,6 +24,11 @@ class Question extends Base
 		$this->suggestionList['list'] = $this->getSuggestionList(DEFAULT_TYPE);
 	}
 
+	public function getQID()
+	{
+		return this->QID;
+	}
+
 	public function getAnswerList($type){
 		if($type != $this->answerList['type']){
 			$this->fetchAnswerList($type);
@@ -174,6 +179,35 @@ class Question extends Base
 		}
 
 		return $jsonList;
+	}
+
+	public static function generateQID(){
+		$latestQID;
+		$db = $this->getDb();
+		$db->query("SELECT MAX(QID) FROM Question ");
+		$records = $db->fetch_assoc_all();
+		$records as $key => $value
+		$latestQID = $value[QID];
+		if($record == NULL){
+			$latestQID = 0;
+		}
+		else{
+			$latestQID = $latestQID + 0;
+			$latestQID = $latestQID + 1;
+		}
+		return latestQID;
+	}
+
+	/*public static function addQuestion($assignQID,$newString,$difficultyLevel,$userName){
+		$db = $this->getDb();
+		$db->query("INSERT INTO Question (QID, string, difficultyLevel, userName) VALUES ('$assignQID', 'newString', '$difficultyLevel', '$userName')");
+		// Ask how to check if query successfully completed or not.
+	}*/
+
+	public static function addQuestion(array $data){
+		$db = $this->getDb();
+		$db->query("INSERT INTO Question (QID, string, difficultyLevel, userName) VALUES ('$data['assignQID']', '$data['newString']', '$data['difficultyLevel']', '$data['userName']')");
+		// return boolean for correct insert of comment. 
 	}
 
 	public static function compareVoteUp($a, $b){

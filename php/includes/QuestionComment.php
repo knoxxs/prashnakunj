@@ -47,5 +47,17 @@ class QuestionComment extends Base
 		$this->alreadyVoted = $alreadyVoted;
 	}
 
+	/*public static function addComment($QID, $userName, $string){
+		$db = $this->getDb();
+		$db->query("INSERT INTO QuestionComment (QID, userName, string) VALUES ('$QID', '$userName', '$string')");
+		// return boolean for correct insert of comment. 
+	}*/
+
+	public static function addComment(array $data){
+		$db = $this->getDb();
+		$db->query("INSERT INTO Question (QID, userName, string) VALUES ('$data['QID']', '$data['userName']', '$data['Cstring']')");
+		// return boolean for correct insert of comment. 
+	}
+
 }
 ?>

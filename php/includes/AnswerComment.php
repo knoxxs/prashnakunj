@@ -50,6 +50,12 @@ class AnswerComment extends Base
 		$this->voteDown = $voteDown;
 		$this->alreadyVoted = $alreadyVoted;
 	}
+
+	public static function addComment(array $data){
+		$db = $this->getDb();
+		$db->query("INSERT INTO AnswerComment (QID, ReviewerID, AnswerTimeStamp, userName, string) VALUES ('$data['QID']', '$data['ReviewerID']', '$data['AnswerTimeStamp']', '$data['userName']', '$data['string']')");
+		// return boolean for correct insert of comment. 
+	}
 }
 
 ?>
