@@ -228,6 +228,34 @@ class Question extends Base
 		return $check;
 	}
 
+	public static function addVote($QID, $userName, $nature)
+	{
+		$db = $this->getDb();
+		$status = $db->query("INSERT INTO QuestionVotes (QID, userName, nature) VALUES ($QID, $userName, $nature)");
+		return $status;
+	}
+
+	public static function checkAlreadyVoted($QID, $userName)
+	{
+		$db = $this->getDb();
+		$uname = $db->query("SELECT userName FROM QuestionVotes (QID, userName) VALUES (QID, userName)");
+		return $uname;
+	}
+
+	public static function checkVoteNature($QID, $userName)
+	{
+		$db = $this->getDb();
+		$nature = $db->query("SELECT nature FROM QuestionVotes (QID, userName) VALUES (QID, userName)");
+		return $nature;
+	}
+
+	public static function updateVote($QID, $userName, $nature)
+	{
+		$db = $this->getDb();
+		$status = $db->query("UPDATE QuestionVotes SET nature=$nature WHERE QID=? AND userName=?");
+		return $status;
+	}
+
 	public static function compareVoteUp($a, $b){
 		return $b->getQuestionTitle()->getVoteUp() - $a->getQuestionTitle()->getVoteUp();
 	}

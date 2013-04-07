@@ -55,8 +55,49 @@ class QuestionComment extends Base
 
 	public static function addComment(array $data){
 		$db = $this->getDb();
-		$db->query("INSERT INTO Question (QID, userName, string) VALUES ('$data['QID']', '$data['userName']', '$data['Cstring']')");
-		// return boolean for correct insert of comment. 
+		$status = $db->query("INSERT INTO QuestionComment (QID, userName, string) VALUES (?,?,?)", $data);
+		return $status;
+	}
+
+	public static function addVote(array $data)
+	{
+		$db = $this->getDb();
+		$status = $db->query("INSERT INTO QuestionCommentVotes (userName, qid, nature, commentUserName, commentTimeStamp) VALUES (?,?,?,?,?)", $data);
+		return $status;
+	}
+
+	public static function checkAlreadyVoted(array $data)
+	{
+		$db = $this->getDb();
+		$uname = $db->query("SELECT userName FROM QuestionCommentVotes (qid, userName, commentUserName, commentTimeStamp) VALUES (?,?,?,?)", $data);
+		return $uname;
+	}
+
+	public static function checkVoteNature(array $data)
+	{
+		$db = $this->getDb();
+		$nature = $db->query("SELECT nature FROM QuestionCommentVotes (qid, userName, commentUserName, commentTimeStamp) VALUES (?,?,?,?)", $data);
+		return $nature;
+	}
+
+	public static function updateVote($nature ,array $data)
+	{
+		$db = $this->getDb();
+		$status = $db->query("UPDATE QuestionCommentVotes SET nature=$nature WHERE qid=? AND userName=? AND commentUserName=? AND commentTimeStamp=?", $data);
+		return $status;
+	}
+
+	public static function checkCommentUser(array $data)
+	{
+		$db = $this->getDb();
+		$uname = $db->query("SELECT userName FROM QuestionComment WHERE QID=? AND userName=? AND timeStamp=?", $data);
+		return $uname;
+	}
+
+	public static function modifyComment($newString, array $data){
+		$db = $this->getDb();
+		$status = $db->query("UPDATE QuestionComment SET string=$newString WHERE QID=? AND userName=? AND timeStamp=? AND commentTimeStamp=?", $data);
+		return $status;	
 	}
 
 }

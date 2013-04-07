@@ -144,13 +144,20 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 										$tagAdded = Question::addQuestionTags($value, $assignQID);
 										if($tagAdded == FALSE){
 											$result = json_encode( array('head' => array('status' => 500, 'message'=>'Internal Error'), 'body' => '') );
+											break;
 										}
 									}
 									else{
-										$result = json_encode( array('head' => array('status' => 404, 'message'=>'Tag Does Not Exists'), 'body' => '') );
+										$result = json_encode( array('head' => array('status' => 404, 'message'=>'Tag '.$value.' does not exist'), 'body' => '') );
+										break;
 									}
 								}
-
+								if ($insertStatus) {
+									$result = json_encode( array('head' => array('status' => 200, 'message'=>'Question Added Successfully'), 'body' => '') );
+								}
+								else{
+									$result = json_encode( array('head' => array('status' => 500, 'message'=>'Internal Error'), 'body' => '') );
+								}
 								// ADD tags to encompass table for the question added
 							}
 							else{
@@ -165,32 +172,154 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 											require_once __DIR__.'/includes/QuestionComment.php';
 											require_once __DIR__.'/includes/user.php';
 											$user = unserialize($_SESSION['user']);
-											$insertStatus = QuestionComment::
+											$insertStatus = QuestionComment::addComment(array(
+												'QID' => '$_POST['id']',
+												'user' => '$user', 
+												'string' => '$_POST['string']'));
+											if ($insertStatus) {
+												$result = json_encode( array('head' => array('status' => 200, 'message'=>'Comment Added Successfully'), 'body' => '') );
+											}
+											else{
+												$result = json_encode( array('head' => array('status' => 500, 'message'=>'Internal Error'), 'body' => '') );
+											}
+										}
+										else{
+											$result = json_encode( array('head' => array('status' => 206, 'message'=>'Only '.sizeof($_POST).' fields received, required 2'), 'body' => '') );
 										}
 										break;
 									
-									default:
-										# code...
+									case 'vote':
+										if(sizeof($_GET) == 4){
+											require_once __DIR__.'/includes/QuestionComment.php';
+											require_once __DIR__.'/includes/user.php';
+											$user = unserialize($_SESSION['user']);
+											$voteStatus = QuestionComment::checkAlreadyVoted(array(
+												'QID' => '$_GET['qid']',
+												'userName' => '$user',
+												'commentUserName' => '$_GET['commentUserName']',
+												'commentTimeStamp' => '$_GET['commentTimeStamp']'));
+											if($voteStatus == $user){
+												$voteNature = QuestionComment::checkVoteNature(array(
+												'QID' => '$_GET['qid']',
+												'userName' => '$user',
+												'commentUserName' => '$_GET['commentUserName']',
+												'commentTimeStamp' => '$_GET['commentTimeStamp']'));
+												if ($voteNature == $_GET['nature']) {
+													$result = json_encode( array('head' => array('status' => 304, 'message'=>'Not Modified'), 'body' => '') );
+												}
+												else{
+													$updateStatus = QuestionComment::updateVote($_GET['nature'], array(
+													'QID' => '$_GET['qid']',
+													'userName' => '$user',
+													'commentUserName' => '$_GET['commentUserName']',
+													'commentTimeStamp' => '$_GET['commentTimeStamp']'));
+													if($updateStatus){
+														$result = json_encode( array('head' => array('status' => 200, 'message'=>'Vote Modified Successfully'), 'body' => '') );
+													}
+													else{
+														$result = json_encode( array('head' => array('status' => 500, 'message'=>'Internal Error'), 'body' => '') );
+													}
+												}
+											}
+											else{
+												$voteStatus = QuestionComment::addVote(array(
+													'userName' => '$user',
+													'QID' => '$_GET['qid']',
+													'nature' => '$_GET['nature']',
+													'commentUserName' => '$_GET['commentUserName']',
+													'commentTimeStamp' => '$_GET['commentTimeStamp']'));
+												if($voteStatus){
+													$result = json_encode( array('head' => array('status' => 200, 'message'=>'Vote Added Successfully'), 'body' => '') );
+												}
+												else{
+													$result = json_encode( array('head' => array('status' => 500, 'message'=>'Internal Error'), 'body' => '') );
+												}
+											}
+
+										}
+										else{
+											$result = json_encode( array('head' => array('status' => 206, 'message'=>'Only '.sizeof($_POST).' fields received, required 4'), 'body' => '') );
+										}
 										break;
+
+									case 'modify':
+										if(sizeof($_POST) == 3){
+											require_once __DIR__.'/includes/QuestionComment.php';
+											require_once __DIR__.'/includes/user.php';
+											$user = unserialize($_SESSION['user']);
+											$checkUser = QuestionComment::checkCommentUser(array(
+												'QID' => '$_GET['qid']',
+												'userName' => '$user',
+												'timeStamp' => '$_GET['timeStamp']'));
+											if ($checkUser) {
+												$status = QuestionComment::modifyComment($_POST['modificationString'], array(
+													'QID' => '$_GET['qid']',
+													'userName' => '$user',
+													'timeStamp' => '$_GET['timeStamp']'));
+												if($status){
+													$result = json_encode( array('head' => array('status' => 200, 'message'=>'Comment Modified Successfully'), 'body' => '') );
+												}
+												else{
+													$result = json_encode( array('head' => array('status' => 500, 'message'=>'Internal Error'), 'body' => '') );
+												}
+											}
+											else{
+												$result = json_encode( array('head' => array('status' => 405, 'message'=>'User -> '.$user.' cannot modify other users comment' ), 'body' => '') );
+											}
+										}
+										else{
+											$result = json_encode( array('head' => array('status' => 206, 'message'=>'Only '.sizeof($_POST).' fields received, required 3'), 'body' => '') );
+										}
+										break;
+
+									default:
+										$result = json_encode( array('head' => array('status' => 400, 'message'=>'No such call for this url'), 'body' => '') );
+										break;	
 								}
 							}
 							break;
+						case 'vote':
+							if(sizeof($_GET) == 2){
+								require_once __DIR__.'/includes/Question.php';
+								require_once __DIR__.'/includes/user.php';
+								$user = unserialize($_SESSION['user']);
+								$voteStatus = Question::checkAlreadyVoted($_GET['QID'], $user);
+								if ($voteStatus == $user) {
+									$voteNature = Question::checkVoteNature($_GET['QID'], $user);
+									if ($voteNature == $_GET['nature']) {
+										$result = json_encode( array('head' => array('status' => 304, 'message'=>'Vote Not Modified'), 'body' => '') );
+									}
+									else{
+										$updateStatus = Question::updateVote($_GET['QID'], $user, $_GET['nature'])
+										if($updateStatus){
+											$result = json_encode( array('head' => array('status' => 200, 'message'=>'Vote Modified Successfully'), 'body' => '') );
+										}
+										else{
+											$result = json_encode( array('head' => array('status' => 500, 'message'=>'Internal Error'), 'body' => '') );
+										}
+									}
+								}
+								else{
+									$voteStatus = Question::addVote($_GET['QID'], $user, $_GET['nature'])
+									if($voteStatus){
+										$result = json_encode( array('head' => array('status' => 200, 'message'=>'Vote Added Successfully'), 'body' => '') );
+									}
+									else{
+										$result = json_encode( array('head' => array('status' => 500, 'message'=>'Internal Error'), 'body' => '') );
+									}
+								}
 
-
+							}
+							else{
+								$result = json_encode( array('head' => array('status' => 206, 'message'=>'Only '.sizeof($_POST).' fields received, required 2'), 'body' => '') );
+							}
+								break;
+								}
+							}
+							break;
 					}				
 				}
-			if(sizeof($_POST) == 2){
-				require_once __DIR__.'/includes/login.php';
-				$login = new Login($_POST['userName'], $_POST['password']);
-				if($login->login()){
-					$result = $login->toJson();
-				}else{
-					$result = json_encode( array('head' => array('status' => 500, 'message'=>''), 'body' => '') );
-				}
-			}else{
-				$result = json_encode( array('head' => array('status' => 206, 'message'=>'Only '.sizeof($_POST).' fields received, required 2'), 'body' => '') );
-			}
-			break;
+				break;
 //  case question ends here and please make changes for the same.
 		default:
 			$result = json_encode( array('head' => array('status' => 400, 'message'=>'No such call'), 'body' => '') );
