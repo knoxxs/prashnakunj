@@ -206,8 +206,26 @@ class Question extends Base
 
 	public static function addQuestion(array $data){
 		$db = $this->getDb();
-		$db->query("INSERT INTO Question (QID, string, difficultyLevel, userName) VALUES ('$data['assignQID']', '$data['newString']', '$data['difficultyLevel']', '$data['userName']')");
+		$db->query("INSERT INTO Question (QID, string, difficultyLevel, userName) VALUES(?,?,?,?)", $data);
 		// return boolean for correct insert of comment. 
+	}
+
+	public static function findTags($tag){
+		$db = $this->getDb();
+		$check = $db->query("SELECT name FROM Tags WHERE name='$tag'");
+		if($check == NULL)
+		{
+			return FALSE;
+		}
+		else{
+			return TRUE;
+		}
+	}
+
+	public static function addQuestionTags($tag, $assignQID){
+		$db = $this->getDb();
+		$check = $db->query("INSERT INTO Encompass (tagName, QID) VALUES ('$tag', '$assignQID')");
+		return $check;
 	}
 
 	public static function compareVoteUp($a, $b){

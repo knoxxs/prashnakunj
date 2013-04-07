@@ -128,25 +128,42 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 						case 'post':
 							if(sizeof($_POST) == 3){
 								require_once __DIR__.'/includes/Question.php';
+								require_once __DIR__.'/includes/user.php';
 								$assignQID = Question::generateQID();
 								$user = unserialize($_SESSION['user']);
 								$insertStatus = Question::addQuestion(array(
 									'assignQID' => '$assignQID', 
-									'newString' => '$_POST['questionString']',
-									'difficultyLevel' => '$_POST['difficultyLevel']', 
+									'newString' => '$_POST['question']['string']',
+									'difficultyLevel' => '$_POST['question']['difficultyLevel']', 
 									'user' => '$user'));
+
+								$tags = $_POST['question']['tags'];
+								foreach ($tags as $key => $value) {
+									$check = Question::findTags($value);
+									if($check){
+										$tagAdded = Question::addQuestionTags($value, $assignQID);
+										if($tagAdded == FALSE){
+											$result = json_encode( array('head' => array('status' => 500, 'message'=>'Internal Error'), 'body' => '') );
+										}
+									}
+									else{
+										$result = json_encode( array('head' => array('status' => 404, 'message'=>'Tag Does Not Exists'), 'body' => '') );
+									}
+								}
+
 								// ADD tags to encompass table for the question added
 							}
 							else{
 								$result = json_encode( array('head' => array('status' => 206, 'message'=>'Only '.sizeof($_POST).' fields received, required 3'), 'body' => '') );
 							}
 
-						case 'questioncomment':
+						case 'qomment':
 							if( isset($regMatches[1][2]) && ( !empty($regMatches[1][2]) ) ){
 								switch ($regMatches[1][2]) {
 									case 'post':
 										if(sizeof($_POST) == 2){
 											require_once __DIR__.'/includes/QuestionComment.php';
+											require_once __DIR__.'/includes/user.php';
 											$user = unserialize($_SESSION['user']);
 											$insertStatus = QuestionComment::
 										}
