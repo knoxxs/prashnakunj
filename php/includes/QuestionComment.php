@@ -1,5 +1,7 @@
 <?php
 
+require_once __DIR__.'/base.php';
+
 class QuestionComment extends Base
 {
 	private $QID, $userName, $string, $timeStamp, $voteUp, $voteDown, $alreadyVoted, $requestedUser;

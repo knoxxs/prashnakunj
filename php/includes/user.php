@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__.'/QuestionPromo.php';
+require_once __DIR__.'/base.php';
 
 class User extends Base{ 
 	private $userName, $firstname, $lastname, $reputation, $favList, $watchLaterList, $historyList, $subscriptionList, $db, $isReviewer;

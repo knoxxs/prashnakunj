@@ -1,5 +1,7 @@
 <?php
 
+require_once __DIR__.'/base.php';
+
 class Suggestion extends Base
 {
 	private $QID, $userName, $timeStamp, $string, $used, $reviwerId, $requestedUser, $alreadyVoted, $commentList;

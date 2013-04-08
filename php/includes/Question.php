@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__.'/QuestionTitle.php';
+require_once __DIR__.'/base.php';
 
 class Question extends Base
 {
@@ -223,6 +224,7 @@ class Question extends Base
 	}
 
 	public static function addQuestionTags($tag, $assignQID){
+		$tag = strtolower($tag);
 		$db = $this->getDb();
 		$check = $db->query("INSERT INTO Encompass (tagName, QID) VALUES ('$tag', '$assignQID')");
 		return $check;

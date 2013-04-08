@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__.'/includes/base.php';
+require_once __DIR__.'/base.php';
 
 class Answer  extends Base
 {

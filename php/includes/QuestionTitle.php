@@ -1,5 +1,7 @@
 <?php
 
+require_once __DIR__.'/base.php';
+
 class QuestionTitle extends Base
 {
 	private $QID, $string, $timeStamp, $difficultyLevel, $userName, $reviewer, $voteUp, $voteDown, $alreadyVoted, $alreadyFav, $tagList, $commentList, $requestedUser;

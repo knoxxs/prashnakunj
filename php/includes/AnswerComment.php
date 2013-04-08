@@ -1,10 +1,10 @@
 <?php
 
-require_once __DIR__.'/includes/base.php';
+require_once __DIR__.'/base.php';
 
 class AnswerComment extends Base
 {
-	private $QID, $userName, $string, $timeStamp, $voteUp, $voteDown, $alreadyVoted, $requestedUser, $reviewerID;
+	private $QID, $userName, $string, $timeStamp, $voteUp, $voteDown, $answerTimeStamp, $alreadyVoted, $requestedUser, $reviewerID;
 
 	public function __construct($QID, $reviewerID, $answerTimeStamp, $userName, $timeStamp, $string){
 		$this->QID = $QID;
@@ -16,12 +16,12 @@ class AnswerComment extends Base
 		if($this->validateVar($_SESSION['user'])){
 			$this->requestedUser = unserialize($_SESSION['user'])->getUserName();
 		}else{
-			$this->requestedUser = null;
+			$this->requestedUser = NULL;
 		}
 
 		//fetching Votes
 		$db = $this->getDb();
-		$db->query("SELECT userName,nature FROM AnswerCommentVotes WHERE QID=? AND commentUserName=? AND commentTimeStamp=?",array($this->QID, $this->userName, $this->timeStamp));
+		$db->query("SELECT userName,nature FROM AnswerCommentVotes WHERE QID=? AND reviewerID=? AND AnswerTimeStamp=? AND AnswerCommentTimeStamp=? AND CommentUserName=?",array($this->QID, $this->reviewerID, $this->answerTimeStamp, $this->timeStamp, $this->userName));
 		$alreadyVoted = 0;
 		$voteUp = 0;
 		$voteDown = 0;
@@ -53,8 +53,8 @@ class AnswerComment extends Base
 
 	public static function addComment(array $data){
 		$db = $this->getDb();
-		$db->query("INSERT INTO AnswerComment (QID, ReviewerID, AnswerTimeStamp, userName, string) VALUES ('$data['QID']', '$data['ReviewerID']', '$data['AnswerTimeStamp']', '$data['userName']', '$data['string']')");
-		// return boolean for correct insert of comment. 
+		$status = $db->query("INSERT INTO AnswerComment (QID, ReviewerID, AnswerTimeStamp, userName, string) VALUES (?,?,?,?,?)", $data);
+		return $status;
 	}
 }
 
