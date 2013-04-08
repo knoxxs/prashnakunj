@@ -164,7 +164,7 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 								$result = json_encode( array('head' => array('status' => 206, 'message'=>'Only '.sizeof($_POST).' fields received, required 3'), 'body' => '') );
 							}
 
-						case 'qomment':
+						case 'qcomment':
 							if( isset($regMatches[1][2]) && ( !empty($regMatches[1][2]) ) ){
 								switch ($regMatches[1][2]) {
 									case 'post':
