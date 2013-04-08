@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__.'/suggestionComment.php';
+require_once __DIR__.'/base.php';
 
 class Suggestion extends Base
 {
@@ -64,6 +65,46 @@ class Suggestion extends Base
 	public static function compareVoteUp($a, $b){
 		return $b->getVoteUp() - $a->getVoteUp();
 	}
+
+	public function getcommentlistarray()
+		{
+		$list = $this->commentList;
+		$jsonList=array();
+		foreach ($list as $key => $value) 
+			{
+			array_push($jsonList, $value->commentlist_to_array);
+			}
+		return $jsonList;
+		}
+		public function commentlist_to_array()
+		{
+			$object = array();
+		$object['QID'] = $this->QID;
+		$object['userName'] = $this->userName;
+		$object['string'] = $this->string;
+		$object['timeStamp'] = $this->timeStamp;
+		return ($object);
+		}
+
+	public static function compareVoteUp($a, $b){
+		return $b->getVoteUp() - $a->getVoteUp();
+	}
+	public function toArray(){
+		$object = array();
+		$object['QID'] = $this->QID;
+		$object['userName'] = $this->userName;
+		$object['string'] = $this->string;
+		$object['timeStamp'] = $this->timeStamp;
+		$object['voteUp'] = $this->voteUp;
+		$object['voteDown'] = $this->voteDown;
+		$object['alreadyVoted'] = $this->alreadyVoted;
+		$object['commentList']=$this->getcommentlistarray();
+		$object['used']=$this->used;
+		$object['reviewerId']=$this->reviewerId;
+
+		return ($object);
+	}
+
 
 }
 

@@ -45,7 +45,6 @@ class Login extends Base
 							$_SESSION['isReviewer'] = $this->isReviewer;
 							$this->user = new Reviewer($this->userName);
 							$_SESSION['user'] = serialize($this->user);
-
 						}else{
 							$this->isReviewer = false;
 							$_SESSION['isReviewer'] = $this->isReviewer;

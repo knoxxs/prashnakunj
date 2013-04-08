@@ -1,5 +1,8 @@
 <?php
 
+require_once __DIR__.'/base.php';
+
+
 class QuestionComment extends Base
 {
 	private $QID, $userName, $string, $timeStamp, $voteUp, $voteDown, $alreadyVoted, $requestedUser;
@@ -46,6 +49,19 @@ class QuestionComment extends Base
 		$this->voteUp = $voteUp;
 		$this->voteDown = $voteDown;
 		$this->alreadyVoted = $alreadyVoted;
+	}
+	public function toArray()
+	{
+		$object = array();
+		$object['QID'] = $this->QID;
+		$object['userName']=$this->userName;
+		$object['string'] = $this->string;
+		$object['reviewerID']= $this->reviewerID;
+		$object['timeStamp']=$this->timeStamp;
+		$object['voteUp'] = $this->voteUp;
+		$object['voteDown'] = $this->voteDown;
+		$object['alreadyVoted'] = $this->alreadyVoted;
+		return ($object);
 	}
 
 }

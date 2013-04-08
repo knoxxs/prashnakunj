@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__.'/user.php';
+require_once __DIR__.'/base.php';
 
 class Reviewer extends User{
 
@@ -34,7 +35,7 @@ class Reviewer extends User{
 		$len = count($this->reviewHistoryList);
 		//Fetching Questions
 		$db = $this->getDb();
-		$db->query("SELECT QID,suggestionUserName,suggestionTimeStamp,timeStamp FROM ReviewHistory WHERE reviewerId=? W ORDER BY timeStamp LIMIT " . $len . "," . MORE_SIZE , array($this->userName));
+		$db->query("SELECT QID,suggestionUserName,suggestionTimeStamp,timeStamp FROM ReviewHistory WHERE reviewerId=? ORDER BY timeStamp LIMIT " . $len . "," . MORE_SIZE , array($this->userName));
 		$records = $db->fetch_assoc_all();
 
 		foreach ($records as $key => $value){

@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__.'/includes/base.php';
+require_once __DIR__.'/base.php';
 
 class AnswerComment extends Base
 {
@@ -51,6 +51,21 @@ class AnswerComment extends Base
 		$this->voteDown = $voteDown;
 		$this->alreadyVoted = $alreadyVoted;
 	}
+
+		public function toArray()
+	{
+		$object = array();
+		$object['QID'] = $this->QID;
+		$object['userName']=$this->userName;
+		$object['string'] = $this->string;
+		$object['reviewerID']= $this->reviewerID;
+		$object['timeStamp']=$this->timeStamp;
+		$object['voteUp'] = $this->voteUp;
+		$object['voteDown'] = $this->voteDown;
+		$object['alreadyVoted'] = $this->alreadyVoted;
+		return ($object);
+	}
+
 }
 
 ?>

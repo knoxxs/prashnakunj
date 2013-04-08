@@ -3,6 +3,7 @@
 require_once __DIR__.'/questionTitle.php';
 require_once __DIR__.'/answer.php';
 require_once __DIR__.'/suggestion.php';
+require_once __DIR__.'/base.php';
 
 class Question extends Base
 {
@@ -140,6 +141,16 @@ class Question extends Base
 		$object['string'] = $this->string;
 		$object['timeStamp'] = $this->timeStamp;
 	}
+
+	public function tobestanswerArray(){
+		$object = array();
+		$object['QID'] = $this->QID;
+		$object['reviewerId'] = $this->reviewerId;
+		$object['string'] = $this->string;
+		$object['timeStamp'] = $this->timeStamp;
+		return $object;
+	}
+
 
 	public static function getQuestions($type = 'timestamp', $num = 10, $lastQuestionTime = null, $scroll = 'after'){
 		$db = (new Database())->connectToDatabase();

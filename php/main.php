@@ -64,11 +64,12 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 						switch($regMatches[1][1]) {
 							case 'favourite':
 								require_once __DIR__.'/includes/user.php';
+								require_once __DIR__.'/includes/reviewer.php';
 								$user = unserialize($_SESSION['user']);
 								if( isset($regMatches[1][2]) && ( !empty($regMatches[1][2]) ) && ($regMatches[1][2] == 'more') ){
 									$user->fetchFavListArray($type);
 								}
-								$list = $user->getFavListArray($typelgonm);
+								$list = $user->getFavListArray($type);
 								$base->result = $user->result;
 								$base->result['body'] = $list;
 								$result = json_encode($base->result);
@@ -96,7 +97,7 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 								$result = json_encode($base->result);
 								break;
 							case 'reviewHistory':
-								if($this->validateVar($_SESSION['isReviewer']) && $_SESSION['isReviewer']){
+								if($base->validateVar($_SESSION['isReviewer']) && $_SESSION['isReviewer']){
 									require_once __DIR__.'/includes/reviewer.php';
 									$user = unserialize($_SESSION['user']);
 									if( isset($regMatches[1][2]) && ( !empty($regMatches[1][2]) ) && ($regMatches[1][2] == 'more') ){
@@ -111,7 +112,7 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 								}
 								break;
 							case 'toBeReview':
-								if($this->validateVar($_SESSION['isReviewer']) && $_SESSION['isReviewer']){
+								if($base->validateVar($_SESSION['isReviewer']) && $_SESSION['isReviewer']){
 									require_once __DIR__.'/includes/reviewer.php';
 									$user = unserialize($_SESSION['user']);
 									if( isset($regMatches[1][2]) && ( !empty($regMatches[1][2]) ) && ($regMatches[1][2] == 'more') ){

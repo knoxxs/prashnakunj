@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__.'/includes/base.php';
+require_once __DIR__.'/base.php';
 require_once __DIR__.'/answerComment.php';
 
 class Answer  extends Base
@@ -151,6 +151,28 @@ class Answer  extends Base
 
 		return ($object);
 	}
+
+		public function getcommentlistarray()
+		{
+		$list = $this->commentList;
+		$jsonList=array();
+		foreach ($list as $key => $value) 
+			{
+			array_push($jsonList, $value->commentlist_to_array);
+			}
+		return $jsonList;
+		}
+		public function commentlist_to_array()
+		{
+			$object = array();
+		$object['QID'] = $this->QID;
+		$object['userName'] = $this->userName;
+		$object['string'] = $this->string;
+		$object['timeStamp'] = $this->timeStamp;
+		$object['reviewerID']=$this->reviewerID;
+		$object['answerTimeStamp']=$this->answerTimeStamp;
+		return ($object);
+		}
 
 	public static function compareVoteUp($a, $b){
 		return -($a->getVoteUp() - $b->getVoteUp());

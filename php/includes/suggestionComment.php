@@ -1,5 +1,7 @@
 <?php
 
+require_once __DIR__.'/base.php';
+
 class SuggestionComment extends Base
 {
 	private $QID, $suggestionUserName, $suggestionTimeStamp, $userName, $string, $timeStamp, $voteUp, $voteDown, $alreadyVoted, $requestedUser;
@@ -48,6 +50,20 @@ class SuggestionComment extends Base
 		$this->voteUp = $voteUp;
 		$this->voteDown = $voteDown;
 		$this->alreadyVoted = $alreadyVoted;
+	}
+		public function toArray()
+	{
+		$object = array();
+		$object['QID'] = $this->QID;
+		$object['suggestionUserName'] = $this->suggestionUserName;
+		$object['userName']=$this->userName;
+		$object['string'] = $this->string;
+		$object['suggestionTimeStamp']= $this->suggestionTimeStamp;
+		$object['timeStamp']=$this->timeStamp;
+		$object['voteUp'] = $this->voteUp;
+		$object['voteDown'] = $this->voteDown;
+		$object['alreadyVoted'] = $this->alreadyVoted;
+		return ($object);
 	}
 }
 ?>

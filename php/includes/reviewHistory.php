@@ -2,6 +2,7 @@
 require_once __DIR__.'/user.php';
 require_once __DIR__.'/review.php';
 require_once __DIR__.'/Answer.php';
+require_once __DIR__.'/base.php';
 
 class Reviewer extends Review{
 
