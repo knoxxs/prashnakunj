@@ -48,5 +48,53 @@ class SuggestionComment extends Base
 		$this->voteDown = $voteDown;
 		$this->alreadyVoted = $alreadyVoted;
 	}
+
+	public static function addComment(array $data){
+		$db = $this->getDb();
+		$status = $db->query("INSERT INTO SuggestionComment (QID, suggestionUserName, suggestionTimeStamp, string, userName) VALUES (?,?,?,?,?)", $data);
+		return $status;
+	}
+
+	public static function addVote(array $data)
+	{
+		$db = $this->getDb();
+		$status = $db->query("INSERT INTO SuggestionCommentVotes (QID, suggestionUserName, suggestionTimeStamp, suggestionCommentUserName, suggestionCommentTimeStamp, userName, nature) VALUES (?,?,?,?,?,?,?)", $data);
+		return $status;
+	}
+
+	public static function checkAlreadyVoted(array $data)
+	{
+		$db = $this->getDb();
+		$uname = $db->query("SELECT userName FROM SuggestionCommentVotes WHERE QID=? AND suggestionUserName=? AND suggestionTimeStamp=? AND suggestionCommentUserName=? AND suggestionCommentTimeStamp=? AND userName=?", $data);
+		return $uname;
+	}
+
+	public static function checkVoteNature(array $data)
+	{
+		$db = $this->getDb();
+		$nature = $db->query("SELECT nature FROM SuggestionCommentVotes WHERE QID=? AND suggestionUserName=? AND suggestionTimeStamp=? AND suggestionCommentUserName=? AND suggestionCommentTimeStamp=? AND userName=?", $data);
+		return $nature;
+	}
+
+	public static function updateVote($nature ,array $data)
+	{
+		$db = $this->getDb();
+		$status = $db->query("UPDATE SuggestionCommentVotes SET nature=$nature WHERE QID=? AND suggestionUserName=? AND suggestionTimeStamp=? AND suggestionCommentUserName=? AND suggestionCommentTimeStamp=? AND userName=?", $data);
+		return $status;
+	}
+
+	public static function checkCommentUser(array $data)
+	{
+		$db = $this->getDb();
+		$uname = $db->query("SELECT userName FROM SuggestionComment WHERE QID=? AND suggestionUserName=? AND suggestionTimeStamp=? AND userName=? AND timeStamp=?", $data);
+		return $uname;
+	}
+
+	public static function modifyComment($newString, array $data){
+		$db = $this->getDb();
+		$status = $db->query("UPDATE SuggestionComment SET string=$newString WHERE QID=? AND suggestionUserName=? AND suggestionTimeStamp=? AND userName=? AND timeStamp=?", $data);
+		return $status;	
+	}
+
 }
 ?>

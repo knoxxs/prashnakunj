@@ -69,14 +69,14 @@ class QuestionComment extends Base
 	public static function checkAlreadyVoted(array $data)
 	{
 		$db = $this->getDb();
-		$uname = $db->query("SELECT userName FROM QuestionCommentVotes (qid, userName, commentUserName, commentTimeStamp) VALUES (?,?,?,?)", $data);
+		$uname = $db->query("SELECT userName FROM QuestionCommentVotes WHERE qid=? AND userName=? AND commentUserName=? AND commentTimeStamp=?", $data);
 		return $uname;
 	}
 
 	public static function checkVoteNature(array $data)
 	{
 		$db = $this->getDb();
-		$nature = $db->query("SELECT nature FROM QuestionCommentVotes (qid, userName, commentUserName, commentTimeStamp) VALUES (?,?,?,?)", $data);
+		$nature = $db->query("SELECT nature FROM QuestionCommentVotes WHERE qid=? AND userName=? AND commentUserName=? AND commentTimeStamp=?", $data);
 		return $nature;
 	}
 

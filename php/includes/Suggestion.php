@@ -58,6 +58,43 @@ class Suggestion extends Base
 		$this->commentList = $commentList;
 	}
 
+	public static function addSuggestion($QID, $userName, $suggestionString)
+	{
+		$db = $this->getDb();
+		$status = $db->query("INSERT INTO Suggestion (QID, userName, string) VALUES ('$QID', '$userName', '$suggestionString')");
+		return $status;
+	}
+
+	public static function addVote(array $data)
+	{
+		$db = $this->getDb();
+		$status = $db->query("INSERT INTO SuggestionVotes (QID, suggestionUserName, suggestionTimestamp, userName, nature) VALUES (?,?,?,?,?)", $data);
+		return $status;
+	}
+
+	public static function checkAlreadyVoted(array $data)
+	{
+		$db = $this->getDb();
+		$uname = $db->query("SELECT userName FROM SuggestionVotes WHERE QID=? AND suggestionUserName=? AND suggestionTimestamp=? AND userName=?", $data);
+		return $uname;
+	}
+
+	public static function checkVoteNature(array $data)
+	{
+		$db = $this->getDb();
+		$nature = $db->query("SELECT nature FROM SuggestionVotes WHERE QID=? AND suggestionUserName=? AND suggestionTimestamp=? AND userName=?", $data);
+		return $nature;
+	}
+
+	public static function updateVote($nature, array $data)
+	{
+		$db = $this->getDb();
+		$status = $db->query("UPDATE SuggestionVotes SET nature=$nature WHERE QID=? AND suggestionUserName=? AND suggestionTimestamp=? AND userName=?", $data);
+		return $status;
+	}
+
+
+
 	public static function compareVoteUp($a, $b){
 		return $b->getVoteUp() - $a->getVoteUp();
 	}
