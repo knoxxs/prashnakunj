@@ -173,6 +173,20 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 			}
 			break;
 
+		case 'search':
+			if( sizeof($_GET) == 1 ){
+				require_once __DIR__.'/includes/question.php';
+				if($base->validateVar($_GET['tag'])){
+					$result = Question::searchTag($_GET['tag']);
+					$result = json_encode($result);
+				}else{
+					$result = json_encode( array('head' => array('status' => 206, 'message'=>'Incomplete field'), 'body' => '') );
+				}
+			}else{
+				$result = json_encode( array('head' => array('status' => 206, 'message'=>'Received 0 fields expected 1'), 'body' => '') );
+			}
+			break;
+
 		case 'reviewLock':
 			if(sizeof($_GET) == 3){
 				require_once __DIR__.'/includes/review.php';

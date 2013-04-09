@@ -35,12 +35,18 @@ class Reviewer extends User{
 		$len = count($this->reviewHistoryList);
 		//Fetching Questions
 		$db = $this->getDb();
-		$db->query("SELECT QID,suggestionUserName,suggestionTimeStamp,timeStamp FROM ReviewHistory WHERE reviewerId=? ORDER BY timeStamp DESC LIMIT " . $len . "," . MORE_SIZE , array($this->userName));
+		$db->query("SELECT QID FROM Question WHERE reviewerId=? ORDER BY timeStamp DESC LIMIT " . $len . "," . MORE_SIZE , array($this->userName));
 		$records = $db->fetch_assoc_all();
 
 		foreach ($records as $key => $value){
-			array_push($this->reviewHistoryList, new ReviewHistory( $value['QID'], $value['suggestionUserName'], $value['suggestionTimeStamp'], $this->userName, $value['timeStamp']) );
-		}					
+			array_push($this->reviewHistoryList, new Review( $value['QID'], $value['suggestionUserName'], $value['suggestionTimeStamp']) );
+		}
+
+		$db->query("SELECT QID,userName,timeStamp FROM Suggestion WHERE reviewerId=? ORDER BY timeStamp DESC LIMIT " . $len . "," . MORE_SIZE , array($this->userName));
+		foreach ($records as $key => $value){
+			array_push($this->reviewHistoryList, new ReviewHistory( $value['QID'], $value['suggestionUserName'], $value['suggestionTimeStamp']) );
+		}
+
 		$this->result['head']['status'] = 200;
 	}
 
@@ -76,4 +82,6 @@ class Reviewer extends User{
 
 		$this->result['head']['status'] = 200;
 	}
+
+	// public function setLock
 } 

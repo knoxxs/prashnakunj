@@ -14,7 +14,7 @@ class QuestionPromo extends Base
 		$this->string = $string;
 		$this->timeStamp = $timeStamp;
 		$this->difficultyLevel = $difficultyLevel;
-		if($this->validateVar($_SESSION['user'])){
+		if($this->validateVar($_SESSION) && $this->validateVar($_SESSION['user'])){
 			$this->requestedUser = unserialize($_SESSION['user'])->getUserName();
 		}else{
 			$this->requestedUser = null;

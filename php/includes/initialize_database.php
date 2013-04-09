@@ -15,6 +15,7 @@ class Database{
 		$db = new Zebra_Database();
 		$db->debug=true;
 		$db->connect($mysql_host,$mysql_user,$mysql_pass,$mysql_db);
+		mysql_query('SET CHARACTER SET utf8');
 		return $db;
 	}
 

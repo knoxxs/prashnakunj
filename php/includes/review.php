@@ -11,26 +11,15 @@ class Review extends Base{
 		$this->QID = $QID;
 		$this->suggestionUserName = $suggestionUserName;
 		$this->suggestionTimeStamp = $suggestionTimeStamp;
-		$this->locker = null;
 
-		$db = $this->getDb();
-		$tagList = array();
-		$db->query("SELECT name,parent FROM Comprehend WHERE QID='$this->QID' AND suggestionUserName='$this->suggestionUserName' AND suggestionTimeStamp=$this->suggestionTimeStamp");
-		$records = $db->fetch_assoc_all();
-		foreach ($records as $key => $value){
-			array_push($tagList, array("name" => $value['name'], "parent" => $value['name']));
-		}
-		$this->tagList = $tagList;
-	}
-	
-	public function getLocker()
-	{
-	    return $this->locker;
-	}
-	
-	public function setLocker($locker)
-	{
-	    $this->locker = $locker;
+		// $db = $this->getDb();
+		// $tagList = array();
+		// $db->query("SELECT name,parent FROM Comprehend WHERE QID='$this->QID' AND suggestionUserName='$this->suggestionUserName' AND suggestionTimeStamp=$this->suggestionTimeStamp");
+		// $records = $db->fetch_assoc_all();
+		// foreach ($records as $key => $value){
+		// 	array_push($tagList, array("name" => $value['name'], "parent" => $value['name']));
+		// }
+		// $this->tagList = $tagList;
 	}
 	
 	public function lockReview(){
@@ -48,6 +37,11 @@ class Review extends Base{
 	public function unlockReview(){
 		$db = $this->getDb();
 		return $db->query("UPDATE Comprehend SET locked=False,reviewerId=null WHERE QID='$this->QID' AND suggestionUserName='$this->suggestionUserName' AND suggestionTimeStamp=$this->suggestionTimeStamp");
+	}
+
+	public function toArray(){
+		$object = array();
+		
 	}
 }
 

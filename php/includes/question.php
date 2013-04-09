@@ -4,6 +4,7 @@ require_once __DIR__.'/questionTitle.php';
 require_once __DIR__.'/answer.php';
 require_once __DIR__.'/suggestion.php';
 require_once __DIR__.'/base.php';
+require_once __DIR__.'/questionPromo.php';
 
 class Question extends Base
 {
@@ -218,6 +219,18 @@ class Question extends Base
 
 	public static function compareVoteUp($a, $b){
 		return $b->getQuestionTitle()->getVoteUp() - $a->getQuestionTitle()->getVoteUp();
+	}
+
+	public static function searchTag($tag){
+		$db = (new Database())->connectToDatabase();
+		$db->query("SELECT * FROM Question JOIN (SELECT QID FROM Encompass WHERE tagName='$tag')as q");
+		$records = $db->fetch_assoc_all();
+		$object = array();
+		foreach ($records as $key => $value) {
+			array_push($object, (new QuestionPromo($value['QID'], $value['userName'], $value['string'], $value['timeStamp'], $value['difficultyLevel']))->toArray());
+		}
+
+		return $object;
 	}
 }
 
