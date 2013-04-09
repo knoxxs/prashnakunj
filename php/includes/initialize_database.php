@@ -11,7 +11,7 @@ class Database{
 		$mysql_host = 'localhost';
 		$mysql_user = 'QuestionCorner';
 		$mysql_pass = 'password';
-		$mysql_db = 'QuestionCorner';
+		$mysql_db = 'QuestionCorner1';
 		$db = new Zebra_Database();
 		$db->debug=true;
 		$db->connect($mysql_host,$mysql_user,$mysql_pass,$mysql_db);

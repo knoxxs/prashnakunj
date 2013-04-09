@@ -184,13 +184,10 @@ class Question extends Base
 
 	public static function generateQID(){
 		$db = (new Database())->connectToDatabase();
-		$db->query("SELECT MAX(QID) FROM Question");
+		$db->query("SELECT MAX(CAST( QID AS SIGNED )) as maxQID FROM Question");
 		$records = $db->fetch_assoc_all();
-		foreach($records as $key => $value)
-		{
-			$latestQID = $value['QID'];
-		}
-		if($record == NULL){
+		$latestQID = $records[0]['maxQID'];
+		if($records[0]['maxQID'] == NULL){
 			$latestQID = 0;
 		}
 		else{
@@ -208,8 +205,8 @@ class Question extends Base
 
 	public static function addQuestion(array $data){
 		$db = (new Database())->connectToDatabase();
-		$db->query("INSERT INTO Question (QID, string, difficultyLevel, userName) VALUES(?,?,?,?)", $data);
-		// return boolean for correct insert of comment. 
+		$check = $db->query("INSERT INTO Question (QID, string, difficultyLevel, userName) VALUES(?,?,?,?)", $data);
+		return $check;
 	}
 
 	public static function findTags($tag){

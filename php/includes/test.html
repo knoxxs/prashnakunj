@@ -1,23 +1,22 @@
 <html>
 <head>
-	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 </head>
 <body>
+	<input type="button" id="a">
 <script>
-	if (jQuery) {
+	if (typeof jQuery == 'undefined') {
    		alert("Hello! I am an alert box!!");
 	}
-	data = {};
-	data['question'] = {};
-	data['question']['questionString'] = 'This is a test Question';
-	data['question']['difficultyLevel'] = 2;
-	data['question']['tags'] = [];
-	data['question']['tags'][0] = 'string';
-	data['question']['tags'][1] = 'light';
-	data['question']['tags'][2] = 'bond';
-	$.post('http://localhost/github/prashnakunj/php/main/question/post', data, function(result){
-	alert(result);
-	}, 'json');  
+	$('#a').click(function(){
+		data = {};
+		data['id'] = 48;
+		data['string'] = 'This is a test comment';
+		console.log(data);
+		$.post('http://localhost/github/prashnakunj/php/main/question/qcomment/post', data, function(result){
+		console.log(result);
+		}, 'json');  
+	});
 </script>
 </body>
 </html>

@@ -492,7 +492,7 @@ Suggestion cmnt ID- QID_S[n]_C[n]
 	"body":{
 		"id":""
 	}
-}
+}	
 
 
 //post a comment 		/api/post/comment       POST 
@@ -513,8 +513,7 @@ Suggestion cmnt ID- QID_S[n]_C[n]
 
 //post a question 			/api/post/question      POST
 {
-	"question":{"question":{"id":"",
-						"questionString":"",
+	"question":{		"questionString":"",
 						// "author":"",
 						// "posted":{"day":"",
 						// 		"month":"",
@@ -523,9 +522,10 @@ Suggestion cmnt ID- QID_S[n]_C[n]
 						// 		"minute":""},
 						"difficultyLevel":"",
 						"tags":[],
-						}
 				}
+	
 }
+
 
 {
 	"head":{
@@ -646,6 +646,18 @@ Suggestion cmnt ID- QID_S[n]_C[n]
 		"numH":"",
 		"numRH":""		
 	}
+}
+
+//search tag 		/qcorner/search?tag= 		GET
+{
+	"tag":""
+}
+{
+	"head":{
+		"status":"",
+		"message":""
+		},
+	"body":["QuestionPromo array"]
 }
 
 

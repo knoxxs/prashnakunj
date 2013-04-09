@@ -71,8 +71,13 @@ class QuestionComment extends Base
 	public static function checkAlreadyVoted(array $data)
 	{
 		$db = (new Database())->connectToDatabase();
-		$db->query("SELECT userName FROM QuestionCommentVotes WHERE qid=? AND userName=? AND commentUserName=? AND commentTimeStamp=?", $data);
-		$name = $db->fetch_assoc_all()[0]['userName'];
+		$records = $db->query("SELECT userName FROM QuestionCommentVotes WHERE qid=? AND userName=? AND commentUserName=? AND commentTimeStamp=?", $data);
+		if($db->returned_rows > 0){
+			$name = $db->fetch_assoc_all()[0]['userName'];
+		}
+		else{
+			$name = NULL;
+		}
 		return $name;
 	}
 

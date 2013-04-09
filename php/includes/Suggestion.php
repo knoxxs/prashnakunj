@@ -77,8 +77,13 @@ class Suggestion extends Base
 	public static function checkAlreadyVoted(array $data)
 	{
 		$db = (new Database())->connectToDatabase();
-		$db->query("SELECT userName FROM SuggestionVotes WHERE QID=? AND suggestionUserName=? AND suggestionTimestamp=? AND userName=?", $data);
-		$name = $db->fetch_assoc_all()[0]['userName'];
+		$records = $db->query("SELECT userName FROM SuggestionVotes WHERE QID=? AND suggestionUserName=? AND suggestionTimestamp=? AND userName=?", $data);
+		if($db->returned_rows > 0){
+			$name = $db->fetch_assoc_all()[0]['userName'];
+		}
+		else{
+			$name = NULL;
+		}	
 		return $name;
 	}
 
