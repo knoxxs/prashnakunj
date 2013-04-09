@@ -29,7 +29,6 @@ class Reviewer extends User{
 		foreach ($list as $key => $value) {
 			array_push($jsonList, $value->toArray());
 		}
-
 		return $jsonList;
 	}
 
@@ -37,10 +36,10 @@ class Reviewer extends User{
 		$len = count($this->reviewHistoryList);
 		//Fetching Questions
 		$db = $this->getDb();
-		$db->query("SELECT QID FROM Question WHERE reviewer=? ORDER BY timeStamp DESC LIMIT " . $len . "," . MORE_SIZE , array($this->userName));
+		$db->query("SELECT QID,timeStamp,userName FROM Question WHERE reviewer=? ORDER BY timeStamp DESC LIMIT " . $len . "," . MORE_SIZE , array($this->userName));
 		$records = $db->fetch_assoc_all();
 		foreach ($records as $key => $value){
-			array_push($this->reviewHistoryList, new Review( $value['QID'], $value['suggestionUserName'], $value['suggestionTimeStamp']) );
+			array_push($this->reviewHistoryList, new Review( $value['QID']) );
 		}
 
 		$db->query("SELECT QID,userName,timeStamp FROM Suggestion WHERE reviewerId=? ORDER BY timeStamp DESC LIMIT " . $len . "," . MORE_SIZE , array($this->userName));
@@ -70,15 +69,17 @@ class Reviewer extends User{
 	public function fetchToBeReviewList(){
 		$len = count($this->toBeReviewList);
 
-		//Fetching Questions
 		$db = $this->getDb();
-		foreach($this->tagList as $key => $value){
-			//TODO: REMOVE those notifications which are already locked
-			$db->query("SELECT QID,suggestionUserName,suggestionTimeStamp FROM Comprehend WHERE name=? AND parent=?", array($value['name'], $value['parent']));
-			$records = $db->fetch_assoc_all();
-			foreach ($records as $key2 => $value2){
-				array_push($this->toBeReviewList, new Review( $value2['QID'], $value2['suggestionUserName'], $value2['suggestionTimeStamp']) );
-			}					
+		$db->query("SELECT QID,timeStamp,userName FROM Question WHERE reviewer IS NULL ORDER BY timeStamp DESC LIMIT " . $len . "," . MORE_SIZE , array($this->userName));
+		$records = $db->fetch_assoc_all();
+		foreach ($records as $key => $value){
+			array_push($this->toBeReviewList, new Review( $value['QID']) );
+		}
+	
+		$db->query("SELECT QID,userName,timeStamp FROM Suggestion WHERE reviewerId IS NULL ORDER BY timeStamp DESC LIMIT " . $len . "," . MORE_SIZE , array($this->userName));
+		$records = $db->fetch_assoc_all();
+		foreach ($records as $key => $value){
+			array_push($this->toBeReviewList, new Review( $value['QID'], $value['userName'], $value['timeStamp']) );
 		}
 
 		$this->result['head']['status'] = 200;
