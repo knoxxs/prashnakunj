@@ -223,7 +223,7 @@ class Question extends Base
 
 	public static function searchTag($tag){
 		$db = (new Database())->connectToDatabase();
-		$db->query("SELECT * FROM Question JOIN (SELECT QID FROM Encompass WHERE tagName='$tag')as q");
+		$db->query("SELECT * FROM Question NATURAL JOIN (SELECT QID FROM Encompass WHERE tagName='$tag')as q");
 		$records = $db->fetch_assoc_all();
 		$object = array();
 		foreach ($records as $key => $value) {

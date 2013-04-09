@@ -41,7 +41,9 @@ class Review extends Base{
 
 	public function toArray(){
 		$object = array();
-		
+		$object['QID'] = $this->QID;
+		$object['suggestionTimeStamp'] = $this->suggestionUserName;
+		$object['suggestionTimeStamp'] = $this->suggestionTimeStamp;
 	}
 }
 
