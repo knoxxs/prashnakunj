@@ -11,7 +11,7 @@ $base = new Base();
 $result = '';
 
 //TODO: session_start placing for minimizing auto serializing errors, cuurently only placed in login constructor
-
+//print_r($regMatches);
 if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 	switch ($regMatches[1][0]) {
 		case 'register':
@@ -130,11 +130,12 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 								require_once __DIR__.'/includes/Question.php';
 								require_once __DIR__.'/includes/user.php';
 								$assignQID = Question::generateQID();
-								$user = unserialize($_SESSION['user']);
+								$uname = unserialize($_SESSION['user']);
+								$user = $uname->getUsername();
 								$insertStatus = Question::addQuestion(array(
 									'assignQID' => '$assignQID', 
-									'newString' => '$_POST['question']['string']',
-									'difficultyLevel' => '$_POST['question']['difficultyLevel']', 
+									'newString' => '$_POST[\'question\'][\'string\']',
+									'difficultyLevel' => '$_POST[\'question\'][\'difficultyLevel\']', 
 									'user' => '$user'));
 
 								$tags = $_POST['question']['tags'];
@@ -163,6 +164,7 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 							else{
 								$result = json_encode( array('head' => array('status' => 206, 'message'=>'Only '.sizeof($_POST).' fields received, required 3'), 'body' => '') );
 							}
+							break;
 
 						case 'qcomment':
 							if( isset($regMatches[1][2]) && ( !empty($regMatches[1][2]) ) ){
@@ -171,11 +173,12 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 										if(sizeof($_POST) == 2){
 											require_once __DIR__.'/includes/QuestionComment.php';
 											require_once __DIR__.'/includes/user.php';
-											$user = unserialize($_SESSION['user']);
+											$uname = unserialize($_SESSION['user']);
+											$user = $uname->getUsername();
 											$insertStatus = QuestionComment::addComment(array(
-												'QID' => '$_POST['id']',
+												'QID' => '$_POST[\'id\']',
 												'user' => '$user', 
-												'string' => '$_POST['string']'));
+												'string' => '$_POST[\'string\']'));
 											if ($insertStatus) {
 												$result = json_encode( array('head' => array('status' => 200, 'message'=>'Comment Added Successfully'), 'body' => '') );
 											}
@@ -192,27 +195,28 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 										if(sizeof($_GET) == 4){
 											require_once __DIR__.'/includes/QuestionComment.php';
 											require_once __DIR__.'/includes/user.php';
-											$user = unserialize($_SESSION['user']);
+											$uname = unserialize($_SESSION['user']);
+											$user = $uname->getUsername();
 											$voteStatus = QuestionComment::checkAlreadyVoted(array(
-												'QID' => '$_GET['qid']',
+												'QID' => '$_GET[\'qid\']',
 												'userName' => '$user',
-												'commentUserName' => '$_GET['commentUserName']',
-												'commentTimeStamp' => '$_GET['commentTimeStamp']'));
+												'commentUserName' => '$_GET[\'commentUserName\']',
+												'commentTimeStamp' => '$_GET[\'commentTimeStamp\']'));
 											if($voteStatus == $user){
 												$voteNature = QuestionComment::checkVoteNature(array(
-												'QID' => '$_GET['qid']',
+												'QID' => '$_GET[\'qid\']',
 												'userName' => '$user',
-												'commentUserName' => '$_GET['commentUserName']',
-												'commentTimeStamp' => '$_GET['commentTimeStamp']'));
+												'commentUserName' => '$_GET[\'commentUserName\']',
+												'commentTimeStamp' => '$_GET[\'commentTimeStamp\']'));
 												if ($voteNature == $_GET['nature']) {
 													$result = json_encode( array('head' => array('status' => 304, 'message'=>'Not Modified'), 'body' => '') );
 												}
 												else{
 													$updateStatus = QuestionComment::updateVote($_GET['nature'], array(
-													'QID' => '$_GET['qid']',
+													'QID' => '$_GET[\'qid\']',
 													'userName' => '$user',
-													'commentUserName' => '$_GET['commentUserName']',
-													'commentTimeStamp' => '$_GET['commentTimeStamp']'));
+													'commentUserName' => '$_GET[\'commentUserName\']',
+													'commentTimeStamp' => '$_GET[\'commentTimeStamp\']'));
 													if($updateStatus){
 														$result = json_encode( array('head' => array('status' => 200, 'message'=>'Vote Modified Successfully'), 'body' => '') );
 													}
@@ -224,10 +228,10 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 											else{
 												$voteStatus = QuestionComment::addVote(array(
 													'userName' => '$user',
-													'QID' => '$_GET['qid']',
-													'nature' => '$_GET['nature']',
-													'commentUserName' => '$_GET['commentUserName']',
-													'commentTimeStamp' => '$_GET['commentTimeStamp']'));
+													'QID' => '$_GET[\'qid\']',
+													'nature' => '$_GET[\'nature\']',
+													'commentUserName' => '$_GET[\'commentUserName\']',
+													'commentTimeStamp' => '$_GET[\'commentTimeStamp\']'));
 												if($voteStatus){
 													$result = json_encode( array('head' => array('status' => 200, 'message'=>'Vote Added Successfully'), 'body' => '') );
 												}
@@ -246,16 +250,17 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 										if(sizeof($_POST) == 3){
 											require_once __DIR__.'/includes/QuestionComment.php';
 											require_once __DIR__.'/includes/user.php';
-											$user = unserialize($_SESSION['user']);
+											$uname = unserialize($_SESSION['user']);
+											$user = $uname->getUsername();
 											$checkUser = QuestionComment::checkCommentUser(array(
-												'QID' => '$_POST['qid']',
+												'QID' => '$_POST[\'qid\']',
 												'userName' => '$user',
-												'timeStamp' => '$_POST['timeStamp']'));
+												'timeStamp' => '$_POST[\'timeStamp\']'));
 											if ($checkUser) {
 												$status = QuestionComment::modifyComment($_POST['modificationString'], array(
-													'QID' => '$_POST['qid']',
+													'QID' => '$_POST[\'qid\']',
 													'userName' => '$user',
-													'timeStamp' => '$_POST['timeStamp']'));
+													'timeStamp' => '$_POST[\'timeStamp\']'));
 												if($status){
 													$result = json_encode( array('head' => array('status' => 200, 'message'=>'Comment Modified Successfully'), 'body' => '') );
 												}
@@ -282,7 +287,8 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 							if(sizeof($_GET) == 2){
 								require_once __DIR__.'/includes/Question.php';
 								require_once __DIR__.'/includes/user.php';
-								$user = unserialize($_SESSION['user']);
+								$uname = unserialize($_SESSION['user']);
+								$user = $uname->getUsername();
 								$voteStatus = Question::checkAlreadyVoted($_GET['QID'], $user);
 								if ($voteStatus == $user) {
 									$voteNature = Question::checkVoteNature($_GET['QID'], $user);
@@ -322,7 +328,8 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 										if(sizeof($_POST) == 2){
 											require_once __DIR__.'/includes/Suggestion.php';
 											require_once __DIR__.'/includes/user.php';
-											$user = unserialize($_SESSION['user']);
+											$uname = unserialize($_SESSION['user']);
+											$user = $uname->getUsername();
 											$status = Suggestion::addSuggestion($_POST['QID'], $user, $_POST['suggestionString']);
 											if($status){
 												$result = json_encode( array('head' => array('status' => 200, 'message'=>'Suggestion Added Successfully'), 'body' => '') );
@@ -340,26 +347,27 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 										if (sizeof($_GET == 4)) {
 											require_once __DIR__.'/includes/Suggestion.php';
 											require_once __DIR__.'/includes/user.php';
-											$user = unserialize($_SESSION['user']);
+											$uname = unserialize($_SESSION['user']);
+											$user = $uname->getUsername();
 											$voteStatus = Suggestion::checkAlreadyVoted(array(
-												'QID' => '$_GET['QID']',
-												'suggestionUserName' => '$_GET['suggestionUserName']',
-												'suggestionTimeStamp' => '$_GET['suggestionTimeStamp']',
+												'QID' => '$_GET[\'QID\']',
+												'suggestionUserName' => '$_GET[\'suggestionUserName\']',
+												'suggestionTimeStamp' => '$_GET[\'suggestionTimeStamp\']',
 												'$userName' => '$user'));
 											if ($voteStatus == $user) {
 												$voteNature = Suggestion::checkVoteNature(array(
-													'QID' => '$_GET['QID']',
-													'suggestionUserName' => '$_GET['suggestionUserName']',
-													'suggestionTimeStamp' => '$_GET['suggestionTimeStamp']',
+													'QID' => '$_GET[\'QID\']',
+													'suggestionUserName' => '$_GET[\'suggestionUserName\']',
+													'suggestionTimeStamp' => '$_GET[\'suggestionTimeStamp\']',
 													'$userName' => '$user'));
 												if ($voteNature == $_GET['nature']) {
 													$result = json_encode( array('head' => array('status' => 304, 'message'=>'Vote Not Modified'), 'body' => '') );
 												}
 												else{
 													$updateStatus = Suggestion::updateVote($_GET['nature'], array(
-														'QID' => '$_GET['QID']',
-														'suggestionUserName' => '$_GET['suggestionUserName']',
-														'suggestionTimeStamp' => '$_GET['suggestionTimeStamp']',
+														'QID' => '$_GET[\'QID\']',
+														'suggestionUserName' => '$_GET[\'suggestionUserName\']',
+														'suggestionTimeStamp' => '$_GET[\'suggestionTimeStamp\']',
 														'$userName' => '$user'));
 													if($updateStatus){
 														$result = json_encode( array('head' => array('status' => 200, 'message'=>'Vote Modified Successfully'), 'body' => '') );
@@ -371,11 +379,11 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 											}
 											else{
 												$voteStatus = Suggestion::addVote(array(
-													'QID' => '$_GET['QID']',
-													'suggestionUserName' => '$_GET['suggestionUserName']',
-													'suggestionTimeStamp' => '$_GET['suggestionTimeStamp']',
+													'QID' => '$_GET[\'QID\']',
+													'suggestionUserName' => '$_GET[\'suggestionUserName\']',
+													'suggestionTimeStamp' => '$_GET[\'suggestionTimeStamp\']',
 													'$userName' => '$user',
-													'nature' => '$_GET['nature']'));
+													'nature' => '$_GET[\'nature\']'));
 												if($voteStatus){
 													$result = json_encode( array('head' => array('status' => 200, 'message'=>'Vote Added Successfully'), 'body' => '') );
 												}
@@ -396,13 +404,14 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 													if(sizeof($_POST) == 4){
 														require_once __DIR__.'/includes/SuggestionComment.php';
 														require_once __DIR__.'/includes/user.php';
-														$user = unserialize($_SESSION['user']);
+														$uname = unserialize($_SESSION['user']);
+														$user = $uname->getUsername();
 														$insertStatus = SuggestionComment::addComment(array(
-															'QID' => '$_POST['QID']',
-															'suggestionUserName' => '$_POST['suggestionUserName']',
-															'suggestionTimeStamp' => '$_POST['suggestionTimeStamp']',
+															'QID' => '$_POST[\'QID\']',
+															'suggestionUserName' => '$_POST[\'suggestionUserName\']',
+															'suggestionTimeStamp' => '$_POST[\'suggestionTimeStamp\']',
 															'user' => '$user', 
-															'commentString' => '$_POST['commentString']'));
+															'commentString' => '$_POST[\'commentString\']'));
 														if ($insertStatus) {
 															$result = json_encode( array('head' => array('status' => 200, 'message'=>'Comment Added Successfully'), 'body' => '') );
 														}
@@ -419,32 +428,33 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 													if (sizeof($_GET) == 6) {
 														require_once __DIR__.'/includes/SuggestionComment.php';
 														require_once __DIR__.'/includes/user.php';
-														$user = unserialize($_SESSION['user']);
+														$uname = unserialize($_SESSION['user']);
+														$user = $uname->getUsername();
 														$voteStatus = SuggestionComment::checkAlreadyVoted(array(
-															'QID' => '$_GET['QID']',
-															'suggestionUserName' => '$_GET['suggestionUserName']',
-															'suggestionTimeStamp' => '$_GET['suggestionTimeStamp']',
-															'suggestionCommmentUserName' => '$_GET['suggestionCommmentUserName']',
-															'suggestionCommmentTimeStamp' => '$_GET['suggestionCommmentTimeStamp']',
+															'QID' => '$_GET[\'QID\']',
+															'suggestionUserName' => '$_GET[\'suggestionUserName\']',
+															'suggestionTimeStamp' => '$_GET[\'suggestionTimeStamp\']',
+															'suggestionCommmentUserName' => '$_GET[\'suggestionCommmentUserName\']',
+															'suggestionCommmentTimeStamp' => '$_GET[\'suggestionCommmentTimeStamp\']',
 															'$userName' => '$user'));
 														if ($voteStatus == $user) {
 															$voteNature = SuggestionComment::checkVoteNature(array(
-																'QID' => '$_GET['QID']',
-																'suggestionUserName' => '$_GET['suggestionUserName']',
-																'suggestionTimeStamp' => '$_GET['suggestionTimeStamp']',
-																'suggestionCommmentUserName' => '$_GET['suggestionCommmentUserName']',
-																'suggestionCommmentTimeStamp' => '$_GET['suggestionCommmentTimeStamp']',
+																'QID' => '$_GET[\'QID\']',
+																'suggestionUserName' => '$_GET[\'suggestionUserName\']',
+																'suggestionTimeStamp' => '$_GET[\'suggestionTimeStamp\']',
+																'suggestionCommmentUserName' => '$_GET[\'suggestionCommmentUserName\']',
+																'suggestionCommmentTimeStamp' => '$_GET[\'suggestionCommmentTimeStamp\']',
 																'$userName' => '$user'));
 															if ($voteNature == $_GET['nature']) {
 																$result = json_encode( array('head' => array('status' => 304, 'message'=>'Vote Not Modified'), 'body' => '') );
 															}
 															else{
 																$updateStatus = SuggestionComment::updateVote($_GET['nature'], array(
-																'QID' => '$_GET['QID']',
-																'suggestionUserName' => '$_GET['suggestionUserName']',
-																'suggestionTimeStamp' => '$_GET['suggestionTimeStamp']',
-																'suggestionCommmentUserName' => '$_GET['suggestionCommmentUserName']',
-																'suggestionCommmentTimeStamp' => '$_GET['suggestionCommmentTimeStamp']',
+																'QID' => '$_GET[\'QID\']',
+																'suggestionUserName' => '$_GET[\'suggestionUserName\']',
+																'suggestionTimeStamp' => '$_GET[\'suggestionTimeStamp\']',
+																'suggestionCommmentUserName' => '$_GET[\'suggestionCommmentUserName\']',
+																'suggestionCommmentTimeStamp' => '$_GET[\'suggestionCommmentTimeStamp\']',
 																'$userName' => '$user'));
 																if($updateStatus){
 																	$result = json_encode( array('head' => array('status' => 200, 'message'=>'Vote Modified Successfully'), 'body' => '') );
@@ -456,13 +466,13 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 														}
 														else{
 															$voteStatus = SuggestionComment::addVote(array(
-																'QID' => '$_GET['QID']',
-																'suggestionUserName' => '$_GET['suggestionUserName']',
-																'suggestionTimeStamp' => '$_GET['suggestionTimeStamp']',
-																'suggestionCommmentUserName' => '$_GET['suggestionCommmentUserName']',
-																'suggestionCommmentTimeStamp' => '$_GET['suggestionCommmentTimeStamp']',
+																'QID' => '$_GET[\'QID\']',
+																'suggestionUserName' => '$_GET[\'suggestionUserName\']',
+																'suggestionTimeStamp' => '$_GET[\'suggestionTimeStamp\']',
+																'suggestionCommmentUserName' => '$_GET[\'suggestionCommmentUserName\']',
+																'suggestionCommmentTimeStamp' => '$_GET[\'suggestionCommmentTimeStamp\']',
 																'$userName' => '$user',
-																'nature' => '$_GET['nature']'));
+																'nature' => '$_GET[\'nature\']'));
 															if($voteStatus){
 																$result = json_encode( array('head' => array('status' => 200, 'message'=>'Vote Added Successfully'), 'body' => '') );
 															}
@@ -480,20 +490,21 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 													if(sizeof($_POST) == 5){
 														require_once __DIR__.'/includes/SuggestionComment.php';
 														require_once __DIR__.'/includes/user.php';
-														$user = unserialize($_SESSION['user']);
+														$uname = unserialize($_SESSION['user']);
+														$user = $uname->getUsername();
 														$checkUser = SuggestionComment::checkCommentUser(array(
-														'QID' => '$_POST['QID']',
-														'suggestionUserName' => '$_POST['suggestionUserName']',
-														'suggestionTimeStamp' => '$_POST['suggestionTimeStamp']',
+														'QID' => '$_POST[\'QID\']',
+														'suggestionUserName' => '$_POST[\'suggestionUserName\']',
+														'suggestionTimeStamp' => '$_POST[\'suggestionTimeStamp\']',
 														'userName' => '$user',
-														'timeStamp' => '$_POST['timeStamp']'));
+														'timeStamp' => '$_POST[\'timeStamp\']'));
 														if ($checkUser) {
 															$status = SuggestionComment::modifyComment($_POST['modificationString'], array(
-																'QID' => '$_POST['qid']',
-																'suggestionUserName' => '$_POST['suggestionUserName']',
-																'suggestionTimeStamp' => '$_POST['suggestionTimeStamp']',
+																'QID' => '$_POST[\'QID\']',
+																'suggestionUserName' => '$_POST[\'suggestionUserName\']',
+																'suggestionTimeStamp' => '$_POST[\'suggestionTimeStamp\']',
 																'userName' => '$user',
-																'timeStamp' => '$_POST['timeStamp']'));
+																'timeStamp' => '$_POST[\'timeStamp\']'));
 															if($status){
 																$result = json_encode( array('head' => array('status' => 200, 'message'=>'Comment Modified Successfully'), 'body' => '') );
 															}
@@ -523,19 +534,23 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 								}
 							}
 							break;
+						
+						default:
+							$result = json_encode( array('head' => array('status' => 400, 'message'=>'No such call'), 'body' => '') );
+							break;
+
 					}
+					break;
 				}
-				break;
-			}				
-				}
-				break;
-//  case question ends here and please make changes for the same.
+			}	
+
 		default:
 			$result = json_encode( array('head' => array('status' => 400, 'message'=>'No such call'), 'body' => '') );
-			break;
+			break;			
 	}
 	exit($result);
-}else{
+}
+else{
 	exit( json_encode(array('head' => array('status' => 404, 'message'=>''), 'body' => '')) );
 }
 ?>

@@ -21,7 +21,7 @@ class AnswerComment extends Base
 
 		//fetching Votes
 		$db = $this->getDb();
-		$db->query("SELECT userName,nature FROM AnswerCommentVotes WHERE QID=? AND reviewerID=? AND AnswerTimeStamp=? AND AnswerCommentTimeStamp=? AND CommentUserName=?",array($this->QID, $this->reviewerID, $this->answerTimeStamp, $this->timeStamp, $this->userName));
+		$db->query("SELECT userName,nature FROM AnswerCommentVotes WHERE QID=? AND reviewerID=? AND answerTimeStamp=? AND answerCommentTimeStamp=? AND commentUserName=?",array($this->QID, $this->reviewerID, $this->answerTimeStamp, $this->timeStamp, $this->userName));
 		$alreadyVoted = 0;
 		$voteUp = 0;
 		$voteDown = 0;
@@ -52,8 +52,8 @@ class AnswerComment extends Base
 	}
 
 	public static function addComment(array $data){
-		$db = $this->getDb();
-		$status = $db->query("INSERT INTO AnswerComment (QID, ReviewerID, AnswerTimeStamp, userName, string) VALUES (?,?,?,?,?)", $data);
+		$db = (new Database())->connectToDatabase();
+		$status = $db->query("INSERT INTO AnswerComment (QID, reviewerID, answerTimeStamp, userName, string) VALUES (?,?,?,?,?)", $data);
 		return $status;
 	}
 }

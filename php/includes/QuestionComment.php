@@ -56,48 +56,50 @@ class QuestionComment extends Base
 	}*/
 
 	public static function addComment(array $data){
-		$db = $this->getDb();
+		$db = (new Database())->connectToDatabase();
 		$status = $db->query("INSERT INTO QuestionComment (QID, userName, string) VALUES (?,?,?)", $data);
 		return $status;
 	}
 
 	public static function addVote(array $data)
 	{
-		$db = $this->getDb();
+		$db = (new Database())->connectToDatabase();
 		$status = $db->query("INSERT INTO QuestionCommentVotes (userName, qid, nature, commentUserName, commentTimeStamp) VALUES (?,?,?,?,?)", $data);
 		return $status;
 	}
 
 	public static function checkAlreadyVoted(array $data)
 	{
-		$db = $this->getDb();
-		$uname = $db->query("SELECT userName FROM QuestionCommentVotes WHERE qid=? AND userName=? AND commentUserName=? AND commentTimeStamp=?", $data);
-		return $uname;
+		$db = (new Database())->connectToDatabase();
+		$db->query("SELECT userName FROM QuestionCommentVotes WHERE qid=? AND userName=? AND commentUserName=? AND commentTimeStamp=?", $data);
+		$name = $db->fetch_assoc_all()[0]['userName'];
+		return $name;
 	}
 
 	public static function checkVoteNature(array $data)
 	{
-		$db = $this->getDb();
-		$nature = $db->query("SELECT nature FROM QuestionCommentVotes WHERE qid=? AND userName=? AND commentUserName=? AND commentTimeStamp=?", $data);
+		$db = (new Database())->connectToDatabase();
+		$db->query("SELECT nature FROM QuestionCommentVotes WHERE qid=? AND userName=? AND commentUserName=? AND commentTimeStamp=?", $data);
+		$nature = $db->fetch_assoc_all()[0]['nature'];
 		return $nature;
 	}
 
 	public static function updateVote($nature ,array $data)
 	{
-		$db = $this->getDb();
+		$db = (new Database())->connectToDatabase();
 		$status = $db->query("UPDATE QuestionCommentVotes SET nature=$nature WHERE qid=? AND userName=? AND commentUserName=? AND commentTimeStamp=?", $data);
 		return $status;
 	}
 
 	public static function checkCommentUser(array $data)
 	{
-		$db = $this->getDb();
+		$db = (new Database())->connectToDatabase();
 		$uname = $db->query("SELECT userName FROM QuestionComment WHERE QID=? AND userName=? AND timeStamp=?", $data);
 		return $uname;
 	}
 
 	public static function modifyComment($newString, array $data){
-		$db = $this->getDb();
+		$db = (new Database())->connectToDatabase();
 		$status = $db->query("UPDATE QuestionComment SET string=$newString WHERE QID=? AND userName=? AND timeStamp=? AND commentTimeStamp=?", $data);
 		return $status;	
 	}

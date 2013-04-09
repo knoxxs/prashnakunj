@@ -67,14 +67,16 @@ class SuggestionComment extends Base
 	public static function checkAlreadyVoted(array $data)
 	{
 		$db = $this->getDb();
-		$uname = $db->query("SELECT userName FROM SuggestionCommentVotes WHERE QID=? AND suggestionUserName=? AND suggestionTimeStamp=? AND suggestionCommentUserName=? AND suggestionCommentTimeStamp=? AND userName=?", $data);
-		return $uname;
+		$db->query("SELECT userName FROM SuggestionCommentVotes WHERE QID=? AND suggestionUserName=? AND suggestionTimeStamp=? AND suggestionCommentUserName=? AND suggestionCommentTimeStamp=? AND userName=?", $data);
+		$name = $db->fetch_assoc_all()[0]['userName'];
+		return $name;
 	}
 
 	public static function checkVoteNature(array $data)
 	{
 		$db = $this->getDb();
-		$nature = $db->query("SELECT nature FROM SuggestionCommentVotes WHERE QID=? AND suggestionUserName=? AND suggestionTimeStamp=? AND suggestionCommentUserName=? AND suggestionCommentTimeStamp=? AND userName=?", $data);
+		$db->query("SELECT nature FROM SuggestionCommentVotes WHERE QID=? AND suggestionUserName=? AND suggestionTimeStamp=? AND suggestionCommentUserName=? AND suggestionCommentTimeStamp=? AND userName=?", $data);
+		$nature = $db->fetch_assoc_all()[0]['nature'];
 		return $nature;
 	}
 
