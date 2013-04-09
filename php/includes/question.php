@@ -135,14 +135,14 @@ class Question extends Base
 			//Fetching Questions
 			$db = $this->getDb();
 			if($type != 'popularity'){
-				$db->query("SELECT string,userName,timeStamp,used,reviewerId FROM Suggestion WHERE QID = ? ORDER BY $type DESC LIMIT $len, ".MORE_SIZE, array($this->questionTitle->getQID()));
+				$db->query("SELECT string,userName,timeStamp,reviewerId FROM Suggestion WHERE QID = ? ORDER BY $type DESC LIMIT $len, ".MORE_SIZE, array($this->questionTitle->getQID()));
 			}else{
-				$db->query("SELECT string,userName,timeStamp,used,reviewerId FROM Suggestion WHERE QID = ?", array($this->questionTitle->getQID()));
+				$db->query("SELECT string,userName,timeStamp,reviewerId FROM Suggestion WHERE QID = ?", array($this->questionTitle->getQID()));
 			}
 			$records = $db->fetch_assoc_all();
 
 			foreach ($records as $key => $value){
-				array_push($this->suggestionList['list'], new Suggestion($this->questionTitle->getQID(), $value['userName'], $value['timeStamp'], $value['string'], $value['used'], $value['reviewerId']));
+				array_push($this->suggestionList['list'], new Suggestion($this->questionTitle->getQID(), $value['userName'], $value['timeStamp'], $value['string'], is_null($value['reviewerId']), $value['reviewerId']));
 			}
 			if($type == 'popularity'){
 				usort($this->suggestionList['list'], "Suggestion::compareVoteUp");
