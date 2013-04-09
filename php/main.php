@@ -2,6 +2,7 @@
 require_once __DIR__.'/includes/base.php';
 
 header('Access-Control-Allow-Origin: *');
+set_time_limit(1900);
 
 define('PATH_REGEX_PATTERN',"!\/([^\/]+)!");
 @session_start();
@@ -190,25 +191,56 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 
 		case 'reviewLock':
 			if(sizeof($_GET) == 3){
-				require_once __DIR__.'/includes/review.php';
+				require_once __DIR__.'/includes/reviewer.php';
 				//if( $base->validateVar($_GET['QID']) && $base->validateVar($_GET['suggestionUserName']) && $base->validateVar($_GET['suggestionTimeStamp']) ){
 				if( ($base->validateVar($_GET['QID']) && empty($_GET['suggestionUserName']) && empty($_GET['suggestionTimeStamp']) )  ||  ($base->validateVar($_GET['QID']) && $base->validateVar($_GET['suggestionUserName']) && $base->validateVar($_GET['suggestionTimeStamp']) )){
-					if($base->validateVar($_SESSION['locked'])){
-						//TODO
-					}else{
-						$review = new Review($_GET['QID'], $_GET['suggestionUserName'], $_GET['suggestionTimeStamp']);
-						if($review->lockReview()){
-							$_SESSION['locked'] = unserialize($review);
-
+					if($base->isLoggedIn()){
+						if($_SESSION['isReviewer']){
+							$suggestionUserName = $_GET['suggestionUserName'] == "null" ?NULL :$_GET['suggestionUserName'];
+							$suggestionTimeStamp = $_GET['suggestionTimeStamp'] == "null" ?NULL :$_GET['suggestionTimeStamp'];
+							if(unserialize($_SESSION['user'])->setLock($_GET['QID'], $suggestionUserName, $suggestionTimeStamp)){
+								session_write_close();
+								$_SESSION['LAST_ACTIVITY'] = time();
+								while(isset($_SESSION['LAST_ACTIVITY']) && (time() - $_SESSION['LAST_ACTIVITY'] < DEFAULT_SLEEP_TIME) && isset($_SESSION['locked'])) {
+									sleep(10);
+								}
+								unserialize($_SESSION['user'])->removeLock();
+								$result = unserialize($_SESSION['user'])->result;
+								$result['body'] = '';
+								$result = json_encode($result);
+							}else{
+								$result = json_encode( array('head' => array('status' => 500, 'message'=>'Internal Server Error'), 'body' => '') );
+							}
 						}else{
-							//TODO
+							$result = json_encode( array('head' => array('status' => 409, 'message'=>'Not have rights'), 'body' => '') );
 						}
+					}else{
+						$result = json_encode( array('head' => array('status' => 401, 'message'=>'Not Logged In'), 'body' => '') );
 					}
 				}else{
 					$result = json_encode( array('head' => array('status' => 206, 'message'=>'Incomplete field'), 'body' => '') );
 				}
 			}else{
 				$result = json_encode( array('head' => array('status' => 206, 'message'=>'Only '.sizeof($_GET).' fields received, required 3'), 'body' => '') );
+			}
+			break;
+
+		case 'reviewUnlock':
+			require_once __DIR__.'/includes/reviewer.php';
+			//if( $base->validateVar($_GET['QID']) && $base->validateVar($_GET['suggestionUserName']) && $base->validateVar($_GET['suggestionTimeStamp']) ){
+			if($base->isLoggedIn()){
+				if($_SESSION['isReviewer']){
+					if(unserialize($_SESSION['user'])->removeLock()){
+						$result = json_encode( array('head' => array('status' => 200), 'body' => '') );
+					}else{
+						$result = json_encode( array('head' => array('status' => 500, 'message'=>'Internal Server Error'), 'body' => '') );
+					}
+					$result = json_encode($result);
+				}else{
+					$result = json_encode( array('head' => array('status' => 409, 'message'=>'Not have rights'), 'body' => '') );
+				}
+			}else{
+				$result = json_encode( array('head' => array('status' => 401, 'message'=>'Not Logged In'), 'body' => '') );
 			}
 			break;
 

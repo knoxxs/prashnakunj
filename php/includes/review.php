@@ -25,19 +25,56 @@ class Review extends Base{
 	
 	public function lockReview(){
 		$db = $this->getDb();
-		$db->query("SELECT locked FROM Review WHERE QID='$this->QID' AND suggestionUserName='$this->suggestionUserName' AND suggestionTimeStamp=$this->suggestionTimeStamp");
-		$records = $db->fetch_assoc_all();
-		if($records[0]['locked']){
-			$this->locker = unserialize($_SESSION['user'])->getUserName();
-			return $db->query("UPDATE Comprehend SET locked=True,reviewerId='$this->locker' WHERE QID='$this->QID' AND suggestionUserName='$this->suggestionUserName' AND suggestionTimeStamp=$this->suggestionTimeStamp");
+		if(is_null($this->suggestionUserName)){
+			$db->query("SELECT locked FROM Question WHERE QID='$this->QID'");
 		}else{
-			return false;
+			$db->query("SELECT locked FROM Suggestion WHERE QID='$this->QID' AND userName='$this->suggestionUserName' AND timeStamp=$this->suggestionTimeStamp");
+		}
+		$records = $db->fetch_assoc_all();
+		$this->result['head']['status'] = 200;
+		if(!$records[0]['locked']){
+			if(is_null($this->suggestionUserName)){
+				$db->query("SELECT locked FROM Question WHERE QID='$this->QID' AND reviewer=?",array(unserialize($_SESSION['user'])->getUserName()));
+			}else{
+				$db->query("SELECT locked FROM Suggestion WHERE QID='$this->QID' AND reviewerId=? AND userName='$this->suggestionUserName' AND timeStamp=$this->suggestionTimeStamp", array(unserialize($_SESSION['user'])->getUserName()));
+			}
+			$records = $db->fetch_assoc_all();
+			if($db->returned_rows == 0){
+				if(is_null($this->suggestionUserName)){
+					return $db->query("UPDATE Question SET locked=1,reviewer=? WHERE QID='$this->QID'", array(unserialize($_SESSION['user'])->getUserName()));
+				}else{
+					return $db->query("UPDATE Question SET locked=1,reviewerId=? WHERE QID='$this->QID' AND userName='$this->suggestionUserName' AND timeStamp=$this->suggestionTimeStamp", array(unserialize($_SESSION['user'])->getUserName()));
+				}
+			}else{
+				$this->result['head']['status'] = 403;
+				$this->result['head']['message'] = "Already Locked";
+
+			}
+		}else{
+			$this->result['head']['status'] = 409;
+			$this->result['head']['message'] = "Already Locked";
 		}
 	}
 
 	public function unlockReview(){
 		$db = $this->getDb();
-		return $db->query("UPDATE Comprehend SET locked=False,reviewerId=null WHERE QID='$this->QID' AND suggestionUserName='$this->suggestionUserName' AND suggestionTimeStamp=$this->suggestionTimeStamp");
+		if(is_null($this->suggestionUserName)){
+			$db->query("SELECT locked,reviewer FROM Question WHERE QID='$this->QID'");
+		}else{
+			$db->query("SELECT locked,reviewerId as reviewer FROM Suggestion WHERE QID='$this->QID' AND userName='$this->suggestionUserName' AND timeStamp=$this->suggestionTimeStamp");
+		}
+		$records = $db->fetch_assoc_all();
+		if($records[0]['locked'] && $records[0]['reviewer']){
+			$this->result['head']['status'] = 200;
+			if(is_null($this->suggestionUserName)){
+				return $db->query("UPDATE Question SET locked=0,reviewer=NULL WHERE QID='$this->QID'");
+			}else{
+				return $db->query("UPDATE Question SET locked=0,reviewerId=NULL WHERE QID='$this->QID' AND userName='$this->suggestionUserName' AND timeStamp=$this->suggestionTimeStamp");
+			}
+		}else{
+			$this->result['head']['status'] = 405;
+			$this->result['head']['message'] = "Locked by someone else.";
+		}
 	}
 
 	public function toArray(){

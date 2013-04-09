@@ -85,5 +85,28 @@ class Reviewer extends User{
 		$this->result['head']['status'] = 200;
 	}
 
-	// public function setLock
+
+	public function setLock($QID, $suggestionUserName=null, $suggestionTimeStamp=null){
+		$review = new Review($QID, $suggestionUserName, $suggestionTimeStamp);
+		if($review->lockReview()){
+			$_SESSION['locked'] = serialize($review);
+			$result = $review->result;		
+			return true;
+		}else{
+			$result = $review->result;
+			return false;
+		}
+	}
+	public function removeLock(){
+		$review = unserialize($_SESSION['locked']);
+		if($review->unlockReview()){
+			unset($_SESSION['locked']);
+			unset($_SESSION['LAST_ACTIVITY']);
+			$result = $review->result;
+			return true;
+		}else{
+			$result = $review->result;
+			return false;
+		}
+	}
 } 
