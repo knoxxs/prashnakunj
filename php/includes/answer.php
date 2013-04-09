@@ -141,46 +141,22 @@ class Answer  extends Base
 		$object['QID'] = $this->QID;
 		$object['userName'] = $this->userName;
 		$object['string'] = $this->string;
-		$object['timeStamp'] = $this->timeStamp;
+		$object['timeStamp'] = $this->answerTimeStamp;
 		$object['voteUp'] = $this->voteUp;
 		$object['voteDown'] = $this->voteDown;
-		$object['difficultyLevel'] = $this->difficultyLevel;
 		$object['alreadyVoted'] = $this->alreadyVoted;
-		$object['alreadyFav'] = $this->alreadyFav;
-		$object['tagList'] = $this->tagList;
-
+		$object['reportAbuseCount'] = $this->reportAbuseCount;
+		$commentsTemp = array();
+		foreach ($this->commentList as $key => $value) {
+			array_push($commentsTemp, $value.toArray());
+		}
+		$object['commentList'] = $commentsTemp;
 		return ($object);
 	}
-
-		public function getcommentlistarray()
-		{
-		$list = $this->commentList;
-		$jsonList=array();
-		foreach ($list as $key => $value) 
-			{
-			array_push($jsonList, $value->commentlist_to_array);
-			}
-		return $jsonList;
-		}
-		public function commentlist_to_array()
-		{
-			$object = array();
-		$object['QID'] = $this->QID;
-		$object['userName'] = $this->userName;
-		$object['string'] = $this->string;
-		$object['timeStamp'] = $this->timeStamp;
-		$object['reviewerID']=$this->reviewerID;
-		$object['answerTimeStamp']=$this->answerTimeStamp;
-		return ($object);
-		}
 
 	public static function compareVoteUp($a, $b){
 		return -($a->getVoteUp() - $b->getVoteUp());
 	}
 
-
 }
-?>
-}
-
 ?>

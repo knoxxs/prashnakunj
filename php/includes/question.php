@@ -136,21 +136,13 @@ class Question extends Base
 
 	public function toArray(){
 		$object = array();
-		$object['QID'] = $this->QID;
-		$object['userName'] = $this->userName;
-		$object['string'] = $this->string;
-		$object['timeStamp'] = $this->timeStamp;
-	}
+		$object['question'] = $this->questionTitle->toArray();
+		$object['bestAnswer'] = $this->bestAnswer->toArray();
+		$object['answers'] = $this->answerList->toArray();
+		$object['suggestions'] = $this->suggestionList->toArray();
 
-	public function tobestanswerArray(){
-		$object = array();
-		$object['QID'] = $this->QID;
-		$object['reviewerId'] = $this->reviewerId;
-		$object['string'] = $this->string;
-		$object['timeStamp'] = $this->timeStamp;
-		return $object;
+		return object;
 	}
-
 
 	public static function getQuestions($type = 'timestamp', $num = 10, $lastQuestionTime = null, $scroll = 'after'){
 		$db = (new Database())->connectToDatabase();

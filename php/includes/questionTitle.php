@@ -2,6 +2,7 @@
 
 require_once __DIR__.'/questionComment.php';
 require_once __DIR__.'/base.php';
+require_once __DIR__.'/reviewer.php';
 
 class QuestionTitle extends Base
 {
@@ -85,7 +86,7 @@ class QuestionTitle extends Base
 	    return $this->QID;
 	}
 		
-		public function toArray(){
+	public function toArray(){
 		$object = array();
 		$object['QID'] = $this->QID;
 		$object['userName'] = $this->userName;
@@ -97,8 +98,12 @@ class QuestionTitle extends Base
 		$object['alreadyVoted'] = $this->alreadyVoted;
 		$object['alreadyFav'] = $this->alreadyFav;
 		$object['tagList'] = $this->tagList;
-		$object['reviewer']=$this->reviewer;
-		$object['commentList']=$this->getcommentlistarray();
+		$commentsTemp = array();
+		foreach ($this->commentList as $key => $value) {
+			array_push($commentsTemp, $value.toArray());
+		}
+		$object['commentList'] = $commentsTemp;
+
 		return ($object);
 	}
 

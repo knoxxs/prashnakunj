@@ -52,8 +52,7 @@ class AnswerComment extends Base
 		$this->alreadyVoted = $alreadyVoted;
 	}
 
-		public function toArray()
-	{
+	public function toArray(){
 		$object = array();
 		$object['QID'] = $this->QID;
 		$object['userName']=$this->userName;
