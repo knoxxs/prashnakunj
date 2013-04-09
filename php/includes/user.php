@@ -156,7 +156,7 @@ class User extends Base{
 			//SELECT SUM(nature),COUNT(nature) FROM (SELECT qid,string,timeStamp,difficultyLevel FROM Question NATURAL JOIN (SELECT qid FROM Watch WHERE userName='uname2') as W ORDER BY timestamp LIMIT 0,5) as Q JOIN QuestionVotes as QV ON Q.QID=QV.QID GROUP BY Q.QID
 			if($type != 'popularity')
 			{
-				$db->query("SELECT QID,userName,string,timeStamp,difficultyLevel FROM Question NATURAL JOIN (SELECT qid FROM Watch WHERE userName=?) as W ORDER BY " . $type . " LIMIT " . $len . "," . MORE_SIZE , array($this->userName));
+				$db->query("SELECT QID,userName,string,timeStamp,difficultyLevel FROM Question NATURAL JOIN (SELECT qid FROM Watch WHERE userName=?) as W ORDER BY " . $type . " DESC LIMIT " . $len . "," . MORE_SIZE , array($this->userName));
 			}
 			else
 			{
@@ -193,7 +193,7 @@ class User extends Base{
 			$db = $this->getDb();
 			if($type != 'popularity')
 			{
-				$db->query("SELECT QID,userName,string,timeStamp,difficultyLevel FROM Question NATURAL JOIN (SELECT qid FROM Favourites WHERE userName=?) as W ORDER BY " . $type . " LIMIT " . $len . "," . MORE_SIZE , array($this->userName));
+				$db->query("SELECT QID,userName,string,timeStamp,difficultyLevel FROM Question NATURAL JOIN (SELECT qid FROM Favourites WHERE userName=?) as W ORDER BY " . $type . " DESC LIMIT " . $len . "," . MORE_SIZE , array($this->userName));
 			}
 			else
 			{
@@ -230,7 +230,7 @@ class User extends Base{
 			$db = $this->getDb();
 			if($type != 'popularity')
 			{
-				$db->query("SELECT QID,userName,string,timeStamp,difficultyLevel FROM Question NATURAL JOIN (SELECT qid FROM Views WHERE userName=?) as W ORDER BY " . $type . " LIMIT " . $len . "," . MORE_SIZE , array($this->userName));
+				$db->query("SELECT QID,userName,string,timeStamp,difficultyLevel FROM Question NATURAL JOIN (SELECT qid FROM Views WHERE userName=?) as W ORDER BY " . $type . " DESC LIMIT " . $len . "," . MORE_SIZE , array($this->userName));
 			}
 			else
 			{
