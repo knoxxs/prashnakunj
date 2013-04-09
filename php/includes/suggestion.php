@@ -23,7 +23,7 @@ class Suggestion extends Base
 
 		//fetching Votes
 		$db = $this->getDb();
-		$db->query("SELECT userName,nature FROM SuggestionVotes WHERE QID=? AND suggestionUserName=? AND suggestionTimestamp=?",array($this->QID, $this->userName, $this->timestamp));
+		$db->query("SELECT userName,nature FROM SuggestionVotes WHERE QID=? AND suggestionUserName=? AND suggestionTimestamp=?",array($this->QID, $this->userName, $this->timeStamp));
 		$alreadyVoted = 0;
 		$voteUp = 0;
 		$voteDown = 0;
@@ -53,11 +53,11 @@ class Suggestion extends Base
 		$this->alreadyVoted = $alreadyVoted;
 
 		//fetchingComment
-		$db->query("SELECT userName,string,timeStamp FROM SuggestionComment WHERE QID=? AND suggestionUserName=? AND suggestionTimestamp=? ORDER BY timeStamp DESC",array($this->QID, $this->userName, $this->timestamp));
+		$db->query("SELECT userName,string,timeStamp FROM SuggestionComment WHERE QID=? AND suggestionUserName=? AND suggestionTimestamp=? ORDER BY timeStamp DESC",array($this->QID, $this->userName, $this->timeStamp));
 		$commentList = array();
 		$records = $db->fetch_assoc_all();
 		foreach ($records as $key => $value) {
-			array_push($commentList, new SuggestionComment($this->QID, $this->userName, $this->timestamp, $value['string'], $value['userName'], $value['timeStamp']));
+			array_push($commentList, new SuggestionComment($this->QID, $this->userName, $this->timeStamp, $value['string'], $value['userName'], $value['timeStamp']));
 		}
 		$this->commentList = $commentList;
 	}
@@ -68,7 +68,7 @@ class Suggestion extends Base
 
 	public function toArray(){
 		$object = array();
-		$object['QID'] = $this->QID;
+		// $object['QID'] = $this->QID;
 		$object['userName'] = $this->userName;
 		$object['string'] = $this->string;
 		$object['timeStamp'] = $this->timeStamp;
@@ -79,14 +79,12 @@ class Suggestion extends Base
 		$object['reviewerId']=$this->reviewerId;
 		$commentsTemp = array();
 		foreach ($this->commentList as $key => $value) {
-			array_push($commentsTemp, $value.toArray());
+			array_push($commentsTemp, $value->toArray());
 		}
 		$object['commentList'] = $commentsTemp;
-		return ($object);
+		return $object;
 	}
 
 
 }
-
-
 ?>

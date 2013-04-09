@@ -100,7 +100,7 @@ class QuestionTitle extends Base
 		$object['tagList'] = $this->tagList;
 		$commentsTemp = array();
 		foreach ($this->commentList as $key => $value) {
-			array_push($commentsTemp, $value.toArray());
+			array_push($commentsTemp, $value->toArray());
 		}
 		$object['commentList'] = $commentsTemp;
 

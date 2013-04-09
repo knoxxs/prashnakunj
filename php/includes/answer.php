@@ -17,7 +17,7 @@ class Answer  extends Base
 
 		//fetching Votes
 		$db = $this->getDb();
-		$db->query("SELECT userName,nature FROM AnswerVotes WHERE QID=? And timeStamp=? And reviewerID=?",array($this->QID, $this->answerTimeStamp, $this->reviewerID));
+		$db->query("SELECT userName,nature FROM AnswerVotes WHERE QID=? And timeStamp=? And reviewer=?",array($this->QID, $this->answerTimeStamp, $this->reviewerID));
 		$alreadyVoted = false;
 		$voteUp = 0;
 		$voteDown = 0;
@@ -41,7 +41,7 @@ class Answer  extends Base
 		$commentList = array();
 		$records = $db->fetch_assoc_all();
 		foreach ($records as $key => $value) {
-			array_push($commentList, new AnswerComment($value['QID'], $value['reviewerID'], $value['answerTimeStamp'], $value['userName'], $value['timeStamp'], $value['string']));
+			array_push($commentList, new AnswerComment($this->QID, $this->reviewerID, $this->answerTimeStamp, $value['userName'], $value['timeStamp'], $value['string']));
 		}
 		$this->commentList = $commentList;
 
@@ -138,8 +138,8 @@ class Answer  extends Base
 
 	public function toArray(){
 		$object = array();
-		$object['QID'] = $this->QID;
-		$object['userName'] = $this->userName;
+		// $object['QID'] = $this->QID;
+		$object['userName'] = $this->reviewerID;
 		$object['string'] = $this->string;
 		$object['timeStamp'] = $this->answerTimeStamp;
 		$object['voteUp'] = $this->voteUp;
@@ -148,7 +148,7 @@ class Answer  extends Base
 		$object['reportAbuseCount'] = $this->reportAbuseCount;
 		$commentsTemp = array();
 		foreach ($this->commentList as $key => $value) {
-			array_push($commentsTemp, $value.toArray());
+			array_push($commentsTemp, $value->toArray());
 		}
 		$object['commentList'] = $commentsTemp;
 		return ($object);

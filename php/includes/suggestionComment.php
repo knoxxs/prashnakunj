@@ -54,11 +54,11 @@ class SuggestionComment extends Base
 		public function toArray()
 	{
 		$object = array();
-		$object['QID'] = $this->QID;
-		$object['suggestionUserName'] = $this->suggestionUserName;
+		// $object['QID'] = $this->QID;
+		// $object['suggestionUserName'] = $this->suggestionUserName;
 		$object['userName']=$this->userName;
 		$object['string'] = $this->string;
-		$object['suggestionTimeStamp']= $this->suggestionTimeStamp;
+		// $object['suggestionTimeStamp']= $this->suggestionTimeStamp;
 		$object['timeStamp']=$this->timeStamp;
 		$object['voteUp'] = $this->voteUp;
 		$object['voteDown'] = $this->voteDown;

@@ -50,13 +50,13 @@ class QuestionComment extends Base
 		$this->voteDown = $voteDown;
 		$this->alreadyVoted = $alreadyVoted;
 	}
+
 	public function toArray()
 	{
 		$object = array();
-		$object['QID'] = $this->QID;
+		// $object['QID'] = $this->QID;
 		$object['userName']=$this->userName;
 		$object['string'] = $this->string;
-		$object['reviewerID']= $this->reviewerID;
 		$object['timeStamp']=$this->timeStamp;
 		$object['voteUp'] = $this->voteUp;
 		$object['voteDown'] = $this->voteDown;

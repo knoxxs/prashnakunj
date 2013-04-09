@@ -9,7 +9,27 @@ class Question extends Base
 {
 	private $questionTitle, $bestAnswer, $answerList, $suggestionList;
 
-	public function __construct($QID, $string, $timeStamp, $difficultyLevel, $userName, $reviewer){
+	public function __construct(){
+		if(func_num_args() == 6){
+			$QID = func_get_arg(0);
+			$string = func_get_arg(1);
+			$timeStamp = func_get_arg(2);
+			$difficultyLevel = func_get_arg(3);
+			$userName = func_get_arg(4);
+			$reviewer = func_get_arg(5);
+		}elseif(func_num_args() == 1){
+			$QID = func_get_arg(0);
+
+			$db = $this->getDb();
+			$db->query("SELECT string,timeStamp,reviewer,userName,difficultyLevel FROM Question WHERE QID = '$QID'");
+			$records = $db->fetch_assoc_all();
+			$string = $records[0]['string'];
+			$timeStamp = $records[0]['timeStamp'];
+			$difficultyLevel = $records[0]['reviewer'];
+			$userName = $records[0]['userName'];
+			$reviewer = $records[0]['difficultyLevel'];
+		}
+
 		parent::__construct();
 		
 		$this->questionTitle = new QuestionTitle($QID, $string, $timeStamp, $difficultyLevel, $userName, $reviewer);
@@ -21,12 +41,13 @@ class Question extends Base
 		
 		$this->bestAnswer = null;
 		if($db->returned_rows > 0){
-			$this->bestAnswer =  new Answer($QID, $value['string'], $value['timeStamp'], $value['reviewerId']);
+			$this->bestAnswer =  new Answer($QID, $records[0]['string'], $records[0]['timeStamp'], $records[0]['reviewerId']);
 		}
-		$this->answerList = array('type' => DEFAULT_TYPE, 'list' => null);
+		$this->answerList = array('type' => DEFAULT_TYPE, 'list' => array());
 
-		$this->suggestionList = array('type' => DEFAULT_TYPE, 'list' => null);
+		$this->suggestionList = array('type' => DEFAULT_TYPE, 'list' => array());
 		$this->suggestionList['list'] = $this->getSuggestionList(DEFAULT_TYPE);
+
 	}
 
 	public function getAnswerList($type){
@@ -113,14 +134,14 @@ class Question extends Base
 			//Fetching Questions
 			$db = $this->getDb();
 			if($type != 'popularity'){
-				$db->query("SELECT string,userName,timeStamp,used,reviewerId FROM Suggestion WHERE QID = '$this->questionTitle->getQID()' ORDER BY $type DESC LIMIT $len, ".MORE_SIZE);
+				$db->query("SELECT string,userName,timeStamp,used,reviewerId FROM Suggestion WHERE QID = ? ORDER BY $type DESC LIMIT $len, ".MORE_SIZE, array($this->questionTitle->getQID()));
 			}else{
-				$db->query("SELECT string,userName,timeStamp,used,reviewerId FROM Suggestion WHERE QID = '$this->questionTitle->getQID()'");
+				$db->query("SELECT string,userName,timeStamp,used,reviewerId FROM Suggestion WHERE QID = ?", array($this->questionTitle->getQID()));
 			}
 			$records = $db->fetch_assoc_all();
 
 			foreach ($records as $key => $value){
-				array_push($this->suggestionList['list'], new Suggestion($this->QID, $value['userName'], $value['timeStamp'], $value['string'], $value['used'], $value['reviewerId']));
+				array_push($this->suggestionList['list'], new Suggestion($this->questionTitle->getQID(), $value['userName'], $value['timeStamp'], $value['string'], $value['used'], $value['reviewerId']));
 			}
 			if($type == 'popularity'){
 				usort($this->suggestionList['list'], "Suggestion::compareVoteUp");
@@ -137,11 +158,23 @@ class Question extends Base
 	public function toArray(){
 		$object = array();
 		$object['question'] = $this->questionTitle->toArray();
-		$object['bestAnswer'] = $this->bestAnswer->toArray();
-		$object['answers'] = $this->answerList->toArray();
-		$object['suggestions'] = $this->suggestionList->toArray();
-
-		return object;
+		//echo json_encode($object['question']) ;
+		if(is_null($this->bestAnswer)){
+			$object['bestAnswer'] = null;
+		}else{
+			$object['bestAnswer'] = $this->bestAnswer->toArray();
+		}
+		if(empty($this->suggestionList['list'])){
+			$object['suggestions'] = null;
+		}else{
+			$suggestionListArray = array();
+			foreach ($this->suggestionList['list'] as $key => $value) {
+				array_push($suggestionListArray, $value->toArray());
+			}
+			$object['suggestions'] = $suggestionListArray;
+		}
+		
+		return $object;
 	}
 
 	public static function getQuestions($type = 'timestamp', $num = 10, $lastQuestionTime = null, $scroll = 'after'){

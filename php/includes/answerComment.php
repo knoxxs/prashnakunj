@@ -4,7 +4,7 @@ require_once __DIR__.'/base.php';
 
 class AnswerComment extends Base
 {
-	private $QID, $userName, $string, $timeStamp, $voteUp, $voteDown, $alreadyVoted, $requestedUser, $reviewerID;
+	private $QID, $userName, $string, $timeStamp, $voteUp, $voteDown, $alreadyVoted, $requestedUser, $reviewerID, $answerTimeStamp;
 
 	public function __construct($QID, $reviewerID, $answerTimeStamp, $userName, $timeStamp, $string){
 		parent::__construct();
@@ -22,7 +22,7 @@ class AnswerComment extends Base
 
 		//fetching Votes
 		$db = $this->getDb();
-		$db->query("SELECT userName,nature FROM AnswerCommentVotes WHERE QID=? AND commentUserName=? AND commentTimeStamp=?",array($this->QID, $this->userName, $this->timeStamp));
+		$db->query("SELECT userName,nature FROM AnswerCommentVotes WHERE QID=? AND commentUserName=? AND answerCommentTimeStamp=?",array($this->QID, $this->userName, $this->timeStamp));
 		$alreadyVoted = 0;
 		$voteUp = 0;
 		$voteDown = 0;
@@ -54,10 +54,11 @@ class AnswerComment extends Base
 
 	public function toArray(){
 		$object = array();
-		$object['QID'] = $this->QID;
+		// $object['QID'] = $this->QID;
 		$object['userName']=$this->userName;
+		// $object['answerTimeStamp']=$this->answerTimeStamp;
+		//$object['reviewerID'] = $this->reviewerID;
 		$object['string'] = $this->string;
-		$object['reviewerID']= $this->reviewerID;
 		$object['timeStamp']=$this->timeStamp;
 		$object['voteUp'] = $this->voteUp;
 		$object['voteDown'] = $this->voteDown;
