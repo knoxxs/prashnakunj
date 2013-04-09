@@ -13,7 +13,12 @@ class Answer  extends Base
 		$this->string = $string;
 		$this->answerTimeStamp = $timeStamp;
 		$this->reviewerID = $reviewerID;
-		$this->requestedUser = unserialize($_SESSION['user'])->getUserName();
+		if($this->validateVar($_SESSION) && $this->validateVar($_SESSION['user'])){
+			$this->requestedUser = unserialize($_SESSION['user'])->getUserName();
+		}else{
+			$this->requestedUser = null;
+		}
+
 
 		//fetching Votes
 		$db = $this->getDb();

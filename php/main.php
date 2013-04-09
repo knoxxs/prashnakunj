@@ -43,17 +43,17 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 			break;
 
 		case 'logout':
-			if(sizeof($_POST) == 1){
 				require_once __DIR__.'/includes/login.php';
-				$login = new Login($_POST['userName']);
-				if($login->logout()){
-					$result = $login->toJson();
+				if($base->validateVar($_SESSION) && $base->validateVar($_SESSION['user'])){
+					$login = new Login(unserialize($_SESSION['user'])->getUserName());
+					if($login->logout()){
+						$result = $login->toJson();
+					}else{
+						$result = json_encode( array('head' => array('status' => 500, 'message'=>''), 'body' => '') );
+					}
 				}else{
-					$result = json_encode( array('head' => array('status' => 500, 'message'=>''), 'body' => '') );
+					$result = json_encode( array('head' => array('status' => 406, 'message'=>'No user Logged In'), 'body' => '') );;
 				}
-			}else{
-				$result = json_encode( array('head' => array('status' => 206, 'message'=>'Only '.sizeof($_POST).' fields received, required 1'), 'body' => '') );
-			}
 			break;
 
 		case 'list':

@@ -15,7 +15,7 @@ class Suggestion extends Base
 		$this->timeStamp = $timeStamp;
 		$this->reviewerId = $reviewerId;
 		$this->used = $used;
-		if($this->validateVar($_SESSION['user'])){
+		if($this->validateVar($_SESSION) && $this->validateVar($_SESSION['user'])){
 			$this->requestedUser = unserialize($_SESSION['user'])->getUserName();
 		}else{
 			$this->requestedUser = null;

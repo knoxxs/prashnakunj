@@ -14,7 +14,7 @@ class AnswerComment extends Base
 		$this->userName = $userName;
 		$this->string = $string;
 		$this->timeStamp = $timeStamp;
-		if($this->validateVar($_SESSION['user'])){
+		if($this->validateVar($_SESSION) && $this->validateVar($_SESSION['user'])){
 			$this->requestedUser = unserialize($_SESSION['user'])->getUserName();
 		}else{
 			$this->requestedUser = null;
