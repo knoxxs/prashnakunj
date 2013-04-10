@@ -117,8 +117,8 @@ class Register extends Base{
 			$this->head['status'] = 203;
 		}
 
+		$this->result = array("head" => $this->head , "body" => '');
 		return true;
 	}
-
 }
 ?>
