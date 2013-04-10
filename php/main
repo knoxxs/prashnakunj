@@ -246,7 +246,7 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 						case 'post':
 							print_r($_POST);
 							if(sizeof($_POST) == 3){
-								require_once __DIR__.'/includes/Question.php';
+								require_once __DIR__.'/includes/question.php';
 								require_once __DIR__.'/includes/user.php';
 								$assignQID = Question::generateQID();
 								$uname = unserialize($_SESSION['user']);
@@ -288,7 +288,7 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 								switch ($regMatches[1][2]) {
 									case 'post':
 										if(sizeof($_POST) == 2){
-											require_once __DIR__.'/includes/QuestionComment.php';
+											require_once __DIR__.'/includes/questionComment.php';
 											require_once __DIR__.'/includes/user.php';
 											$uname = unserialize($_SESSION['user']);
 											$user = $uname->getUsername();
@@ -310,7 +310,7 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 									
 									case 'vote':
 										if(sizeof($_GET) == 4){
-											require_once __DIR__.'/includes/QuestionComment.php';
+											require_once __DIR__.'/includes/questionComment.php';
 											require_once __DIR__.'/includes/user.php';
 											$uname = unserialize($_SESSION['user']);
 											$user = $uname->getUsername();
@@ -365,7 +365,7 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 
 									case 'modify':
 										if(sizeof($_POST) == 3){
-											require_once __DIR__.'/includes/QuestionComment.php';
+											require_once __DIR__.'/includes/questionComment.php';
 											require_once __DIR__.'/includes/user.php';
 											$uname = unserialize($_SESSION['user']);
 											$user = $uname->getUsername();
@@ -402,7 +402,7 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 							break;
 						case 'vote':
 							if(sizeof($_GET) == 2){
-								require_once __DIR__.'/includes/Question.php';
+								require_once __DIR__.'/includes/question.php';
 								require_once __DIR__.'/includes/user.php';
 								$uname = unserialize($_SESSION['user']);
 								$user = $uname->getUsername();
@@ -443,7 +443,7 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 								switch ($regMatches[1][2]){
 									case 'post':
 										if(sizeof($_POST) == 2){
-											require_once __DIR__.'/includes/Suggestion.php';
+											require_once __DIR__.'/includes/suggestion.php';
 											require_once __DIR__.'/includes/user.php';
 											$uname = unserialize($_SESSION['user']);
 											$user = $uname->getUsername();
@@ -462,7 +462,7 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 
 									case 'vote':
 										if (sizeof($_GET == 4)) {
-											require_once __DIR__.'/includes/Suggestion.php';
+											require_once __DIR__.'/includes/suggestion.php';
 											require_once __DIR__.'/includes/user.php';
 											$uname = unserialize($_SESSION['user']);
 											$user = $uname->getUsername();
@@ -519,7 +519,7 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 											switch ($regMatches[1][3]){
 												case 'post':
 													if(sizeof($_POST) == 4){
-														require_once __DIR__.'/includes/SuggestionComment.php';
+														require_once __DIR__.'/includes/suggestionComment.php';
 														require_once __DIR__.'/includes/user.php';
 														$uname = unserialize($_SESSION['user']);
 														$user = $uname->getUsername();
@@ -543,7 +543,7 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 
 												case 'vote':
 													if (sizeof($_GET) == 6) {
-														require_once __DIR__.'/includes/SuggestionComment.php';
+														require_once __DIR__.'/includes/suggestionComment.php';
 														require_once __DIR__.'/includes/user.php';
 														$uname = unserialize($_SESSION['user']);
 														$user = $uname->getUsername();
@@ -605,7 +605,7 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 
 												case 'modify':
 													if(sizeof($_POST) == 5){
-														require_once __DIR__.'/includes/SuggestionComment.php';
+														require_once __DIR__.'/includes/suggestionComment.php';
 														require_once __DIR__.'/includes/user.php';
 														$uname = unserialize($_SESSION['user']);
 														$user = $uname->getUsername();
