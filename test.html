@@ -1,0 +1,43 @@
+<!DOCTYPE  html>
+<html>
+<head>
+ 
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script><script src="js/cookie.js"></script>
+		 
+</head>
+<body>
+ 
+<script type="text/javascript">
+ 
+$(document).ready(function(){  
+var uName, pWord, eMail, secQ, secQA;
+	  $("#login_button").click(function(event){
+		uName = 'uname6'
+		pWord = 'password';
+		var result = {};
+		result['userName']=uName;
+		result['password']=pWord;
+		$.post( 
+             "http://54.249.240.120/qcorner/login",
+			 result,
+             function(data) {
+				if(data.head.status==200)
+				{
+					setCookie('username', uName, 1);
+					console.log(data);
+					alert(data.head.status);
+					alert(data.head.message);
+					getCookie('PHPSESSID');
+					window.location = 'test2.html';
+				}
+             },
+			 "json"
+
+          );
+      });
+});
+</script>
+
+<input type="button" id="login_button" ></input>
+</body>
+</html>
