@@ -244,7 +244,6 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 				elseif($base->isLoggedIn()){
 					switch($regMatches[1][1]){
 						case 'post':
-							print_r($_POST);
 							if(sizeof($_POST) == 3){
 								require_once __DIR__.'/includes/Question.php';
 								require_once __DIR__.'/includes/user.php';
