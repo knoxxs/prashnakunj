@@ -46,6 +46,7 @@ var uName, pWord, eMail, secQ, secQA;
              function(data) {
 				if(data.head.status==200)
 				{
+					alert(getCookie('PHPSESSID'));
 					setCookie('username', uName, 1);
 					console.log(data);
 					alert(data.head.status);
