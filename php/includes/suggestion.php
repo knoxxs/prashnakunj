@@ -62,6 +62,50 @@ class Suggestion extends Base
 		$this->commentList = $commentList;
 	}
 
+	public static function addSuggestion($QID, $userName, $suggestionString)
+	{
+		$db = (new Database())->connectToDatabase();
+		$status = $db->query("INSERT INTO Suggestion (QID, userName, string) VALUES ('$QID', '$userName', '$suggestionString')");
+		return $status;
+	}
+
+	public static function addVote(array $data)
+	{
+		$db = (new Database())->connectToDatabase();
+		$status = $db->query("INSERT INTO SuggestionVotes (QID, suggestionUserName, suggestionTimestamp, userName, nature) VALUES (?,?,?,?,?)", $data);
+		return $status;
+	}
+
+	public static function checkAlreadyVoted(array $data)
+	{
+		$db = (new Database())->connectToDatabase();
+		$records = $db->query("SELECT userName FROM SuggestionVotes WHERE QID=? AND suggestionUserName=? AND suggestionTimestamp=? AND userName=?", $data);
+		if($db->returned_rows > 0){
+			$name = $db->fetch_assoc_all()[0]['userName'];
+		}
+		else{
+			$name = NULL;
+		}	
+		return $name;
+	}
+
+	public static function checkVoteNature(array $data)
+	{
+		$db = (new Database())->connectToDatabase();
+		$db->query("SELECT nature FROM SuggestionVotes WHERE QID=? AND suggestionUserName=? AND suggestionTimestamp=? AND userName=?", $data);
+		$nature = $db->fetch_assoc_all()[0]['nature'];
+		return $nature;
+	}
+
+	public static function updateVote($nature, array $data)
+	{
+		$db = (new Database())->connectToDatabase();
+		$status = $db->query("UPDATE SuggestionVotes SET nature=$nature WHERE QID=? AND suggestionUserName=? AND suggestionTimestamp=? AND userName=?", $data);
+		return $status;
+	}
+
+
+
 	public static function compareVoteUp($a, $b){
 		return $b->getVoteUp() - $a->getVoteUp();
 	}

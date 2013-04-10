@@ -51,6 +51,11 @@ class Question extends Base
 
 	}
 
+	public function getQID()
+	{
+		return $this->QID;
+	}
+
 	public function getAnswerList($type){
 		if($type != $this->answerList['type']){
 			$this->fetchAnswerList($type);
@@ -215,6 +220,82 @@ class Question extends Base
 		}
 
 		return $jsonList;
+	}
+
+	public static function generateQID(){
+		$db = (new Database())->connectToDatabase();
+		$db->query("SELECT MAX(CAST( QID AS SIGNED )) as maxQID FROM Question");
+		$records = $db->fetch_assoc_all();
+		$latestQID = $records[0]['maxQID'];
+		if($records[0]['maxQID'] == NULL){
+			$latestQID = 0;
+		}
+		else{
+			$latestQID = $latestQID + 0;
+			$latestQID = $latestQID + 1;
+		}
+		return $latestQID;
+	}
+
+	/*public static function addQuestion($assignQID,$newString,$difficultyLevel,$userName){
+		$db = $this->getDb();
+		$db->query("INSERT INTO Question (QID, string, difficultyLevel, userName) VALUES ('$assignQID', 'newString', '$difficultyLevel', '$userName')");
+		// Ask how to check if query successfully completed or not.
+	}*/
+
+	public static function addQuestion(array $data){
+		$db = (new Database())->connectToDatabase();
+		$check = $db->query("INSERT INTO Question (QID, string, difficultyLevel, userName) VALUES(?,?,?,?)", $data);
+		return $check;
+	}
+
+	public static function findTags($tag){
+		$db = (new Database())->connectToDatabase();
+		$check = $db->query("SELECT name FROM Tags WHERE name='$tag'");
+		if($check == NULL)
+		{
+			return FALSE;
+		}
+		else{
+			return TRUE;
+		}
+	}
+
+	public static function addQuestionTags($tag, $assignQID){
+		$tag = strtolower($tag);
+		$db = (new Database())->connectToDatabase();
+		$check = $db->query("INSERT INTO Encompass (tagName, QID) VALUES ('$tag', '$assignQID')");
+		return $check;
+	}
+
+	public static function addVote($QID, $userName, $nature)
+	{
+		$db = (new Database())->connectToDatabase();
+		$status = $db->query("INSERT INTO QuestionVotes (QID, userName, nature) VALUES ('$QID', '$userName', '$nature')");
+		return $status;
+	}
+
+	public static function checkAlreadyVoted($QID, $userName)
+	{
+		$db = (new Database())->connectToDatabase();
+		$db->query("SELECT userName FROM QuestionVotes WHERE QID='$QID' AND userName='$userName'");
+		$name = $db->fetch_assoc_all()[0]['userName'];
+		return $name;
+	}
+
+	public static function checkVoteNature($QID, $userName)
+	{
+		$db = (new Database())->connectToDatabase();
+		$db->query("SELECT nature FROM QuestionVotes WHERE QID='$QID' AND userName='$userName'");
+		$nature = $db->fetch_assoc_all()[0]['nature'];
+		return $nature;
+	}
+
+	public static function updateVote($QID, $userName, $nature)
+	{
+		$db = (new Database())->connectToDatabase();
+		$status = $db->query("UPDATE QuestionVotes SET nature=$nature WHERE QID='$QID' AND userName='$userName'");
+		return $status;
 	}
 
 	public static function compareVoteUp($a, $b){

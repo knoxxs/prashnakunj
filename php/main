@@ -1,8 +1,7 @@
 <?php
-require_once __DIR__.'/includes/base.php';
 
+require_once __DIR__.'/includes/base.php';
 header('Access-Control-Allow-Origin: *');
-set_time_limit(1900);
 
 define('PATH_REGEX_PATTERN',"!\/([^\/]+)!");
 @session_start();
@@ -13,6 +12,7 @@ $base = new Base();
 $result = '';
 
 //TODO: session_start placing for minimizing auto serializing errors, cuurently only placed in login constructor
+print_r($regMatches);
 if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 	switch ($regMatches[1][0]) {
 		case 'register':
@@ -39,22 +39,22 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 					$result = json_encode( array('head' => array('status' => 500, 'message'=>''), 'body' => '') );
 				}
 			}else{
-				$result = json_encode( array('head' => array('status' => 200, 'message'=>'Only '.sizeof($_POST).' fields received, required 2'), 'body' => '') );
+				$result = json_encode( array('head' => array('status' => 206, 'message'=>'Only '.sizeof($_POST).' fields received, required 2'), 'body' => '') );
 			}
 			break;
 
 		case 'logout':
+			if(sizeof($_POST) == 1){
 				require_once __DIR__.'/includes/login.php';
-				if($base->validateVar($_SESSION) && $base->validateVar($_SESSION['user'])){
-					$login = new Login(unserialize($_SESSION['user'])->getUserName());
-					if($login->logout()){
-						$result = $login->toJson();
-					}else{
-						$result = json_encode( array('head' => array('status' => 500, 'message'=>''), 'body' => '') );
-					}
+				$login = new Login($_POST['userName']);
+				if($login->logout()){
+					$result = $login->toJson();
 				}else{
-					$result = json_encode( array('head' => array('status' => 406, 'message'=>'No user Logged In'), 'body' => '') );;
+					$result = json_encode( array('head' => array('status' => 500, 'message'=>''), 'body' => '') );
 				}
+			}else{
+				$result = json_encode( array('head' => array('status' => 206, 'message'=>'Only '.sizeof($_POST).' fields received, required 1'), 'body' => '') );
+			}
 			break;
 
 		case 'list':
@@ -65,11 +65,7 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 						switch($regMatches[1][1]) {
 							case 'favourite':
 								require_once __DIR__.'/includes/user.php';
-								require_once __DIR__.'/includes/reviewer.php';
 								$user = unserialize($_SESSION['user']);
-								if( isset($regMatches[1][2]) && ( !empty($regMatches[1][2]) ) && ($regMatches[1][2] == 'more') ){
-									$user->fetchFavListArray($type);
-								}
 								$list = $user->getFavListArray($type);
 								$base->result = $user->result;
 								$base->result['body'] = $list;
@@ -78,9 +74,6 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 							case 'watchLater':
 								require_once __DIR__.'/includes/user.php';
 								$user = unserialize($_SESSION['user']);
-								if( isset($regMatches[1][2]) && ( !empty($regMatches[1][2]) ) && ($regMatches[1][2] == 'more') ){
-									$user->getWatchLaterListArray($type);
-								}
 								$list = $user->getWatchLaterListArray($type);
 								$base->result = $user->result;
 								$base->result['body'] = $list;
@@ -89,43 +82,10 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 							case 'history':
 								require_once __DIR__.'/includes/user.php';
 								$user = unserialize($_SESSION['user']);
-								if( isset($regMatches[1][2]) && ( !empty($regMatches[1][2]) ) && ($regMatches[1][2] == 'more') ){
-									$user->getHistoryListArray($type);
-								}
 								$list = $user->getHistoryListArray($type);
 								$base->result = $user->result;
 								$base->result['body'] = $list;
 								$result = json_encode($base->result);
-								break;
-							case 'reviewHistory':
-								if($base->validateVar($_SESSION['isReviewer']) && $_SESSION['isReviewer']){
-									require_once __DIR__.'/includes/reviewer.php';
-									$user = unserialize($_SESSION['user']);
-									if( isset($regMatches[1][2]) && ( !empty($regMatches[1][2]) ) && ($regMatches[1][2] == 'more') ){
-										$user->getReviewHistoryListArray();
-									}
-									$list = $user->getReviewHistoryListArray();
-									$base->result = $user->result;
-									$base->result['body'] = $list;
-									$result = json_encode($base->result);
-								}else{
-									$result = json_encode( array('head' => array('status' => 401, 'message'=>"Don't have reviewer Access"), 'body' => '') );
-								}
-								break;
-							case 'toBeReview':
-								if($base->validateVar($_SESSION['isReviewer']) && $_SESSION['isReviewer']){
-									require_once __DIR__.'/includes/reviewer.php';
-									$user = unserialize($_SESSION['user']);
-									if( isset($regMatches[1][2]) && ( !empty($regMatches[1][2]) ) && ($regMatches[1][2] == 'more') ){
-										$user->getToBeReviewListArray();
-									}
-									$list = $user->getToBeReviewListArray();
-									$base->result = $user->result;
-									$base->result['body'] = $list;
-									$result = json_encode($base->result);
-								}else{
-									$result = json_encode( array('head' => array('status' => 401, 'message'=>"Don't have reviewer Access"), 'body' => '') );
-								}
 								break;
 							default:
 								$result = json_encode( array('head' => array('status' => 400, 'message'=>'No such list'), 'body' => '') );
@@ -151,96 +111,14 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 
 		case 'questions':
 			if(sizeof($_GET) == 4){
-				require_once __DIR__.'/includes/question.php';
+				require_once __DIR__.'/includes/Question.php';
 				if( $base->validateVar($_GET['type']) && $base->validateVar($_GET['number']) && $base->validateVar($_GET['latestQuestionTime']) && $base->validateVar($_GET['scroll']) ){
 					$result = Question::getQuestions($_GET['type'], $_GET['number'], $_GET['latestQuestionTime'], $_GET['scroll']);
-					$result = json_encode($result);
 				}else{
 					$result = json_encode( array('head' => array('status' => 206, 'message'=>'Incomplete field'), 'body' => '') );
 				}
 			}else{
 				$result = json_encode( array('head' => array('status' => 206, 'message'=>'Only '.sizeof($_GET).' fields received, required 4'), 'body' => '') );
-			}
-			break;
-
-		case 'question':
-			if( isset($regMatches[1][1]) && ( !empty($regMatches[1][1]) ) ){
-				require_once __DIR__.'/includes/question.php';
-				$id = $regMatches[1][1];
-					$result = new Question($id);
-					$result = json_encode($result->toArray());
-			}else{
-				$result = json_encode( array('head' => array('status' => 206, 'message'=>'Incomplete field'), 'body' => '') );
-			}
-			break;
-
-		case 'search':
-			if( sizeof($_GET) == 1 ){
-				require_once __DIR__.'/includes/question.php';
-				if($base->validateVar($_GET['tag'])){
-					$result = Question::searchTag($_GET['tag']);
-					$result = array("head" => array('status' => 200, 'message'=>''), 'body' => $result);
-					$result = json_encode($result);
-				}else{
-					$result = json_encode( array('head' => array('status' => 206, 'message'=>'Incomplete field'), 'body' => '') );
-				}
-			}else{
-				$result = json_encode( array('head' => array('status' => 206, 'message'=>'Received 0 fields expected 1'), 'body' => '') );
-			}
-			break;
-
-		case 'reviewLock':
-			if(sizeof($_GET) == 3){
-				require_once __DIR__.'/includes/reviewer.php';
-				//if( $base->validateVar($_GET['QID']) && $base->validateVar($_GET['suggestionUserName']) && $base->validateVar($_GET['suggestionTimeStamp']) ){
-				if( ($base->validateVar($_GET['QID']) && empty($_GET['suggestionUserName']) && empty($_GET['suggestionTimeStamp']) )  ||  ($base->validateVar($_GET['QID']) && $base->validateVar($_GET['suggestionUserName']) && $base->validateVar($_GET['suggestionTimeStamp']) )){
-					if($base->isLoggedIn()){
-						if($_SESSION['isReviewer']){
-							$suggestionUserName = $_GET['suggestionUserName'] == "null" ?NULL :$_GET['suggestionUserName'];
-							$suggestionTimeStamp = $_GET['suggestionTimeStamp'] == "null" ?NULL :$_GET['suggestionTimeStamp'];
-							if(unserialize($_SESSION['user'])->setLock($_GET['QID'], $suggestionUserName, $suggestionTimeStamp)){
-								session_write_close();
-								$_SESSION['LAST_ACTIVITY'] = time();
-								while(isset($_SESSION['LAST_ACTIVITY']) && (time() - $_SESSION['LAST_ACTIVITY'] < DEFAULT_SLEEP_TIME) && isset($_SESSION['locked'])) {
-									sleep(10);
-								}
-								unserialize($_SESSION['user'])->removeLock();
-								$result = unserialize($_SESSION['user'])->result;
-								$result['body'] = '';
-								$result = json_encode($result);
-							}else{
-								$result = json_encode( array('head' => array('status' => 500, 'message'=>'Internal Server Error'), 'body' => '') );
-							}
-						}else{
-							$result = json_encode( array('head' => array('status' => 409, 'message'=>'Not have rights'), 'body' => '') );
-						}
-					}else{
-						$result = json_encode( array('head' => array('status' => 401, 'message'=>'Not Logged In'), 'body' => '') );
-					}
-				}else{
-					$result = json_encode( array('head' => array('status' => 206, 'message'=>'Incomplete field'), 'body' => '') );
-				}
-			}else{
-				$result = json_encode( array('head' => array('status' => 206, 'message'=>'Only '.sizeof($_GET).' fields received, required 3'), 'body' => '') );
-			}
-			break;
-
-		case 'reviewUnlock':
-			require_once __DIR__.'/includes/reviewer.php';
-			//if( $base->validateVar($_GET['QID']) && $base->validateVar($_GET['suggestionUserName']) && $base->validateVar($_GET['suggestionTimeStamp']) ){
-			if($base->isLoggedIn()){
-				if($_SESSION['isReviewer']){
-					if(unserialize($_SESSION['user'])->removeLock()){
-						$result = json_encode( array('head' => array('status' => 200), 'body' => '') );
-					}else{
-						$result = json_encode( array('head' => array('status' => 500, 'message'=>'Internal Server Error'), 'body' => '') );
-					}
-					$result = json_encode($result);
-				}else{
-					$result = json_encode( array('head' => array('status' => 409, 'message'=>'Not have rights'), 'body' => '') );
-				}
-			}else{
-				$result = json_encode( array('head' => array('status' => 401, 'message'=>'Not Logged In'), 'body' => '') );
 			}
 			break;
 

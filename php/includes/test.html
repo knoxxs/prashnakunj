@@ -1,0 +1,22 @@
+<html>
+<head>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+</head>
+<body>
+	<input type="button" id="a">
+<script>
+	if (typeof jQuery == 'undefined') {
+   		alert("Hello! I am an alert box!!");
+	}
+	$('#a').click(function(){
+		data = {};
+		data['id'] = 48;
+		data['string'] = 'This is a test comment';
+		console.log(data);
+		$.post('http://localhost/github/prashnakunj/php/main/question/qcomment/post', data, function(result){
+		console.log(result);
+		}, 'json');  
+	});
+</script>
+</body>
+</html>

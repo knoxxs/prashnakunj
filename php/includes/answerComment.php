@@ -22,7 +22,7 @@ class AnswerComment extends Base
 
 		//fetching Votes
 		$db = $this->getDb();
-		$db->query("SELECT userName,nature FROM AnswerCommentVotes WHERE QID=? AND commentUserName=? AND answerCommentTimeStamp=?",array($this->QID, $this->userName, $this->timeStamp));
+		$db->query("SELECT userName,nature FROM AnswerCommentVotes WHERE QID=? AND reviewerID=? AND answerTimeStamp=? AND answerCommentTimeStamp=? AND commentUserName=?",array($this->QID, $this->reviewerID, $this->answerTimeStamp, $this->timeStamp, $this->userName));
 		$alreadyVoted = 0;
 		$voteUp = 0;
 		$voteDown = 0;
@@ -50,6 +50,12 @@ class AnswerComment extends Base
 		$this->voteUp = $voteUp;
 		$this->voteDown = $voteDown;
 		$this->alreadyVoted = $alreadyVoted;
+	}
+
+	public static function addComment(array $data){
+		$db = (new Database())->connectToDatabase();
+		$status = $db->query("INSERT INTO AnswerComment (QID, reviewerID, answerTimeStamp, userName, string) VALUES (?,?,?,?,?)", $data);
+		return $status;
 	}
 
 	public function toArray(){
