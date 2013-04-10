@@ -98,15 +98,21 @@ class Reviewer extends User{
 		}
 	}
 	public function removeLock(){
-		$review = unserialize($_SESSION['locked']);
-		if($review->unlockReview()){
-			unset($_SESSION['locked']);
-			unset($_SESSION['LAST_ACTIVITY']);
-			$result = $review->result;
-			return true;
+		if($this->validateVar($_SESSION['locked'])){
+			$review = unserialize($_SESSION['locked']);
+			
+			if($review->unlockReview()){
+				unset($_SESSION['locked']);
+				unset($_SESSION['LAST_ACTIVITY']);
+				$result = array('head' => $review->result['head'], 'body' => '');
+				return true;
+			}else{
+				$result = $review->result;
+				return false;
+			}
 		}else{
-			$result = $review->result;
-			return false;
+			$result = array('head' => array('status' => 400, 'message'=>'No lock exists'), 'body' => '') ;
+			return true;
 		}
 	}
 } 

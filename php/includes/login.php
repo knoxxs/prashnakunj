@@ -98,9 +98,12 @@ class Login extends Base
 
 	public function toJson(){
 		if($this->validateVar($_SESSION)){
-			$this->result['body']['firstName'] = unserialize($_SESSION['user'])->getFirstName();
-			$this->result['body']['lastName'] = unserialize($_SESSION['user'])->getLastName();
-			$this->result['body']['reputation'] = unserialize($_SESSION['user'])->getReputation();
+			$user = unserialize($_SESSION['user']);
+			$this->result['body']['firstName'] = $user->getFirstName();
+			$this->result['body']['lastName'] = $user->getLastName();
+			$this->result['body']['reputation'] = $user->getReputation();
+			$this->result['body']['city'] = $user->getCity();
+			$this->result['body']['affiliation'] = $user->getAffiliation();
 			$this->result['body']['isReviewer'] = $_SESSION['isReviewer'];
 		}
 		return json_encode($this->result);
