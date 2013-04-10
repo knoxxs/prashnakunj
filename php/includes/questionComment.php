@@ -62,11 +62,8 @@ class QuestionComment extends Base
 		$object['voteDown'] = $this->voteDown;
 		$object['alreadyVoted'] = $this->alreadyVoted;
 		return ($object);
-	/*public static function addComment($QID, $userName, $string){
-		$db = $this->getDb();
-		$db->query("INSERT INTO QuestionComment (QID, userName, string) VALUES ('$QID', '$userName', '$string')");
-		// return boolean for correct insert of comment. 
-	}*/
+
+	}
 
 	public static function addComment(array $data){
 		$db = (new Database())->connectToDatabase();
