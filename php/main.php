@@ -178,6 +178,74 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 			}
 			break;
 
+		case 'forgotpwd':
+			if( isset($regMatches[1][1]) && ( !empty($regMatches[1][1]) ) ){
+				if($base->isLoggedIn()){
+					switch ($regMatches[1][1]) {
+						case 'checkuname':
+							if (sizeof($_POST) == 1) {
+								require_once __DIR__.'/includes/user.php';
+								$check = User::unameExists($_POST['userName']);
+								if ($check == $_POST['userName']) {
+									$SID = User::securityQuestionNumber($check);
+									if ($SID != NULL) {
+										$result = json_encode( array('head' => array('status' => 200, 'message'=>'UserName exists in database'), 'body' => '$SID') );
+									}
+									else{
+										$result = json_encode( array('head' => array('status' => 500, 'message'=>'Internal Error no security question found'), 'body' => '') );
+									}	
+								}
+								else{
+									$result = json_encode( array('head' => array('status' => 404, 'message'=>'UserName Not Found'), 'body' => '') );
+								}
+							}
+							else{
+								$result = json_encode( array('head' => array('status' => 206, 'message'=>'Only '.sizeof($_POST).' fields received, required 1'), 'body' => '') );
+							}
+							break;
+
+						case 'updatepwd':
+							if (sizeof($_POST) == 4) {
+								require_once __DIR__.'/includes/user.php';
+								$answer = User::securityAnswer($_POST['userName']);
+								if ($answer != NULL) {
+									$SID = User::securityQuestionNumber($_POST['userName']);
+									if ($answer == $_POST['securityAnswer'] && $SID == $_POST['securityQuestionNumber']) {
+										$update = User::updatePwd($_POST['userName'], $_POST['newPassword']);
+										if ($update) {
+											$result = json_encode( array('head' => array('status' => 200, 'message'=>'Password Updated Successfully'), 'body' => '') );
+										}
+										else{
+											$result = json_encode( array('head' => array('status' => 500, 'message'=>'Internal Error - Password Update Unsuccessfull'), 'body' => '') );
+										}
+									}
+									else{
+										$result = json_encode( array('head' => array('status' => 401, 'message'=>'Authorization Failed'), 'body' => '') );
+									}
+								}
+								else{
+									$result = json_encode( array('head' => array('status' => 500, 'message'=>'Internal Error - No security Answer Found'), 'body' => '') );
+								}
+							}
+							else{
+								$result = json_encode( array('head' => array('status' => 206, 'message'=>'Only '.sizeof($_POST).' fields received, required 4'), 'body' => '') );
+							}
+							break;
+						
+						default:
+							$result = json_encode( array('head' => array('status' => 400, 'message'=>'No such call for this url'), 'body' => '') );
+							break;
+					}
+				}
+				else{
+					$result = json_encode( array('head' => array('status' => 401, 'message'=>'Not Logged In'), 'body' => '') );
+				}
+			}
+			else{
+				$result = json_encode( array('head' => array('status' => 206, 'message'=>'URL Incomplete'), 'body' => '') );
+			}
+			break;
+
 		case 'reviewLock':
 			if(sizeof($_GET) == 3){
 				require_once __DIR__.'/includes/reviewer.php';

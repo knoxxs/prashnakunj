@@ -284,6 +284,51 @@ class User extends Base{
 		return (new Profile($this->userName));
 	}
 
+	public static function unameExists($uname)
+	{
+		$db = (new Database())->connectToDatabase();
+		$records = $db->query("SELECT userName FROM user WHERE userName=$uname");
+		if($db->returned_rows > 0){
+			$name = $db->fetch_assoc_all()[0]['userName'];
+		}
+		else{
+			$name = NULL;
+		}
+		return $name;
+	}
+
+	public static function securityQuestionNumber($uname)
+	{
+		$db = (new Database())->connectToDatabase();
+		$records = $db->query("SELECT securityQuestionID FROM user WHERE userName=$uname");
+		if($db->returned_rows > 0){
+			$SID = $db->fetch_assoc_all()[0]['securityQuestionID'];
+		}
+		else{
+			$SID = NULL;
+		}
+		return $SID;
+	}
+
+	public static function securityAnswer($uname)
+	{
+		$db = (new Database())->connectToDatabase();
+		$records = $db->query("SELECT securityAnswer FROM user WHERE userName=$uname");
+		if($db->returned_rows > 0){
+			$SAnswer = $db->fetch_assoc_all()[0]['securityQuestionID'];
+		}
+		else{
+			$SAnswer = NULL;
+		}
+		return $SAnswer;
+	}
+
+	public static function updatePwd($uname, $newPwd)
+	{
+		$db = (new Database())->connectToDatabase();
+		$status = $db->query("UPDATE user SET password=$newPwd WHERE userName=$uname");
+		return $status;
+	}
 
 	//TODO: Need to check password before
 	/**
