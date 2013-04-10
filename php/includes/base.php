@@ -4,7 +4,7 @@ require_once __DIR__.'/initialize_database.php';
 define('MORE_SIZE', 10);
 define('DEFAULT_TYPE', 'timestamp');
 define('DEFAULT_TIME_DELAY_FOR_LOCK', 1800);
-define('DEFAULT_SLEEP_TIME', 10);
+define('DEFAULT_SLEEP_TIME', 1800);
 
 class Base{
 
