@@ -255,7 +255,7 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 			if(sizeof($_GET == 1)){
 				require_once __DIR__.'/includes/question.php';
 				$object = Question::topTenTags();
-				$result = array("head" => array('status' => 200, 'message'=>'Top Ten Tags'), 'body' => $object);
+				$result = json_encode( array("head" => array('status' => 200, 'message'=>'Top Ten Tags'), 'body' => $object) );
 			}
 			else{
 				$result = json_encode( array('head' => array('status' => 206, 'message'=>'Only '.sizeof($_GET).' fields received, required 1'), 'body' => '') );

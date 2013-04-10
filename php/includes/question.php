@@ -322,8 +322,9 @@ class Question extends Base
 	public static function topTenTags()
 	{
 		$db = (new Database())->connectToDatabase();
-		$records = $db->query("SELECT count(QID) as count_qid, tagName FROM Encompass GROUP BY tagName ORDER BY count_qid DESC LIMIT 0, 9");
-		$object= array(); 
+		$db->query("SELECT COUNT( QID ) AS count_qid, tagName FROM Encompass GROUP BY tagName ORDER BY count_qid DESC LIMIT 10");
+		$records = $db->fetch_assoc_all();
+		$object = array(); 
 		foreach ($records as $key => $value) {
 			array_push($object, $value['tagName']);
 		}
