@@ -287,7 +287,7 @@ class User extends Base{
 	public static function unameExists($uname)
 	{
 		$db = (new Database())->connectToDatabase();
-		$records = $db->query("SELECT userName FROM user WHERE userName=$uname");
+		$records = $db->query("SELECT userName FROM user WHERE userName='$uname'");
 		if($db->returned_rows > 0){
 			$name = $db->fetch_assoc_all()[0]['userName'];
 		}
@@ -300,7 +300,7 @@ class User extends Base{
 	public static function securityQuestionNumber($uname)
 	{
 		$db = (new Database())->connectToDatabase();
-		$records = $db->query("SELECT securityQuestionID FROM user WHERE userName=$uname");
+		$records = $db->query("SELECT securityQuestionID FROM user WHERE userName='$uname'");
 		if($db->returned_rows > 0){
 			$SID = $db->fetch_assoc_all()[0]['securityQuestionID'];
 		}
@@ -313,9 +313,9 @@ class User extends Base{
 	public static function securityAnswer($uname)
 	{
 		$db = (new Database())->connectToDatabase();
-		$records = $db->query("SELECT securityAnswer FROM user WHERE userName=$uname");
+		$records = $db->query("SELECT securityAnswer FROM user WHERE userName='$uname'");
 		if($db->returned_rows > 0){
-			$SAnswer = $db->fetch_assoc_all()[0]['securityQuestionID'];
+			$SAnswer = $db->fetch_assoc_all()[0]['securityAnswer'];
 		}
 		else{
 			$SAnswer = NULL;
@@ -325,8 +325,9 @@ class User extends Base{
 
 	public static function updatePwd($uname, $newPwd)
 	{
+		$pwd = md5($newPwd);
 		$db = (new Database())->connectToDatabase();
-		$status = $db->query("UPDATE user SET password=$newPwd WHERE userName=$uname");
+		$status = $db->query("UPDATE user SET password='$pwd' WHERE userName='$uname'");
 		return $status;
 	}
 
