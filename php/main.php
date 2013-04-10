@@ -163,17 +163,6 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 			}
 			break;
 
-		case 'question':
-			if( isset($regMatches[1][1]) && ( !empty($regMatches[1][1]) ) ){
-				require_once __DIR__.'/includes/question.php';
-				$id = $regMatches[1][1];
-					$result = new Question($id);
-					$result = json_encode($result->toArray());
-			}else{
-				$result = json_encode( array('head' => array('status' => 206, 'message'=>'Incomplete field'), 'body' => '') );
-			}
-			break;
-
 		case 'search':
 			if( sizeof($_GET) == 1 ){
 				require_once __DIR__.'/includes/question.php';
@@ -246,7 +235,13 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 
 		case 'question':
 			if( isset($regMatches[1][1]) && ( !empty($regMatches[1][1]) ) ){
-				if($base->isLoggedIn()){
+				if(intval($regMatches[1][1]) > 0){
+					require_once __DIR__.'/includes/question.php';
+					$id = $regMatches[1][1];
+						$result = new Question($id);
+						$result = json_encode($result->toArray());
+				}
+				elseif($base->isLoggedIn()){
 					switch($regMatches[1][1]){
 						case 'post':
 							print_r($_POST);
@@ -668,6 +663,8 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 				{
 					$result = json_encode( array('head' => array('status' => 401, 'message'=>'Not Logged In'), 'body' => '') );
 				}
+			}else{
+				$result = json_encode( array('head' => array('status' => 206, 'message'=>'Incomplete field'), 'body' => '') );
 			}
 			break;	
 
