@@ -278,8 +278,13 @@ class Question extends Base
 	public static function checkAlreadyVoted($QID, $userName)
 	{
 		$db = (new Database())->connectToDatabase();
-		$db->query("SELECT userName FROM QuestionVotes WHERE QID='$QID' AND userName='$userName'");
-		$name = $db->fetch_assoc_all()[0]['userName'];
+		$records = $db->query("SELECT userName FROM QuestionVotes WHERE QID='$QID' AND userName='$userName'");
+		if($db->returned_rows > 0){
+			$name = $db->fetch_assoc_all()[0]['userName'];
+		}
+		else{
+			$name = NULL;
+		}
 		return $name;
 	}
 
