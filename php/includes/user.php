@@ -270,7 +270,7 @@ class User extends Base{
 		$tagList = array();
 		$records = $db->fetch_assoc_all();
 		foreach ($records as $key => $value) {
-			array_push($tagList, $value['name']);
+			array_push($tagList, $value['tagName']);
 		}
 		$this->subscriptionList = $tagList;
 		$this->result['head']['status'] = 200;

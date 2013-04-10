@@ -250,9 +250,10 @@ class Question extends Base
 	}
 
 	public static function findTags($tag){
+		$tag = strtolower($tag);
 		$db = (new Database())->connectToDatabase();
 		$check = $db->query("SELECT name FROM Tags WHERE name='$tag'");
-		if($check == NULL)
+		if($db->returned_rows <= 0)
 		{
 			return FALSE;
 		}

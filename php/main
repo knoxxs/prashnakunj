@@ -330,12 +330,8 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 								$assignQID = Question::generateQID();
 								$uname = unserialize($_SESSION['user']);
 								$user = $uname->getUsername();
-								$insertStatus = Question::addQuestion(array(
-									'assignQID' => $assignQID, 
-									'newString' => $_POST['questionString'],
-									'difficultyLevel' => $_POST['difficultyLevel'], 
-									'user' => $user));
 								$tags = $_POST['tags'];
+								$tagAdded = FALSE;
 								foreach ($tags as $key => $value) {
 									$check = Question::findTags($value);
 									if($check){
@@ -346,15 +342,22 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 										}
 									}
 									else{
-										$result = json_encode( array('head' => array('status' => 404, 'message'=>'Tag '.$value.' does not exist'), 'body' => '') );
+										$result = json_encode( array('head' => array('status' => 409, 'message'=>'Tag '.$value.' does not exist. Unable to add question. Use existing tag or First define a tag then use it.'), 'body' => '') );
 										break;
 									}
 								}
-								if ($insertStatus) {
-									$result = json_encode( array('head' => array('status' => 200, 'message'=>'Question Added Successfully'), 'body' => '') );
-								}
-								else{
-									$result = json_encode( array('head' => array('status' => 500, 'message'=>'Internal Error - No Insert Status'), 'body' => '') );
+								if ($tagAdded) {
+									$insertStatus = Question::addQuestion(array(
+									'assignQID' => $assignQID, 
+									'newString' => $_POST['questionString'],
+									'difficultyLevel' => $_POST['difficultyLevel'], 
+									'user' => $user));
+									if ($insertStatus) {
+										$result = json_encode( array('head' => array('status' => 200, 'message'=>'Question Added Successfully'), 'body' => '') );
+									}
+									else{
+										$result = json_encode( array('head' => array('status' => 500, 'message'=>'Internal Error - No Insert Status'), 'body' => '') );
+									}
 								}
 							}
 							else{
