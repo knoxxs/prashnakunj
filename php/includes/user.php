@@ -287,7 +287,7 @@ class User extends Base{
 	public static function unameExists($uname)
 	{
 		$db = (new Database())->connectToDatabase();
-		$records = $db->query("SELECT userName FROM user WHERE userName='$uname'");
+		$records = $db->query("SELECT userName FROM User WHERE userName='$uname'");
 		if($db->returned_rows > 0){
 			$name = $db->fetch_assoc_all()[0]['userName'];
 		}
@@ -300,7 +300,7 @@ class User extends Base{
 	public static function securityQuestionNumber($uname)
 	{
 		$db = (new Database())->connectToDatabase();
-		$records = $db->query("SELECT securityQuestionID FROM user WHERE userName='$uname'");
+		$records = $db->query("SELECT securityQuestionID FROM User WHERE userName='$uname'");
 		if($db->returned_rows > 0){
 			$SID = $db->fetch_assoc_all()[0]['securityQuestionID'];
 		}
@@ -313,7 +313,7 @@ class User extends Base{
 	public static function securityAnswer($uname)
 	{
 		$db = (new Database())->connectToDatabase();
-		$records = $db->query("SELECT securityAnswer FROM user WHERE userName='$uname'");
+		$records = $db->query("SELECT securityAnswer FROM User WHERE userName='$uname'");
 		if($db->returned_rows > 0){
 			$SAnswer = $db->fetch_assoc_all()[0]['securityAnswer'];
 		}
@@ -327,7 +327,7 @@ class User extends Base{
 	{
 		$pwd = md5($newPwd);
 		$db = (new Database())->connectToDatabase();
-		$status = $db->query("UPDATE user SET password='$pwd' WHERE userName='$uname'");
+		$status = $db->query("UPDATE User SET password='$pwd' WHERE userName='$uname'");
 		return $status;
 	}
 
@@ -339,6 +339,6 @@ class User extends Base{
 	 * @return [type]           True or False
 	 */
 	public static function del($userName){
-		return (new Database())->connectToDatabase()->query('DELETE FROM user WHERE userName=?',array($userName));
+		return (new Database())->connectToDatabase()->query('DELETE FROM User WHERE userName=?',array($userName));
 	}
 }
