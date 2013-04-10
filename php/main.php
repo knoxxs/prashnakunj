@@ -198,7 +198,7 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 								$result['body'] = '';
 								$result = json_encode($result);
 							}else{
-								$result = json_encode( array('head' => array('status' => 500, 'message'=>'Internal Server Error'), 'body' => '') );
+								$result = json_encode( array('head' => array('status' => 409, 'message'=>'Already Locked'), 'body' => '') );
 							}
 						}else{
 							$result = json_encode( array('head' => array('status' => 409, 'message'=>'Not have rights'), 'body' => '') );
@@ -220,7 +220,7 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 			if($base->isLoggedIn()){
 				if($_SESSION['isReviewer']){
 					if(unserialize($_SESSION['user'])->removeLock()){
-						$result = json_encode( array('head' => array('status' => 200), 'body' => '') );
+						$result = 
 					}else{
 						$result = json_encode( array('head' => array('status' => 500, 'message'=>'Internal Server Error'), 'body' => '') );
 					}

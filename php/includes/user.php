@@ -3,7 +3,7 @@ require_once __DIR__.'/questionPromo.php';
 require_once __DIR__.'/base.php';
 
 class User extends Base{ 
-	protected $userName, $firstname, $lastname, $reputation, $favList, $watchLaterList, $historyList, $subscriptionList;
+	protected $userName, $firstname, $lastname, $reputation, $favList, $watchLaterList, $historyList, $subscriptionList, $city, $affiliation;
 
 	/**
 	 * [__construct description]
@@ -14,11 +14,13 @@ class User extends Base{
 
 		$this->userName = $userName;
 		$db = $this->getDb();
-		$db->query("SELECT firstname, lastname,reputation FROM User WHERE userName=?",array($userName));
+		$db->query("SELECT firstname, lastname,reputation,city,affiliation FROM User WHERE userName=?",array($userName));
 		$records = $db->fetch_assoc_all();
 		$this->firstname = $records[0]['firstname'];
 		$this->lastname = $records[0]['lastname'];
 		$this->reputation = $records[0]['reputation'];
+		$this->city = $records[0]['city'];
+		$this->affiliation = $records[0]['affiliation'];
 		
 		$this->watchLaterList['type'] = DEFAULT_TYPE;
 		$this->watchLaterList['list'] = array();
@@ -46,6 +48,14 @@ class User extends Base{
 	
 	public function getLastname(){
 		return $this->lastname;
+	}					
+
+	public function getCity(){
+		return $this->city;
+	}					
+
+	public function getAffiliation(){
+		return $this->affiliation;
 	}					
 
 	public function getFavList($type){
