@@ -318,6 +318,17 @@ class Question extends Base
 
 		return $object;
 	}
+
+	public static function topTenTags()
+	{
+		$db = (new Database())->connectToDatabase();
+		$records = $db->query("SELECT count(QID) as count_qid, tagName FROM Encompass GROUP BY tagName ORDER BY count_qid DESC LIMIT 0, 9");
+		$object= array(); 
+		foreach ($records as $key => $value) {
+			array_push($object, $value['tagName']);
+		}
+		return $object;
+	}
 }
 
 
