@@ -304,7 +304,7 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 			if($base->isLoggedIn()){
 				if($_SESSION['isReviewer']){
 					if(unserialize($_SESSION['user'])->removeLock()){
-						$result = 
+						$result = unserialize($_SESSION['user'])->result;
 					}else{
 						$result = json_encode( array('head' => array('status' => 500, 'message'=>'Internal Server Error'), 'body' => '') );
 					}
