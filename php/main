@@ -12,7 +12,6 @@ $base = new Base();
 $result = '';
 
 //TODO: session_start placing for minimizing auto serializing errors, cuurently only placed in login constructor
-print_r($regMatches);
 if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 	switch ($regMatches[1][0]) {
 		case 'register':
