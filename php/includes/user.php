@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__.'/questionPromo.php';
 require_once __DIR__.'/base.php';
+require_once __DIR__.'/reviewer.php';
 
 class User extends Base{ 
 	protected $userName, $firstname, $lastname, $reputation, $favList, $watchLaterList, $historyList, $subscriptionList, $city, $affiliation;
