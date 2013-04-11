@@ -262,6 +262,20 @@ class Question extends Base
 		}
 	}
 
+	public static function createTag($tag, $uname)
+	{
+		$db = (new Database())->connectToDatabase();
+		$check = $db->query("INSERT INTO Tags (name, userName) VALUES ('$tag', '$uname')");
+		return $check;
+	}
+
+	public static function addParent($tag, $parent)
+	{
+		$db = (new Database())->connectToDatabase();
+		$check = $db->query("INSERT INTO ChildOf (name, parent) VALUES ('$tag', '$parent')");
+		return $check;
+	}
+
 	public static function addQuestionTags($tag, $assignQID){
 		$tag = strtolower($tag);
 		$db = (new Database())->connectToDatabase();
