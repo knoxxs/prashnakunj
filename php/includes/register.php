@@ -120,5 +120,39 @@ class Register extends Base{
 		$this->result = array("head" => $this->head , "body" => '');
 		return true;
 	}
+
+	public static function userDetail($uname)
+	{
+		$db = (new Database())->connectToDatabase();
+		$db->query("SELECT * FROM User WHERE userName='$uname'");
+		$records = $db->fetch_assoc_all()[0];
+		$object = array();
+		$object['userName'] = $records['userName'];
+		$object['firstName'] = $records['firstName'];
+		$object['lastName'] = $records['lastName'];
+		$object['email'] = $records['email'];
+		$object['reputation'] = $records['reputation'];
+		$object['phone'] = $records['phone'];
+		$object['DOB'] = $records['DOB'];
+		$object['gender'] = $records['gender'];
+		$object['qualification'] = $records['qualification'];
+		$object['interests'] = $records['interests'];
+		$object['country'] = $records['country'];
+		$object['city'] = $records['city'];
+		$object['state'] = $records['state'];
+		$object['affiliation'] = $records['affiliation'];
+		$object['securityQuestionID'] = $records['securityQuestionID'];
+		$object['securityAnswer'] = $records['securityAnswer'];
+		$object['areasOfExpertise'] = $records['areasOfExpertise'];
+
+		return $object;
+	}
+
+	public static function modifyDetail($uname, array $data)
+	{
+		$db = (new Database())->connectToDatabase();
+		$status = $db->query("UPDATE User SET firstName=?, lastName=?, email=?, phone=?, DOB=?,  gender=?, qualification=?, interests=?, country=?, city=?, state=?, affiliation=?, securityQuestionID=?, securityAnswer=?, areasOfExpertise=? WHERE userName='$uname'", $data);
+		return $status;
+	}
 }
 ?>
