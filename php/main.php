@@ -755,7 +755,6 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 										require_once __DIR__.'/includes/user.php';
 										if($base->validateVar($_GET['QID']) && $base->validateVar($_GET['nature']) && $base->validateVar($_GET['reviewer']) )
 										{
-											echo "hellooooooooo";
 											$user = unserialize($_SESSION['user']);
 											$uname = $user->getUsername();
 											$voteStatus = Answer::checkAlreadyVoted(array(
@@ -763,7 +762,6 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 												'reviewer' => $_GET['reviewer'],
 												'userName' => $uname));
 											if($voteStatus == $uname){
-												echo "hiiiiiiii";
 												$voteNature = Answer::checkVoteNature(array(
 												'QID' => $_GET['QID'],
 												'reviewer' => $_GET['reviewer'],

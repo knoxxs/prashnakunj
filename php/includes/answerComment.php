@@ -54,7 +54,7 @@ class AnswerComment extends Base
 
 	public static function addComment(array $data){
 		$db = (new Database())->connectToDatabase();
-		$status = $db->query("INSERT INTO AnswerComment (QID, reviewerId, answerTimeStamp, userName, string) VALUES (?,?,?,?,?)", $data);
+		$status = $db->query("INSERT INTO AnswerComment (QID, reviewerId, answerTimeStamp, string, userName) VALUES (?,?,?,?,?)", $data);
 		return $status;
 	}
 
