@@ -4,12 +4,12 @@ require_once __DIR__.'/base.php';
 
 class AnswerComment extends Base
 {
-	private $QID, $userName, $string, $timeStamp, $voteUp, $voteDown, $alreadyVoted, $requestedUser, $reviewerID, $answerTimeStamp;
+	private $QID, $userName, $string, $timeStamp, $voteUp, $voteDown, $alreadyVoted, $requestedUser, $reviewerId, $answerTimeStamp;
 
-	public function __construct($QID, $reviewerID, $answerTimeStamp, $userName, $timeStamp, $string){
+	public function __construct($QID, $reviewerId, $answerTimeStamp, $userName, $timeStamp, $string){
 		parent::__construct();
 		$this->QID = $QID;
-		$this->reviewerID = $reviewerID;
+		$this->reviewerId = $reviewerId;
 		$this->answerTimeStamp = $answerTimeStamp;
 		$this->userName = $userName;
 		$this->string = $string;
@@ -22,7 +22,7 @@ class AnswerComment extends Base
 
 		//fetching Votes
 		$db = $this->getDb();
-		$db->query("SELECT userName,nature FROM AnswerCommentVotes WHERE QID=? AND reviewerID=? AND answerTimeStamp=? AND answerCommentTimeStamp=? AND commentUserName=?",array($this->QID, $this->reviewerID, $this->answerTimeStamp, $this->timeStamp, $this->userName));
+		$db->query("SELECT userName,nature FROM AnswerCommentVotes WHERE QID=? AND reviewerId=? AND answerTimeStamp=? AND answerCommentTimeStamp=? AND commentUserName=?",array($this->QID, $this->reviewerId, $this->answerTimeStamp, $this->timeStamp, $this->userName));
 		$alreadyVoted = 0;
 		$voteUp = 0;
 		$voteDown = 0;
@@ -54,7 +54,7 @@ class AnswerComment extends Base
 
 	public static function addComment(array $data){
 		$db = (new Database())->connectToDatabase();
-		$status = $db->query("INSERT INTO AnswerComment (QID, reviewerID, answerTimeStamp, userName, string) VALUES (?,?,?,?,?)", $data);
+		$status = $db->query("INSERT INTO AnswerComment (QID, reviewerId, answerTimeStamp, userName, string) VALUES (?,?,?,?,?)", $data);
 		return $status;
 	}
 
@@ -63,13 +63,48 @@ class AnswerComment extends Base
 		// $object['QID'] = $this->QID;
 		$object['userName']=$this->userName;
 		// $object['answerTimeStamp']=$this->answerTimeStamp;
-		//$object['reviewerID'] = $this->reviewerID;
+		//$object['reviewerId'] = $this->reviewerId;
 		$object['string'] = $this->string;
 		$object['timeStamp']=$this->timeStamp;
 		$object['voteUp'] = $this->voteUp;
 		$object['voteDown'] = $this->voteDown;
 		$object['alreadyVoted'] = $this->alreadyVoted;
 		return ($object);
+	}
+
+	public static function addVote(array $data)
+	{
+		$db = (new Database())->connectToDatabase();
+		$status = $db->query("INSERT INTO AnswerCommentVotes (QID, reviewerID, answerTimeStamp, answerCommentTimeStamp, commentUserName, userName, nature) VALUES (?,?,?,?,?,?,?)", $data);
+		return $status;
+	}
+
+	public static function checkAlreadyVoted(array $data)
+	{
+		$db = (new Database())->connectToDatabase();
+		$records = $db->query("SELECT userName FROM AnswerCommentVotes WHERE QID=? AND reviewerID=? AND answerTimeStamp=? AND answerCommentTimeStamp=? AND commentUserName=? AND userName=?", $data);
+		if($db->returned_rows > 0){
+			$name = $db->fetch_assoc_all()[0]['userName'];
+		}
+		else{
+			$name = NULL;
+		}
+		return $name;
+	}
+
+	public static function checkVoteNature(array $data)
+	{
+		$db = (new Database())->connectToDatabase();
+		$db->query("SELECT nature FROM AnswerCommentVotes WHERE QID=? AND reviewerID=? AND answerTimeStamp=? AND answerCommentTimeStamp=? AND commentUserName=? AND userName=?", $data);
+		$nature = $db->fetch_assoc_all()[0]['nature'];
+		return $nature;
+	}
+
+	public static function updateVote($nature ,array $data)
+	{
+		$db = (new Database())->connectToDatabase();
+		$status = $db->query("UPDATE AnswerCommentVotes SET nature=$nature WHERE QID=? AND reviewerID=? AND answerTimeStamp=? AND answerCommentTimeStamp=? AND commentUserName=? AND userName=?", $data);
+		return $status;
 	}
 
 }

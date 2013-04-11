@@ -7,7 +7,25 @@ class QuestionPromo extends Base
 { 
 	private $QID, $userName, $string, $timeStamp, $voteUp, $voteDown, $difficultyLevel, $tagList, $alreadyVoted, $alreadyFav, $requestedUser;
 
-	public function __construct($QID, $userName, $string, $timeStamp, $difficultyLevel){
+	public function __construct(){
+		if(func_num_args() == 5){
+			$QID = func_get_arg(0);
+			$userName = func_get_arg(1);
+			$string = func_get_arg(2);
+			$timeStamp = func_get_arg(3);
+			$difficultyLevel = func_get_arg(4);
+		}elseif(func_num_args() == 1){
+			$QID = func_get_arg(0);
+
+			$db = $this->getDb();
+			$db->query("SELECT string,timeStamp,userName,difficultyLevel FROM Question WHERE QID = '$QID'");
+			$records = $db->fetch_assoc_all();
+			$string = $records[0]['string'];
+			$timeStamp = $records[0]['timeStamp'];
+			$difficultyLevel = $records[0]['difficultyLevel'];
+			$userName = $records[0]['userName'];
+		}
+
 		parent::__construct();
 		$this->QID = $QID;
 		$this->userName = $userName;

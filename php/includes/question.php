@@ -26,9 +26,9 @@ class Question extends Base
 			$records = $db->fetch_assoc_all();
 			$string = $records[0]['string'];
 			$timeStamp = $records[0]['timeStamp'];
-			$difficultyLevel = $records[0]['reviewer'];
+			$difficultyLevel = $records[0]['difficultyLevel'];
 			$userName = $records[0]['userName'];
-			$reviewer = $records[0]['difficultyLevel'];
+			$reviewer = $records[0]['reviewer'];
 		}
 
 		parent::__construct();
@@ -246,6 +246,7 @@ class Question extends Base
 	public static function addQuestion(array $data){
 		$db = (new Database())->connectToDatabase();
 		$check = $db->query("INSERT INTO Question (QID, string, difficultyLevel, userName) VALUES(?,?,?,?)", $data);
+
 		return $check;
 	}
 
@@ -282,6 +283,16 @@ class Question extends Base
 		$db = (new Database())->connectToDatabase();
 		$check = $db->query("INSERT INTO ChildOf (name, parent) VALUES ('$tag', '$parent')");
 		return $check;
+	}
+
+	public static function addNotification($tag, $QID)
+	{
+		$db = (new Database())->connectToDatabase();
+		$subscriptions = $db->query("SELECT userName, tagName FROM Subscribe WHERE tagName='$tag'");
+		foreach ($subscriptions as $key => $value) {
+			$db->query("INSERT INTO Notifications VALUES (?,?,?)",array($value['tagName'], $value['userName'], $QID));
+		}
+
 	}
 
 	public static function addQuestionTags($tag, $assignQID){

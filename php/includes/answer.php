@@ -174,5 +174,40 @@ class Answer  extends Base
 			return false;
 		}
 	}
+
+	public static function addVote(array $data)
+	{
+		$db = (new Database())->connectToDatabase();
+		$status = $db->query("INSERT INTO AnswerVotes (QID, reviewer, nature, userName) VALUES (?,?,?,?)", $data);
+		return $status;
+	}
+
+	public static function checkAlreadyVoted(array $data)
+	{
+		$db = (new Database())->connectToDatabase();
+		$records = $db->query("SELECT userName FROM AnswerVotes WHERE QID=? AND reviewer=? AND userName=?", $data);
+		if($db->returned_rows > 0){
+			$name = $db->fetch_assoc_all()[0]['userName'];
+		}
+		else{
+			$name = NULL;
+		}
+		return $name;
+	}
+
+	public static function checkVoteNature(array $data)
+	{
+		$db = (new Database())->connectToDatabase();
+		$db->query("SELECT nature FROM AnswerVotes WHERE QID=? AND reviewer=? AND userName=?", $data);
+		$nature = $db->fetch_assoc_all()[0]['nature'];
+		return $nature;
+	}
+
+	public static function updateVote($nature ,array $data)
+	{
+		$db = (new Database())->connectToDatabase();
+		$status = $db->query("UPDATE AnswerVotes SET nature=$nature WHERE QID=? AND reviewer=? AND userName=?", $data);
+		return $status;
+	}
 }
 ?>

@@ -482,41 +482,6 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 			}
 			break;
 
-		case 'answer':
-			switch($regMatches[1][1]){
-				case 'post':
-					if(sizeof($_POST) == 2){
-						require_once __DIR__.'/includes/answer.php';
-						//if( $base->validateVar($_POST['QID']) && $base->validateVar($_POST['suggestionUserName']) && $base->validateVar($_POST['suggestionTimeStamp']) ){
-						if($base->validateVar($_POST['QID']) && $base->validateVar($_POST['string']) ){
-							if($base->isLoggedIn()){
-								if($_SESSION['isReviewer']){
-									if(Answer::addAnswer($_POST['QID'], $_POST['string'])){
-										$result = json_encode(array('head' => array('status' => 200, 'message'=>''), 'body' => '') );
-									}else{
-										$result = json_encode( array('head' => array('status' => 304, 'message'=>'Unable to add the answer'), 'body' => '') );
-									}
-								}else{
-									$result = json_encode( array('head' => array('status' => 409, 'message'=>'Not have rights'), 'body' => '') );
-								}
-							}else{
-								$result = json_encode( array('head' => array('status' => 401, 'message'=>'Not Logged In'), 'body' => '') );
-							}
-						}else{
-							$result = json_encode( array('head' => array('status' => 206, 'message'=>'Incomplete field'), 'body' => '') );
-						}
-					}else{
-						$result = json_encode( array('head' => array('status' => 206, 'message'=>'Only '.sizeof($_POST).' fields received, required 4'), 'body' => '') );
-					}
-					break;
-				case 'comment':
-					break;
-				default:
-					$result = json_encode( array('head' => array('status' => 400, 'message'=>'No such call for this url'), 'body' => '') );
-					break;	
-			}
-			break;
-
 		case 'submitReviewedQuestion':
 			if(sizeof($_POST) == 4){
 				require_once __DIR__.'/includes/question.php';
@@ -610,6 +575,197 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 							}
 							else{
 								$result = json_encode( array('head' => array('status' => 206, 'message'=>'Only '.sizeof($_POST).' fields received, required 3'), 'body' => '') );
+							}
+							break;
+
+						case 'answer':
+							switch($regMatches[1][2]){
+								case 'post':
+									if(sizeof($_POST) == 2){
+										require_once __DIR__.'/includes/answer.php';
+										//if( $base->validateVar($_POST['QID']) && $base->validateVar($_POST['suggestionUserName']) && $base->validateVar($_POST['suggestionTimeStamp']) ){
+										if($base->validateVar($_POST['QID']) && $base->validateVar($_POST['string']) ){
+											if($base->isLoggedIn()){
+												if($_SESSION['isReviewer']){
+													if(Answer::addAnswer($_POST['QID'], $_POST['string'])){
+														$result = json_encode(array('head' => array('status' => 200, 'message'=>''), 'body' => '') );
+													}else{
+														$result = json_encode( array('head' => array('status' => 304, 'message'=>'Unable to add the answer'), 'body' => '') );
+													}
+												}else{
+													$result = json_encode( array('head' => array('status' => 409, 'message'=>'Not have rights'), 'body' => '') );
+												}
+											}else{
+												$result = json_encode( array('head' => array('status' => 401, 'message'=>'Not Logged In'), 'body' => '') );
+											}
+										}else{
+											$result = json_encode( array('head' => array('status' => 206, 'message'=>'Incomplete field'), 'body' => '') );
+										}
+									}else{
+										$result = json_encode( array('head' => array('status' => 206, 'message'=>'Only '.sizeof($_POST).' fields received, required 2'), 'body' => '') );
+									}
+									break;
+								
+								case 'comment':
+									switch ($regMatches[1][3]) {
+										case 'post':
+											if (sizeof($_POST) == 4) {
+												require_once __DIR__.'/includes/answerComment.php';
+												if($base->validateVar($_POST['QID']) && $base->validateVar($_POST['string']) && $base->validateVar($_POST['answerTimeStamp']) && $base->validateVar($_POST['reviewId']) ){
+													$user = unserialize($_SESSION['user']);
+													$uname = $user->getUsername();
+													if (AnswerComment::addComment(array(
+														'QID' => $_POST['QID'],
+														'reviewId' => $_POST['reviewId'],
+														'answerTimeStamp' => $_POST['answerTimeStamp'],
+														'string' => $_POST['string'],
+														'userName' => $uname))) 
+													{
+														$result = json_encode(array('head' => array('status' => 200, 'message'=>''), 'body' => '') );
+													}
+													else{
+														$result = json_encode( array('head' => array('status' => 304, 'message'=>'Unable to add the answer Comment'), 'body' => '') );
+													}
+
+												}
+												else{
+													$result = json_encode( array('head' => array('status' => 206, 'message'=>'Incomplete field'), 'body' => '') );
+												}
+											}
+											else{
+												$result = json_encode( array('head' => array('status' => 206, 'message'=>'Only '.sizeof($_POST).' fields received, required 4'), 'body' => '') );
+											}
+											break;
+										
+										case 'vote':
+											if (sizeof($_GET) == 6) {
+												require_once __DIR__.'/includes/answerComment.php';
+												if($base->validateVar($_POST['QID']) && $base->validateVar($_POST['nature']) && $base->validateVar($_POST['answerTimeStamp']) && $base->validateVar($_POST['reviewerID'] && $base->validateVar($_POST['answerCommentTimeStamp'] && $base->validateVar($_POST['commentUserName']) )
+												{
+													$user = unserialize($_SESSION['user']);
+													$uname = $user->getUsername();
+													$voteStatus = AnswerComment::checkAlreadyVoted(array(
+														'QID' => $_GET['QID'],
+														'reviewerID' => $_GET['reviewerID'],
+														'answerTimeStamp' => $_GET['answerTimeStamp'],
+														'answerCommentTimeStamp' => $_GET['answerCommentTimeStamp'],
+														'commentUserName' => $_GET['commentUserName'],
+														'userName' => $user));
+													if($voteStatus == $user){
+														$voteNature = AnswerComment::checkVoteNature(array(
+														'QID' => $_GET['QID'],
+														'reviewerID' => $_GET['reviewerID'],
+														'answerTimeStamp' => $_GET['answerTimeStamp'],
+														'answerCommentTimeStamp' => $_GET['answerCommentTimeStamp'],
+														'commentUserName' => $_GET['commentUserName'],
+														'userName' => $user));
+														if ($voteNature == $_GET['nature']) {
+															$result = json_encode( array('head' => array('status' => 304, 'message'=>'Not Modified'), 'body' => '') );
+														}
+														else{
+															$updateStatus = AnswerComment::updateVote($_GET['nature'], array(
+																'QID' => $_GET['QID'],
+																'reviewerID' => $_GET['reviewerID'],
+																'answerTimeStamp' => $_GET['answerTimeStamp'],
+																'answerCommentTimeStamp' => $_GET['answerCommentTimeStamp'],
+																'commentUserName' => $_GET['commentUserName'],
+																'userName' => $user));
+															if($updateStatus){
+																$result = json_encode( array('head' => array('status' => 200, 'message'=>'Vote Modified Successfully'), 'body' => '') );
+															}
+															else{
+																$result = json_encode( array('head' => array('status' => 500, 'message'=>'Internal Error'), 'body' => '') );
+															}
+														}
+													}
+													else{
+														$voteStatus = AnswerComment::addVote($_GET['nature'], array(
+															'QID' => $_GET['QID'],
+															'reviewerID' => $_GET['reviewerID'],
+															'answerTimeStamp' => $_GET['answerTimeStamp'],
+															'answerCommentTimeStamp' => $_GET['answerCommentTimeStamp'],
+															'commentUserName' => $_GET['commentUserName'],
+															'userName' => $user));
+														if($voteStatus){
+															$result = json_encode( array('head' => array('status' => 200, 'message'=>'Vote Added Successfully'), 'body' => '') );
+														}
+														else{
+															$result = json_encode( array('head' => array('status' => 500, 'message'=>'Internal Error'), 'body' => '') );
+														}
+													}
+												}
+												else{
+													$result = json_encode( array('head' => array('status' => 206, 'message'=>'Incomplete field'), 'body' => '') );
+												}
+											}
+											else{
+												$result = json_encode( array('head' => array('status' => 206, 'message'=>'Only '.sizeof($_GET).' fields received, required 6'), 'body' => '') );
+											}
+											break;
+
+										default:
+											$result = json_encode( array('head' => array('status' => 400, 'message'=>'No such call for this url'), 'body' => '') );
+											break;
+									}
+									break;
+
+								case 'vote':
+									if (sizeof($_GET) == 3) {
+										require_once __DIR__.'/includes/answer.php';
+										if($base->validateVar($_POST['QID']) && $base->validateVar($_POST['nature']) && $base->validateVar($_POST['reviewer']) )
+										{
+											$user = unserialize($_SESSION['user']);
+											$uname = $user->getUsername();
+											$voteStatus = Answer::checkAlreadyVoted(array(
+												'QID' => $_GET['QID'],
+												'reviewer' => $_GET['reviewer'],
+												'userName' => $user));
+											if($voteStatus == $user){
+												$voteNature = Answer::checkVoteNature(array(
+												'QID' => $_GET['QID'],
+												'reviewer' => $_GET['reviewer'],
+												'userName' => $user));
+												if ($voteNature == $_GET['nature']) {
+													$result = json_encode( array('head' => array('status' => 304, 'message'=>'Not Modified'), 'body' => '') );
+												}
+												else{
+													$updateStatus = Answer::updateVote($_GET['nature'], array(
+														'QID' => $_GET['QID'],
+														'reviewer' => $_GET['reviewer'],
+														'userName' => $user));
+													if($updateStatus){
+														$result = json_encode( array('head' => array('status' => 200, 'message'=>'Vote Modified Successfully'), 'body' => '') );
+													}
+													else{
+														$result = json_encode( array('head' => array('status' => 500, 'message'=>'Internal Error'), 'body' => '') );
+													}
+												}
+											}
+											else{
+												$voteStatus = Answer::addVote($_GET['nature'], array(
+													'QID' => $_GET['QID'],
+													'reviewer' => $_GET['reviewer'],
+													'userName' => $user));
+												if($voteStatus){
+													$result = json_encode( array('head' => array('status' => 200, 'message'=>'Vote Added Successfully'), 'body' => '') );
+												}
+												else{
+													$result = json_encode( array('head' => array('status' => 500, 'message'=>'Internal Error'), 'body' => '') );
+												}
+											}
+										}
+										else{
+											$result = json_encode( array('head' => array('status' => 206, 'message'=>'Incomplete field'), 'body' => '') );
+										}
+									}
+									else{
+										$result = json_encode( array('head' => array('status' => 206, 'message'=>'Only '.sizeof($_GET).' fields received, required 3'), 'body' => '') );
+									}
+									break;
+
+								default:
+									$result = json_encode( array('head' => array('status' => 400, 'message'=>'No such call for this url'), 'body' => '') );
+									break;	
 							}
 							break;
 

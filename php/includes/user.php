@@ -323,6 +323,33 @@ class User extends Base{
 		return $SAnswer;
 	}
 
+	public static function getNotifications()
+	{
+		$user = unserialize($_SESSION['user']);
+		$tags = $user->getSubscriptionList();
+		$notifs = array();
+		$db = (new Database())->connectToDatabase();
+		$records = $db->query("SELECT * FROM Notifications WHERE userName=?", array($user->getUsername()));
+		$records = $db->fetch_assoc_all();
+		foreach ($records as $key => $value) {
+			array_push($notifs, new QuestionPromo( $value['QID']));
+		}
+
+		$object = array();
+		foreach ($notifs as $key => $value) {
+			array_push($object, $value->toArray());
+		}
+		return $object;
+	}
+
+	public static function removeNotification($QID)
+	{
+		$user = unserialize($_SESSION['user']);
+		$db = (new Database())->connectToDatabase();
+		return $db->query("DELETE FROM Notifications WHERE userName=? AND QID='$QID'", array($user->getUsername()));
+	}
+
+
 	public static function updatePwd($uname, $newPwd)
 	{
 		$pwd = md5($newPwd);
