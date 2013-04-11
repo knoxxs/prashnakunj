@@ -266,18 +266,25 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 						if($_SESSION['isReviewer']){
 							$suggestionUserName = $_GET['suggestionUserName'] == "null" ?NULL :$_GET['suggestionUserName'];
 							$suggestionTimeStamp = $_GET['suggestionTimeStamp'] == "null" ?NULL :$_GET['suggestionTimeStamp'];
-							if(unserialize($_SESSION['user'])->setLock($_GET['QID'], $suggestionUserName, $suggestionTimeStamp)){
-								session_write_close();
+							$ret = unserialize($_SESSION['user'])->setLock($_GET['QID'], $suggestionUserName, $suggestionTimeStamp);
+							if($ret['head']['status'] == 200){
 								$_SESSION['LAST_ACTIVITY'] = time();
+								
 								while(isset($_SESSION['LAST_ACTIVITY']) && (time() - $_SESSION['LAST_ACTIVITY'] < DEFAULT_SLEEP_TIME) && isset($_SESSION['locked'])) {
+									session_write_close();
 									sleep(10);
+									session_start();
 								}
-								unserialize($_SESSION['user'])->removeLock();
-								$result = unserialize($_SESSION['user'])->result;
-								$result['body'] = '';
-								$result = json_encode($result);
+								if(isset($_SESSION['LAST_ACTIVITY']) && time() - $_SESSION['LAST_ACTIVITY'] < DEFAULT_SLEEP_TIME){
+									unserialize($_SESSION['user'])->removeLock();
+									$result = unserialize($_SESSION['user'])->result;
+									$result['body'] = '';
+									$result = json_encode($result);
+								}else{
+									$result = json_encode( array('head' => array('status' => 408, 'message'=>'Review submitted'), 'body' => '') );
+								}
 							}else{
-								$result = json_encode( array('head' => array('status' => 409, 'message'=>'Already Locked'), 'body' => '') );
+								$result = json_encode( array('head' => $ret, 'body' => '') );
 							}
 						}else{
 							$result = json_encode( array('head' => array('status' => 409, 'message'=>'Not have rights'), 'body' => '') );
@@ -309,6 +316,119 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 				}
 			}else{
 				$result = json_encode( array('head' => array('status' => 401, 'message'=>'Not Logged In'), 'body' => '') );
+			}
+			break;
+
+		case 'submitReviewedSuggestion':
+			if(sizeof($_POST) == 4){
+				require_once __DIR__.'/includes/suggestion.php';
+				require_once __DIR__.'/includes/review.php';
+				//if( $base->validateVar($_POST['QID']) && $base->validateVar($_POST['suggestionUserName']) && $base->validateVar($_POST['suggestionTimeStamp']) ){
+				if($base->validateVar($_POST['QID']) && $base->validateVar($_POST['suggestionUserName']) && $base->validateVar($_POST['suggestionTimeStamp']) && $base->validateVar($_POST['string'])  ){
+					if($base->isLoggedIn()){
+						if($_SESSION['isReviewer']){
+							if($base->validateVar($_SESSION['LAST_ACTIVITY'])){
+								$review = unserialize($_SESSION['locked']);
+								
+								if($review->getQID() == $_POST['QID'] && $review->getSuggestionUserName() == $_POST['suggestionUserName'] && $review->getSuggestionTimeStamp() == $_POST['suggestionTimeStamp'] ){
+									if(Suggestion::reviewSuggestion($_POST['QID'], $_POST['suggestionUserName'], $_POST['suggestionTimeStamp'], $_POST['string'])){
+										unset($_SESSION['locked']);
+										unset($_SESSION['LAST_ACTIVITY']);
+										$result = json_encode(array('head' => array('status' => 200, 'message'=>''), 'body' => '') );
+									}else{
+										$result = json_encode( array('head' => array('status' => 304, 'message'=>'Unable to save the review'), 'body' => '') );
+									}
+								}else{
+									$result = json_encode( array('head' => array('status' => 403, 'message'=>'Lock a different review'), 'body' => '') );	
+								}
+							}else{
+								$result = json_encode( array('head' => array('status' => 406, 'message'=>'Lock not acquired'), 'body' => '') );
+							}
+						}else{
+							$result = json_encode( array('head' => array('status' => 409, 'message'=>'Not have rights'), 'body' => '') );
+						}
+					}else{
+						$result = json_encode( array('head' => array('status' => 401, 'message'=>'Not Logged In'), 'body' => '') );
+					}
+				}else{
+					$result = json_encode( array('head' => array('status' => 206, 'message'=>'Incomplete field'), 'body' => '') );
+				}
+			}else{
+				$result = json_encode( array('head' => array('status' => 206, 'message'=>'Only '.sizeof($_POST).' fields received, required 4'), 'body' => '') );
+			}
+			break;
+
+		case 'answer':
+			switch($regMatches[1][1]){
+				case 'post':
+					if(sizeof($_POST) == 2){
+						require_once __DIR__.'/includes/answer.php';
+						//if( $base->validateVar($_POST['QID']) && $base->validateVar($_POST['suggestionUserName']) && $base->validateVar($_POST['suggestionTimeStamp']) ){
+						if($base->validateVar($_POST['QID']) && $base->validateVar($_POST['string']) ){
+							if($base->isLoggedIn()){
+								if($_SESSION['isReviewer']){
+									if(Answer::addAnswer($_POST['QID'], $_POST['string'])){
+										$result = json_encode(array('head' => array('status' => 200, 'message'=>''), 'body' => '') );
+									}else{
+										$result = json_encode( array('head' => array('status' => 304, 'message'=>'Unable to add the answer'), 'body' => '') );
+									}
+								}else{
+									$result = json_encode( array('head' => array('status' => 409, 'message'=>'Not have rights'), 'body' => '') );
+								}
+							}else{
+								$result = json_encode( array('head' => array('status' => 401, 'message'=>'Not Logged In'), 'body' => '') );
+							}
+						}else{
+							$result = json_encode( array('head' => array('status' => 206, 'message'=>'Incomplete field'), 'body' => '') );
+						}
+					}else{
+						$result = json_encode( array('head' => array('status' => 206, 'message'=>'Only '.sizeof($_POST).' fields received, required 4'), 'body' => '') );
+					}
+					break;
+				case 'comment':
+					break;
+				default:
+					$result = json_encode( array('head' => array('status' => 400, 'message'=>'No such call for this url'), 'body' => '') );
+					break;	
+			}
+			break;
+
+		case 'submitReviewedQuestion':
+			if(sizeof($_POST) == 4){
+				require_once __DIR__.'/includes/question.php';
+				//if( $base->validateVar($_POST['QID']) && $base->validateVar($_POST['suggestionUserName']) && $base->validateVar($_POST['suggestionTimeStamp']) ){
+				if($base->validateVar($_POST['QID']) && $base->validateVar($_POST['tags']) && $base->validateVar($_POST['difficultyLevel']) && $base->validateVar($_POST['string']) ){
+					if($base->isLoggedIn()){
+						if($_SESSION['isReviewer']){
+							if(isset($_SESSION['LAST_ACTIVITY']) && $base->validateVar($_SESSION['LAST_ACTIVITY'])){
+								$review = unserialize($_SESSION['locked']);
+								$result = null;
+								if($review->getQID() == $_POST['QID'] && is_null($review->getSuggestionUserName())){
+									$result = Question::reviewQuestion($_POST['QID'], $_POST['string'], $_POST['tags'], $_POST['difficultyLevel']);
+									if($result['head']['status'] == 200){
+										unset($_SESSION['locked']);
+										unset($_SESSION['LAST_ACTIVITY']);
+										$result = json_encode(array('head' => array('status' => 200, 'message'=>''), 'body' => '') );
+									}else{
+										$result = json_encode($result);
+									}
+								}else{
+									$result = json_encode( array('head' => array('status' => 403, 'message'=>'Lock a different review'), 'body' => '') );	
+								}
+							}else{
+								$result = json_encode( array('head' => array('status' => 406, 'message'=>'Lock not acquired'), 'body' => '') );
+							}
+						}else{
+							$result = json_encode( array('head' => array('status' => 409, 'message'=>'Not have rights'), 'body' => '') );
+						}
+					}else{
+						$result = json_encode( array('head' => array('status' => 401, 'message'=>'Not Logged In'), 'body' => '') );
+					}
+				}else{
+					$result = json_encode( array('head' => array('status' => 206, 'message'=>'Incomplete field'), 'body' => '') );
+				}
+			}else{
+				$result = json_encode( array('head' => array('status' => 206, 'message'=>'Only '.sizeof($_POST).' fields received, required 4'), 'body' => '') );
 			}
 			break;
 

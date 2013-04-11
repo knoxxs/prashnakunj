@@ -331,7 +331,36 @@ class Question extends Base
 		}
 		return $object;
 	}
+
+	public static function reviewQuestion($QID, $string, $tags, $difficultyLevel){
+		$db = (new Database())->connectToDatabase();
+		$flag = true;
+		foreach ($tags as $key => $value) {
+			$db->query("SELECT name From Tags WHERE name='$value'");
+			if($db->returned_rows != 1){
+				$flag = false;
+				break;
+			}
+		}
+		if($flag){
+			if($db->query("DELETE FROM Encompass WHERE QID=$QID")){
+				foreach ($tags as $key => $value) {
+					if(!$db->query("INSERT INTO Encompass VALUES('$value', '$QID')")){
+						$result = array("head" => array("status" => 409, "message" => 'Unable to add tags'), "body" => '');
+						return $result;
+					}
+				}
+				if($db->query("UPDATE Question SET string='$string', difficultyLevel=$difficultyLevel, locked=0, reviewer=? WHERE QID='$QID'", array(unserialize($_SESSION['user'])->getUserName() ))){
+					$result = array("head" => array("status" => 200, "message" => ''), "body" => '');
+				}else{
+					$result = array("head" => array("status" => 409, "message" => 'Error modifying question'), "body" => '');
+				}
+			}			
+		}else{
+			$result = array("head" => array("status" => 403, "message" => "Undefined(Wrong) Tags"), "body" => '');
+		}
+		return $result;	
+	}
+
 }
-
-
 ?>
