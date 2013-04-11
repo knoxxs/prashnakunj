@@ -2,6 +2,7 @@
 
 require_once __DIR__.'/base.php';
 require_once __DIR__.'/answerComment.php';
+require_once __DIR__.'/reviewer.php';
 
 class Answer  extends Base
 {
@@ -163,5 +164,15 @@ class Answer  extends Base
 		return -($a->getVoteUp() - $b->getVoteUp());
 	}
 
+	public static function addAnswer($QID, $string){
+		$db = (new Database())->connectToDatabase();
+		$db->query("SELECT QID FROM Question WHERE QID=$QID");
+		if($db->returned_rows == 1){
+			$status = $db->query("INSERT INTO Answer VALUES('$QID',?,now(),'$string')", array(unserialize($_SESSION['user'])->getUserName()));
+			return $status;	
+		}else{
+			return false;
+		}
+	}
 }
 ?>

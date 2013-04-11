@@ -2,6 +2,7 @@
 
 require_once __DIR__.'/suggestionComment.php';
 require_once __DIR__.'/base.php';
+require_once __DIR__.'/reviewer.php';
 
 class Suggestion extends Base
 {
@@ -129,6 +130,10 @@ class Suggestion extends Base
 		return $object;
 	}
 
-
+	public static function reviewSuggestion($QID, $userName, $timeStamp, $string){
+		$db = (new Database())->connectToDatabase();
+		$status = $db->query("UPDATE Suggestion SET string='$string', locked=0, reviewerId=? WHERE QID='$QID' AND userName='$userName' AND timeStamp='$timeStamp'", array(unserialize($_SESSION['user'])->getUserName() ));
+		return $status;	
+	}
 }
 ?>
