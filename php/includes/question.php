@@ -249,17 +249,25 @@ class Question extends Base
 		return $check;
 	}
 
+	public static function removeQuestion($assignQID)
+	{
+		$db = (new Database())->connectToDatabase();
+		$db->query("DELETE FROM Question WHERE QID='$assignQID'");
+	}
+
 	public static function findTags($tag){
 		$tag = strtolower($tag);
+		$status = 'initial';
 		$db = (new Database())->connectToDatabase();
-		$check = $db->query("SELECT name FROM Tags WHERE name='$tag'");
-		if($db->returned_rows <= 0)
-		{
-			return FALSE;
+		$db->query("SELECT name FROM Tags WHERE name='$tag'");
+		$records = $db->fetch_assoc_all();
+		if( ! empty($records)){
+			$status = 'match';
 		}
 		else{
-			return TRUE;
+			$status = 'nomatch';
 		}
+		return $status;
 	}
 
 	public static function createTag($tag, $uname)
@@ -279,8 +287,21 @@ class Question extends Base
 	public static function addQuestionTags($tag, $assignQID){
 		$tag = strtolower($tag);
 		$db = (new Database())->connectToDatabase();
-		$check = $db->query("INSERT INTO Encompass (tagName, QID) VALUES ('$tag', '$assignQID')");
-		return $check;
+		$status = $db->query("INSERT INTO Encompass (tagName, QID) VALUES ('$tag', '$assignQID')");
+		$db->query("SELECT * FROM Encompass WHERE tagName='$tag' AND QID='$assignQID'");
+		if($db->returned_rows > 0){
+			$name = $db->fetch_assoc_all()[0]['tagName'];
+		}
+		else{
+			$name = NULL;
+		}
+		return $name;
+	}
+
+	public static function removeQuestionTags($assignQID)
+	{
+		$db = (new Database())->connectToDatabase();
+		$db->query("DELETE FROM Encompass WHERE QID='$assignQID'");
 	}
 
 	public static function addVote($QID, $userName, $nature)

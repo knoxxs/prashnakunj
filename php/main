@@ -447,7 +447,6 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 				elseif($base->isLoggedIn()){
 					switch($regMatches[1][1]){
 						case 'post':
-							print_r($_POST);
 							if(sizeof($_POST) == 3){
 								require_once __DIR__.'/includes/question.php';
 								require_once __DIR__.'/includes/user.php';
@@ -455,33 +454,38 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 								$uname = unserialize($_SESSION['user']);
 								$user = $uname->getUsername();
 								$tags = $_POST['tags'];
-								$tagAdded = FALSE;
-								foreach ($tags as $key => $value) {
-									$check = Question::findTags($value);
-									if($check){
-										$tagAdded = Question::addQuestionTags($value, $assignQID);
-										if($tagAdded == FALSE){
-											$result = json_encode( array('head' => array('status' => 500, 'message'=>'Internal Error - Tag not added '), 'body' => '') );
-											break;
-										}
-									}
-									else{
-										$result = json_encode( array('head' => array('status' => 409, 'message'=>'Tag '.$value.' does not exist. Unable to add question. Use existing tag or First define a tag then use it.'), 'body' => '') );
-										break;
-									}
-								}
-								if ($tagAdded) {
-									$insertStatus = Question::addQuestion(array(
+								$insertStatus = Question::addQuestion(array(
 									'assignQID' => $assignQID, 
 									'newString' => $_POST['questionString'],
 									'difficultyLevel' => $_POST['difficultyLevel'], 
 									'user' => $user));
+								$count = 0;
+								$objects = array();
+								foreach ($tags as $key => $value) {
+									$check = Question::findTags($value);
+									if($check == 'match'){
+										$tagAdded = Question::addQuestionTags($value, $assignQID);
+										if(is_null($tagAdded)){
+											$result = json_encode( array('head' => array('status' => 500, 'message'=>'Internal Error - Tag not added '), 'body' => '') );
+										}
+									}
+									else{
+										array_push($objects, $value);
+										$count++;
+									}
+								}
+								if ($count == 0) {
 									if ($insertStatus) {
 										$result = json_encode( array('head' => array('status' => 200, 'message'=>'Question Added Successfully'), 'body' => '') );
 									}
 									else{
 										$result = json_encode( array('head' => array('status' => 500, 'message'=>'Internal Error - No Insert Status'), 'body' => '') );
 									}
+								}
+								else{
+									Question::removeQuestionTags($assignQID);
+									Question::removeQuestion($assignQID);
+									$result = json_encode( array('head' => array('status' => 409, 'message'=>'Tags does not exist. Unable to add question. Use existing tag or First define a tag then use it.'), 'body' => $objects) );
 								}
 							}
 							else{

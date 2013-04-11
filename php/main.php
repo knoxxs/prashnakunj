@@ -33,6 +33,59 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 				$result = json_encode( array('head' => array('status' => 206, 'message'=>'Only '.sizeof($_POST).' fields received, required 18'), 'body' => '') );
 			}
 			break;
+
+		case 'userdetail':
+			if($base->isLoggedIn()){
+				require_once __DIR__.'/includes/register.php';
+				require_once __DIR__.'/includes/user.php';
+				$user = unserialize($_SESSION['user']);
+				$uname = $user->getUsername();
+				$object = Register::userDetail($uname);
+				$result = json_encode( array('head' => array('status' => 200, 'message'=>'User Details'), 'body' => $object) );
+			}
+			else{
+				$result = json_encode( array('head' => array('status' => 401, 'message'=>'Not Logged In'), 'body' => '') );
+			}
+			break;
+
+		case 'modifydetail':
+			if($base->isLoggedIn()){
+				if (sizeof($_POST) == 15) {
+					require_once __DIR__.'/includes/register.php';
+					require_once __DIR__.'/includes/user.php';
+					$user = unserialize($_SESSION['user']);
+					$uname = $user->getUsername();
+					$status = Register::modifyDetail($uname, array(
+												'firstName' => $_POST['firstName'], 
+												'lastName' => $_POST['lastName'],
+												'email' => $_POST['email'],
+												'phone' => $_POST['phone'],
+												'DOB' => $_POST['DOB'],
+												'gender' => $_POST['gender'],
+												'qualification' => $_POST['qualification'],
+												'interests' => $_POST['interests'],
+												'country' => $_POST['country'],
+												'city' => $_POST['city'],
+												'state' => $_POST['state'],
+												'affiliation' => $_POST['affiliation'],
+												'securityQuestionID' => $_POST['securityQuestionID'],
+												'securityAnswer' => $_POST['securityAnswer'],
+												'areasOfExpertise' => $_POST['areasOfExpertise']));
+					if ($status) {
+						$result = json_encode( array('head' => array('status' => 200, 'message'=>'User Details Modified Successfully'), 'body' => '') );
+					}
+					else{
+						$result = json_encode( array('head' => array('status' => 500, 'message'=>'Internal Server Error'), 'body' => '') );
+					}
+				}
+				else{
+					$result = json_encode( array('head' => array('status' => 206, 'message'=>'Only '.sizeof($_POST).' fields received, required 15'), 'body' => '') );
+				}
+			}
+			else{
+				$result = json_encode( array('head' => array('status' => 401, 'message'=>'Not Logged In'), 'body' => '') );
+			}
+			break;
 		
 		case 'login':
 			if(sizeof($_POST) == 2){
@@ -193,7 +246,7 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 							if ($check == $_POST['userName']) {
 								$SID = User::securityQuestionNumber($check);
 								if ($SID != NULL) {
-									$result = json_encode( array('head' => array('status' => 200, 'message'=>'UserName exists in database'), 'body' => '$SID') );
+									$result = json_encode( array('head' => array('status' => 200, 'message'=>'UserName exists in database'), 'body' => $SID) );
 								}
 								else{
 									$result = json_encode( array('head' => array('status' => 500, 'message'=>'Internal Error no security question found'), 'body' > '') );
@@ -243,6 +296,77 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 			}
 			else{
 				$result = json_encode( array('head' => array('status' => 206, 'message'=>'URL Incomplete'), 'body' => '') );
+			}
+			break;
+
+		case 'tag':
+			if( isset($regMatches[1][1]) && ( !empty($regMatches[1][1]) ) ){
+				if($base->isLoggedIn()){
+					switch($regMatches[1][1]){
+						case 'create':
+							if (sizeof($_POST) == 2) {
+								require_once __DIR__.'/includes/question.php';
+								require_once __DIR__.'/includes/user.php';
+								$user = unserialize($_SESSION['user']);
+								$uname = $user->getUsername();
+								$condition = TRUE;
+								$tag = $_POST['newTag'];
+								$tag = strtolower($tag);
+								$check = Question::findTags($tag);
+								if ($check) {
+									$result = json_encode( array('head' => array('status' => 409, 'message'=>'Tag '.$tag.' already exists'), 'body' => '') );
+								}
+								else{
+									$parents = $_POST['parents'];
+									foreach ($parents as $key => $value) {
+										$checkparent = Question::findTags($value);
+										if (!$checkparent) {
+											$condition = FALSE;
+											break;
+										}
+									}
+									if ($condition) {
+										$status = Question::createTag($tag, $uname);
+										if ($status) {
+											$ifstat = TRUE;
+											foreach ($parents as $key => $value) {
+												$parentstatus = Question::addParent($tag, $value);
+												if (!$parentstatus) {
+													$result = json_encode( array('head' => array('status' => 500, 'message'=>'Tag Added Successfully but error adding parents - Internal Server Error'), 'body' => '') );
+													$ifstat = FALSE;
+													break;
+												}
+											}
+											if ($ifstat) {
+												$result = json_encode( array("head" => array('status' => 200, 'message'=>'New Tag - '.$tag.' Created Successfully'), 'body' => '') );
+											}
+										}
+										else
+										{
+											$result = json_encode( array('head' => array('status' => 500, 'message'=>'Internal Server Error - Error Creating New Tag'), 'body' => '') );
+										}
+									}
+									else{
+										$result = json_encode( array('head' => array('status' => 406, 'message'=>'Please change parents - One or more you are posting does not exists'), 'body' => '') );
+									}
+								}
+							}
+							else{
+								$result = json_encode( array('head' => array('status' => 206, 'message'=>'Only '.sizeof($_POST).' fields received, required 2'), 'body' => '') );
+							}
+							break;
+
+						default :
+							$result = json_encode( array('head' => array('status' => 400, 'message'=>'No such call for this url'), 'body' => '') );
+							break;
+					}
+				}
+				else{
+					$result = json_encode( array('head' => array('status' => 401, 'message'=>'Not Logged In'), 'body' => '') );
+				}
+			}
+			else{
+				$result = json_encode( array('head' => array('status' => 206, 'message'=>'Incomplete URL'), 'body' => '') );
 			}
 			break;
 
@@ -323,38 +447,45 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 				elseif($base->isLoggedIn()){
 					switch($regMatches[1][1]){
 						case 'post':
-							print_r($_POST);
 							if(sizeof($_POST) == 3){
 								require_once __DIR__.'/includes/question.php';
 								require_once __DIR__.'/includes/user.php';
 								$assignQID = Question::generateQID();
 								$uname = unserialize($_SESSION['user']);
 								$user = $uname->getUsername();
+								$tags = $_POST['tags'];
 								$insertStatus = Question::addQuestion(array(
 									'assignQID' => $assignQID, 
 									'newString' => $_POST['questionString'],
 									'difficultyLevel' => $_POST['difficultyLevel'], 
 									'user' => $user));
-								$tags = $_POST['tags'];
+								$count = 0;
+								$objects = array();
 								foreach ($tags as $key => $value) {
 									$check = Question::findTags($value);
-									if($check){
+									if($check == 'match'){
 										$tagAdded = Question::addQuestionTags($value, $assignQID);
-										if($tagAdded == FALSE){
+										if(is_null($tagAdded)){
 											$result = json_encode( array('head' => array('status' => 500, 'message'=>'Internal Error - Tag not added '), 'body' => '') );
-											break;
 										}
 									}
 									else{
-										$result = json_encode( array('head' => array('status' => 404, 'message'=>'Tag '.$value.' does not exist'), 'body' => '') );
-										break;
+										array_push($objects, $value);
+										$count++;
 									}
 								}
-								if ($insertStatus) {
-									$result = json_encode( array('head' => array('status' => 200, 'message'=>'Question Added Successfully'), 'body' => '') );
+								if ($count == 0) {
+									if ($insertStatus) {
+										$result = json_encode( array('head' => array('status' => 200, 'message'=>'Question Added Successfully'), 'body' => '') );
+									}
+									else{
+										$result = json_encode( array('head' => array('status' => 500, 'message'=>'Internal Error - No Insert Status'), 'body' => '') );
+									}
 								}
 								else{
-									$result = json_encode( array('head' => array('status' => 500, 'message'=>'Internal Error - No Insert Status'), 'body' => '') );
+									Question::removeQuestionTags($assignQID);
+									Question::removeQuestion($assignQID);
+									$result = json_encode( array('head' => array('status' => 409, 'message'=>'Tags does not exist. Unable to add question. Use existing tag or First define a tag then use it.'), 'body' => $objects) );
 								}
 							}
 							else{
