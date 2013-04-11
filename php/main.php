@@ -640,8 +640,7 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 										case 'vote':
 											if (sizeof($_GET) == 6) {
 												require_once __DIR__.'/includes/answerComment.php';
-												if($base->validateVar($_POST['QID']) && $base->validateVar($_POST['nature']) && $base->validateVar($_POST['answerTimeStamp']) && $base->validateVar($_POST['reviewerID'] && $base->validateVar($_POST['answerCommentTimeStamp'] && $base->validateVar($_POST['commentUserName']) )
-												{
+												if($base->validateVar($_POST['QID']) && $base->validateVar($_POST['nature']) && $base->validateVar($_POST['answerTimeStamp']) && $base->validateVar($_POST['reviewerID']) && $base->validateVar($_POST['answerCommentTimeStamp'] && $base->validateVar($_POST['commentUserName'])) ){
 													$user = unserialize($_SESSION['user']);
 													$uname = $user->getUsername();
 													$voteStatus = AnswerComment::checkAlreadyVoted(array(
