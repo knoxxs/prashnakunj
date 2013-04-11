@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__.'/questionPromo.php';
 require_once __DIR__.'/base.php';
+require_once __DIR__.'/reviewer.php';
 
 class User extends Base{ 
 	protected $userName, $firstname, $lastname, $reputation, $favList, $watchLaterList, $historyList, $subscriptionList, $city, $affiliation;
@@ -152,7 +153,7 @@ class User extends Base{
 	 * @param  string $type [description]
 	 * @return int       reuqest status
 	 */
-	public function fetchWatchLaterList($type = DEFAULT_TYPE){
+	public function fetchWatchLaterList($type = DEFAULT_TYPE, $num=MORE_SIZE){
 		if($this->typeValidation($type)){
 			if($type == $this->watchLaterList['type']){
 				$len = count($this->watchLaterList['list']);
@@ -166,7 +167,7 @@ class User extends Base{
 			//SELECT SUM(nature),COUNT(nature) FROM (SELECT qid,string,timeStamp,difficultyLevel FROM Question NATURAL JOIN (SELECT qid FROM Watch WHERE userName='uname2') as W ORDER BY timestamp LIMIT 0,5) as Q JOIN QuestionVotes as QV ON Q.QID=QV.QID GROUP BY Q.QID
 			if($type != 'popularity')
 			{
-				$db->query("SELECT QID,userName,string,timeStamp,difficultyLevel FROM Question NATURAL JOIN (SELECT qid FROM Watch WHERE userName=?) as W ORDER BY " . $type . " DESC LIMIT " . $len . "," . MORE_SIZE , array($this->userName));
+				$db->query("SELECT QID,userName,string,timeStamp,difficultyLevel FROM Question NATURAL JOIN (SELECT qid FROM Watch WHERE userName=?) as W ORDER BY " . $type . " DESC LIMIT " . $len . "," . $num , array($this->userName));
 			}
 			else
 			{
@@ -180,7 +181,7 @@ class User extends Base{
 			if($type == 'popularity')
 			{
 				usort($this->watchLaterList['list'], "QuestionPromo::compareVoteUp");
-				$this->watchLaterList['list'] = array_slice($this->watchLaterList['list'], 0, $len + MORE_SIZE);
+				$this->watchLaterList['list'] = array_slice($this->watchLaterList['list'], 0, $len + $num);
 			}
 
 			$this->result['head']['status'] = 200;
@@ -190,7 +191,39 @@ class User extends Base{
 		}
 	}
 
-	public function fetchFavList($type = DEFAULT_TYPE){
+	public function getMyQuestion(){
+		$db = $this->getDb();
+		$db->query("SELECT QID,userName,string,timeStamp,difficultyLevel FROM Question WHERE userName=? ORDER BY timeStamp DESC ", array($this->userName));
+		$records = $db->fetch_assoc_all();
+		$object = array();
+		foreach ($records as $key => $value) {
+			$temp = new QuestionPromo( $value['QID'], $value['userName'], $value['string'], $value['timeStamp'], $value['difficultyLevel']);
+			$temp = $temp->toArray();
+			array_push($object, $temp);
+		}
+		$this->result['head']['status'] = 200;
+		$this->result['head']['message'] = '';
+
+		return $object;
+	}
+
+	public function getMyContributions(){
+		$db = $this->getDb();
+		$db->query("SELECT QID,string,userName,timeStamp,difficultyLevel FROM Question NATURAL JOIN (SELECT QID FROM Suggestion WHERE userName=?) as q ORDER BY timeStamp DESC ", array($this->userName));
+		$records = $db->fetch_assoc_all();
+		$object = array();
+		foreach ($records as $key => $value) {
+			$temp = new QuestionPromo( $value['QID'], $value['userName'], $value['string'], $value['timeStamp'], $value['difficultyLevel']);
+			$temp = $temp->toArray();
+			array_push($object, $temp);
+		}
+		$this->result['head']['status'] = 200;
+		$this->result['head']['message'] = '';
+
+		return $object;
+	}
+
+	public function fetchFavList($type = DEFAULT_TYPE, $num=MORE_SIZE){
 		if($this->typeValidation($type)){
 			if($type == $this->favList['type']){
 				$len = count($this->favList['list']);
@@ -203,7 +236,7 @@ class User extends Base{
 			$db = $this->getDb();
 			if($type != 'popularity')
 			{
-				$db->query("SELECT QID,userName,string,timeStamp,difficultyLevel FROM Question NATURAL JOIN (SELECT qid FROM Favourites WHERE userName=?) as W ORDER BY " . $type . " DESC LIMIT " . $len . "," . MORE_SIZE , array($this->userName));
+				$db->query("SELECT QID,userName,string,timeStamp,difficultyLevel FROM Question NATURAL JOIN (SELECT qid FROM Favourites WHERE userName=?) as W ORDER BY " . $type . " DESC LIMIT " . $len . "," . $num, array($this->userName));
 			}
 			else
 			{
@@ -217,17 +250,18 @@ class User extends Base{
 			if($type == 'popularity')
 			{
 				usort($this->favList['list'], "QuestionPromo::compareVoteUp");
-				$this->favList['list'] = array_slice($this->favList['list'], 0, $len + MORE_SIZE);
+				$this->favList['list'] = array_slice($this->favList['list'], 0, $len + $num);
 			}
 						
 			$this->result['head']['status'] = 200;
 		}else{
 			$this->result['head']['status'] = 400;
 			$this->result['head']['message'] = 'unkown type';
+			$_SESSION['user'] = serialize($this);
 		}
 	}
 
-	public function fetchHistoryList($type = DEFAULT_TYPE){
+	public function fetchHistoryList($type = DEFAULT_TYPE, $num=MORE_SIZE){
 		if($this->typeValidation($type)){
 			if($type == $this->historyList['type']){
 				$len = count($this->historyList['list']);
@@ -240,7 +274,7 @@ class User extends Base{
 			$db = $this->getDb();
 			if($type != 'popularity')
 			{
-				$db->query("SELECT QID,userName,string,timeStamp,difficultyLevel FROM Question NATURAL JOIN (SELECT qid FROM Views WHERE userName=?) as W ORDER BY " . $type . " DESC LIMIT " . $len . "," . MORE_SIZE , array($this->userName));
+				$db->query("SELECT QID,userName,string,timeStamp,difficultyLevel FROM Question NATURAL JOIN (SELECT qid FROM Views WHERE userName=?) as W ORDER BY " . $type . " DESC LIMIT " . $len . "," . $num , array($this->userName));
 			}
 			else
 			{
@@ -254,7 +288,7 @@ class User extends Base{
 			if($type == 'popularity')
 			{
 				usort($this->historyList['list'], "QuestionPromo::compareVoteUp");
-				$this->historyList['list'] = array_slice($this->historyList['list'], 0, $len + MORE_SIZE);
+				$this->historyList['list'] = array_slice($this->historyList['list'], 0, $len + $num);
 			}
 
 			$this->result['head']['status'] = 200;
