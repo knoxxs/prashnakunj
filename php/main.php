@@ -221,6 +221,41 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 			}
 			break;
 
+		case 'notifications':
+			if($base->isLoggedIn()){
+				require_once __DIR__.'/includes/user.php';
+				$result = User::getNotifications();
+				$result = json_encode(array('head' => array('status' => 200, 'message' => ''), 'body' => $result));
+			}
+			else
+			{
+				$result = json_encode( array('head' => array('status' => 401, 'message'=>'Authorization Failed'), 'body' => '') );
+			}
+			break;
+
+		case 'removeNotification':
+			if(sizeof($_GET) == 1){
+				if($base->validateVar($_GET['QID'])){
+					if($base->isLoggedIn()){
+						require_once __DIR__.'/includes/user.php';
+						if(User::removeNotification($_GET['QID'])){
+							$result = json_encode(array('head' => array('status' => 200, 'message' => ''), 'body' => ''));
+						}else{
+							$result = json_encode( array('head' => array('status' => 500, 'message'=>'Internal Server Error'), 'body' > '') );
+						}
+					}
+					else
+					{
+						$result = json_encode( array('head' => array('status' => 401, 'message'=>'Authorization Failed'), 'body' => '') );
+					}
+				}else{
+					$result = json_encode( array('head' => array('status' => 206, 'message'=>'Incomplete field'), 'body' => '') );
+				}
+			}else{
+				$result = json_encode( array('head' => array('status' => 206, 'message'=>'Only '.sizeof($_GET).' fields received, required 1'), 'body' => '') );
+			}
+			break;
+
 		case 'search':
 			if( sizeof($_GET) == 1 ){
 				require_once __DIR__.'/includes/question.php';
@@ -561,6 +596,9 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 								}
 								if ($count == 0) {
 									if ($insertStatus) {
+										foreach ($tags as $key => $value) {
+											Question::addNotification($value, $assignQID);
+										}
 										$result = json_encode( array('head' => array('status' => 200, 'message'=>'Question Added Successfully'), 'body' => '') );
 									}
 									else{
@@ -611,6 +649,7 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 										case 'post':
 											if (sizeof($_POST) == 4) {
 												require_once __DIR__.'/includes/answerComment.php';
+												require_once __DIR__.'/includes/user.php';
 												if($base->validateVar($_POST['QID']) && $base->validateVar($_POST['string']) && $base->validateVar($_POST['answerTimeStamp']) && $base->validateVar($_POST['reviewId']) ){
 													$user = unserialize($_SESSION['user']);
 													$uname = $user->getUsername();
@@ -640,8 +679,8 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 										case 'vote':
 											if (sizeof($_GET) == 6) {
 												require_once __DIR__.'/includes/answerComment.php';
-												if($base->validateVar($_POST['QID']) && $base->validateVar($_POST['nature']) && $base->validateVar($_POST['answerTimeStamp']) && $base->validateVar($_POST['reviewerID'] && $base->validateVar($_POST['answerCommentTimeStamp'] && $base->validateVar($_POST['commentUserName']) )
-												{
+												require_once __DIR__.'/includes/user.php';
+												if( $base->validateVar($_GET['QID']) && $base->validateVar($_GET['nature']) && $base->validateVar($_GET['answerTimeStamp']) && $base->validateVar($_GET['reviewerID']) && $base->validateVar($_GET['answerCommentTimeStamp']) && $base->validateVar($_GET['commentUserName']) ){
 													$user = unserialize($_SESSION['user']);
 													$uname = $user->getUsername();
 													$voteStatus = AnswerComment::checkAlreadyVoted(array(
@@ -650,15 +689,15 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 														'answerTimeStamp' => $_GET['answerTimeStamp'],
 														'answerCommentTimeStamp' => $_GET['answerCommentTimeStamp'],
 														'commentUserName' => $_GET['commentUserName'],
-														'userName' => $user));
-													if($voteStatus == $user){
+														'userName' => $uname));
+													if($voteStatus == $uname){
 														$voteNature = AnswerComment::checkVoteNature(array(
 														'QID' => $_GET['QID'],
 														'reviewerID' => $_GET['reviewerID'],
 														'answerTimeStamp' => $_GET['answerTimeStamp'],
 														'answerCommentTimeStamp' => $_GET['answerCommentTimeStamp'],
 														'commentUserName' => $_GET['commentUserName'],
-														'userName' => $user));
+														'userName' => $uname));
 														if ($voteNature == $_GET['nature']) {
 															$result = json_encode( array('head' => array('status' => 304, 'message'=>'Not Modified'), 'body' => '') );
 														}
@@ -669,7 +708,7 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 																'answerTimeStamp' => $_GET['answerTimeStamp'],
 																'answerCommentTimeStamp' => $_GET['answerCommentTimeStamp'],
 																'commentUserName' => $_GET['commentUserName'],
-																'userName' => $user));
+																'userName' => $uname));
 															if($updateStatus){
 																$result = json_encode( array('head' => array('status' => 200, 'message'=>'Vote Modified Successfully'), 'body' => '') );
 															}
@@ -679,13 +718,14 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 														}
 													}
 													else{
-														$voteStatus = AnswerComment::addVote($_GET['nature'], array(
+														$voteStatus = AnswerComment::addVote(array(
 															'QID' => $_GET['QID'],
 															'reviewerID' => $_GET['reviewerID'],
 															'answerTimeStamp' => $_GET['answerTimeStamp'],
 															'answerCommentTimeStamp' => $_GET['answerCommentTimeStamp'],
 															'commentUserName' => $_GET['commentUserName'],
-															'userName' => $user));
+															'userName' => $uname,
+															'nature' => $_GET['nature']));
 														if($voteStatus){
 															$result = json_encode( array('head' => array('status' => 200, 'message'=>'Vote Added Successfully'), 'body' => '') );
 														}
@@ -712,19 +752,22 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 								case 'vote':
 									if (sizeof($_GET) == 3) {
 										require_once __DIR__.'/includes/answer.php';
-										if($base->validateVar($_POST['QID']) && $base->validateVar($_POST['nature']) && $base->validateVar($_POST['reviewer']) )
+										require_once __DIR__.'/includes/user.php';
+										if($base->validateVar($_GET['QID']) && $base->validateVar($_GET['nature']) && $base->validateVar($_GET['reviewer']) )
 										{
+											echo "hellooooooooo";
 											$user = unserialize($_SESSION['user']);
 											$uname = $user->getUsername();
 											$voteStatus = Answer::checkAlreadyVoted(array(
 												'QID' => $_GET['QID'],
 												'reviewer' => $_GET['reviewer'],
-												'userName' => $user));
-											if($voteStatus == $user){
+												'userName' => $uname));
+											if($voteStatus == $uname){
+												echo "hiiiiiiii";
 												$voteNature = Answer::checkVoteNature(array(
 												'QID' => $_GET['QID'],
 												'reviewer' => $_GET['reviewer'],
-												'userName' => $user));
+												'userName' => $uname));
 												if ($voteNature == $_GET['nature']) {
 													$result = json_encode( array('head' => array('status' => 304, 'message'=>'Not Modified'), 'body' => '') );
 												}
@@ -732,7 +775,7 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 													$updateStatus = Answer::updateVote($_GET['nature'], array(
 														'QID' => $_GET['QID'],
 														'reviewer' => $_GET['reviewer'],
-														'userName' => $user));
+														'userName' => $uname));
 													if($updateStatus){
 														$result = json_encode( array('head' => array('status' => 200, 'message'=>'Vote Modified Successfully'), 'body' => '') );
 													}
@@ -742,10 +785,11 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 												}
 											}
 											else{
-												$voteStatus = Answer::addVote($_GET['nature'], array(
+												$voteStatus = Answer::addVote(array(
 													'QID' => $_GET['QID'],
 													'reviewer' => $_GET['reviewer'],
-													'userName' => $user));
+													'nature' => $_GET['nature'],
+													'userName' => $uname));
 												if($voteStatus){
 													$result = json_encode( array('head' => array('status' => 200, 'message'=>'Vote Added Successfully'), 'body' => '') );
 												}
@@ -771,7 +815,7 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 
 						case 'qcomment':
 							if( isset($regMatches[1][2]) && ( !empty($regMatches[1][2]) ) ){
-								switch ($regMatches[1][2]) {
+								switch ($regMatches[1][2]){
 									case 'post':
 										if(sizeof($_POST) == 2){
 											require_once __DIR__.'/includes/questionComment.php';
@@ -886,6 +930,7 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 								}
 							}
 							break;
+
 						case 'vote':
 							if(sizeof($_GET) == 2){
 								require_once __DIR__.'/includes/question.php';
