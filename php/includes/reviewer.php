@@ -32,17 +32,17 @@ class Reviewer extends User{
 		return $jsonList;
 	}
 
-	public function fetchReviewHistoryList(){
+	public function fetchReviewHistoryList($num=MORE_SIZE){
 		$len = count($this->reviewHistoryList);
 		//Fetching Questions
 		$db = $this->getDb();
-		$db->query("SELECT QID,timeStamp,userName FROM Question WHERE reviewer=? ORDER BY timeStamp DESC LIMIT " . $len . "," . MORE_SIZE , array($this->userName));
+		$db->query("SELECT QID,timeStamp,userName FROM Question WHERE reviewer=? ORDER BY timeStamp DESC LIMIT " . $len . "," . $num , array($this->userName));
 		$records = $db->fetch_assoc_all();
 		foreach ($records as $key => $value){
 			array_push($this->reviewHistoryList, new Review( $value['QID']) );
 		}
 
-		$db->query("SELECT QID,userName,timeStamp FROM Suggestion WHERE reviewerId=? ORDER BY timeStamp DESC LIMIT " . $len . "," . MORE_SIZE , array($this->userName));
+		$db->query("SELECT QID,userName,timeStamp FROM Suggestion WHERE reviewerId=? ORDER BY timeStamp DESC LIMIT " . $len . "," . $num , array($this->userName));
 		$records = $db->fetch_assoc_all();
 		foreach ($records as $key => $value){
 			array_push($this->reviewHistoryList, new Review( $value['QID'], $value['userName'], $value['timeStamp']) );
@@ -66,17 +66,17 @@ class Reviewer extends User{
 		return $jsonList;
 	}
 
-	public function fetchToBeReviewList(){
+	public function fetchToBeReviewList($num=MORE_SIZE){
 		$len = count($this->toBeReviewList);
 
 		$db = $this->getDb();
-		$db->query("SELECT QID,timeStamp,userName FROM Question WHERE reviewer IS NULL ORDER BY timeStamp DESC LIMIT " . $len . "," . MORE_SIZE , array($this->userName));
+		$db->query("SELECT QID,timeStamp,userName FROM Question WHERE reviewer IS NULL ORDER BY timeStamp DESC LIMIT " . $len . "," . $num , array($this->userName));
 		$records = $db->fetch_assoc_all();
 		foreach ($records as $key => $value){
 			array_push($this->toBeReviewList, new Review( $value['QID']) );
 		}
 	
-		$db->query("SELECT QID,userName,timeStamp FROM Suggestion WHERE reviewerId IS NULL ORDER BY timeStamp DESC LIMIT " . $len . "," . MORE_SIZE , array($this->userName));
+		$db->query("SELECT QID,userName,timeStamp FROM Suggestion WHERE reviewerId IS NULL ORDER BY timeStamp DESC LIMIT " . $len . "," . $num , array($this->userName));
 		$records = $db->fetch_assoc_all();
 		foreach ($records as $key => $value){
 			array_push($this->toBeReviewList, new Review( $value['QID'], $value['userName'], $value['timeStamp']) );

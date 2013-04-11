@@ -125,8 +125,12 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 								require_once __DIR__.'/includes/user.php';
 								require_once __DIR__.'/includes/reviewer.php';
 								$user = unserialize($_SESSION['user']);
-								if( isset($regMatches[1][2]) && ( !empty($regMatches[1][2]) ) && ($regMatches[1][2] == 'more') ){
-									$user->fetchFavListArray($type);
+								if( isset($regMatches[1][3]) && ( !empty($regMatches[1][3]) ) && ($regMatches[1][3] == 'more') ){
+									if($base->validateVar($_GET) && $base->validateVar($_GET['number'])){
+										$user->fetchFavList($type, $_GET['number']);
+									}else{
+										$user->fetchFavList($type);
+									}
 								}
 								$list = $user->getFavListArray($type);
 								$base->result = $user->result;
@@ -136,8 +140,12 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 							case 'watchLater':
 								require_once __DIR__.'/includes/user.php';
 								$user = unserialize($_SESSION['user']);
-								if( isset($regMatches[1][2]) && ( !empty($regMatches[1][2]) ) && ($regMatches[1][2] == 'more') ){
-									$user->getWatchLaterListArray($type);
+								if( isset($regMatches[1][3]) && ( !empty($regMatches[1][3]) ) && ($regMatches[1][3] == 'more') ){
+									if($base->validateVar($_GET) && $base->validateVar($_GET['number'])){
+										$user->fetchWatchLaterList($type, $_GET['number']);
+									}else{
+										$user->fetchWatchLaterList($type);
+									}
 								}
 								$list = $user->getWatchLaterListArray($type);
 								$base->result = $user->result;
@@ -147,8 +155,14 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 							case 'history':
 								require_once __DIR__.'/includes/user.php';
 								$user = unserialize($_SESSION['user']);
-								if( isset($regMatches[1][2]) && ( !empty($regMatches[1][2]) ) && ($regMatches[1][2] == 'more') ){
-									$user->getHistoryListArray($type);
+								if( isset($regMatches[1][3]) && ( !empty($regMatches[1][3]) ) && ($regMatches[1][3] == 'more') ){
+									if( isset($regMatches[1][3]) && ( !empty($regMatches[1][3]) ) && ($regMatches[1][3] == 'more') ){
+									if($base->validateVar($_GET) && $base->validateVar($_GET['number'])){
+										$user->fetchHistoryList($type, $_GET['number']);
+									}else{
+										$user->fetchHistoryList($type);
+									}
+								}
 								}
 								$list = $user->getHistoryListArray($type);
 								$base->result = $user->result;
@@ -159,8 +173,14 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 								if($base->validateVar($_SESSION['isReviewer']) && $_SESSION['isReviewer']){
 									require_once __DIR__.'/includes/reviewer.php';
 									$user = unserialize($_SESSION['user']);
-									if( isset($regMatches[1][2]) && ( !empty($regMatches[1][2]) ) && ($regMatches[1][2] == 'more') ){
-										$user->getReviewHistoryListArray();
+									if( isset($regMatches[1][3]) && ( !empty($regMatches[1][3]) ) && ($regMatches[1][3] == 'more') ){
+										if( isset($regMatches[1][3]) && ( !empty($regMatches[1][3]) ) && ($regMatches[1][3] == 'more') ){
+											if($base->validateVar($_GET) && $base->validateVar($_GET['number'])){
+												$user->fetchReviewHistoryList($_GET['number']);
+											}else{
+												$user->fetchReviewHistoryList();
+											}
+										}
 									}
 									$list = $user->getReviewHistoryListArray();
 									$base->result = $user->result;
@@ -174,8 +194,14 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 								if($base->validateVar($_SESSION['isReviewer']) && $_SESSION['isReviewer']){
 									require_once __DIR__.'/includes/reviewer.php';
 									$user = unserialize($_SESSION['user']);
-									if( isset($regMatches[1][2]) && ( !empty($regMatches[1][2]) ) && ($regMatches[1][2] == 'more') ){
-										$user->getToBeReviewListArray();
+									if( isset($regMatches[1][3]) && ( !empty($regMatches[1][3]) ) && ($regMatches[1][3] == 'more') ){
+										if( isset($regMatches[1][3]) && ( !empty($regMatches[1][3]) ) && ($regMatches[1][3] == 'more') ){
+											if($base->validateVar($_GET) && $base->validateVar($_GET['number'])){
+												$user->fetchToBeReviewList($_GET['number']);
+											}else{
+												$user->fetchToBeReviewList();
+											}
+										}
 									}
 									$list = $user->getToBeReviewListArray();
 									$base->result = $user->result;
@@ -193,6 +219,20 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 								require_once __DIR__.'/includes/user.php';
 								$user = unserialize($_SESSION['user']);
 								$list = $user->getSubscriptionList();
+								$base->result = $user->result;
+								$base->result['body'] = $list;
+								$result = json_encode($base->result);
+					}elseif($regMatches[1][1] == 'myQuestions'){
+								require_once __DIR__.'/includes/user.php';
+								$user = unserialize($_SESSION['user']);
+								$list = $user->getMyQuestion();
+								$base->result = $user->result;
+								$base->result['body'] = $list;
+								$result = json_encode($base->result);
+					}elseif($regMatches[1][1] == 'myContributions'){
+								require_once __DIR__.'/includes/user.php';
+								$user = unserialize($_SESSION['user']);
+								$list = $user->getMyContributions();
 								$base->result = $user->result;
 								$base->result['body'] = $list;
 								$result = json_encode($base->result);
@@ -255,6 +295,7 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 				$result = json_encode( array('head' => array('status' => 206, 'message'=>'Only '.sizeof($_GET).' fields received, required 1'), 'body' => '') );
 			}
 			break;
+
 
 		case 'search':
 			if( sizeof($_GET) == 1 ){
