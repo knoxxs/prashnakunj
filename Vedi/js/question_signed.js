@@ -46,7 +46,7 @@ function quesDisplay()
 
 						if(data.suggestions == null)
 						{
-							jQuery('#sugList').append('<div id="respond"><form id="commentform"><h5>Post a suggestion:</h5><textarea name="comment" id="new_suggestion" style="height: 30px; width: 650px; border: 1px dotted rgb(72,72,72);" tabindex="4"></textarea><p><input name="submit" id="submit" tabindex="5" value="Post" onClick="suggPost()"/></p><input type="hidden" name="comment_post_ID" value="" id="comment_post_ID" /><input type="hidden" name="comment_parent" id="comment_parent" value="0" />	</form></div><div class="clearfix"></div>');
+							jQuery('#sugList').html('<div id="respond"><form id="commentform"><h5>Post a suggestion:</h5><textarea name="comment" id="new_suggestion" style="height: 30px; width: 650px; border: 1px dotted rgb(72,72,72);" tabindex="4"></textarea><p><input name="submit" id="submit" tabindex="5" value="Post" onClick="suggPost()"/></p><input type="hidden" name="comment_post_ID" value="" id="comment_post_ID" /><input type="hidden" name="comment_parent" id="comment_parent" value="0" />	</form></div><div class="clearfix"></div>');
 						}
 						else
 						{
@@ -56,7 +56,7 @@ function quesDisplay()
 							}
 								jQuery('#sugList').append('<div id="respond"><form id="commentform"><h5>Post a suggestion:</h5><textarea name="comment" id="new_suggestion" style="height: 30px; width: 650px; border: 1px dotted rgb(72,72,72);" tabindex="4"></textarea><p><input name="submit" id="submit" tabindex="5" value="Post" onClick="suggPost()"/></p><input type="hidden" name="comment_post_ID" value="" id="comment_post_ID" /><input type="hidden" name="comment_parent" id="comment_parent" value="0" />	</form></div><div class="clearfix"></div>');
 						}
-						
+
 						for(var i=0;i<=data.suggestions.length;i++)
 						{
 							for(var j=0;j<data.suggestions[i].commentList.length;j++)

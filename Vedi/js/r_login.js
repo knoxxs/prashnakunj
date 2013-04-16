@@ -59,6 +59,21 @@ var uName, pWord, eMail, secQ, secQA;
           );
 	  });
 	  $("#resetp_button").click(function(event){
+		switch(getCookie('securityQuestionNumber'))
+		{
+			case '1':
+				$('#securityQ').attr('value', 'What\'s your mother\'s maiden name?');
+				break;
+			case '2':
+				$('#securityQ').attr('value', 'Where did you first attend school?');
+				break;
+			case '3':
+				$('#securityQ').attr('value', 'What was the name for your first pet?');
+				break;
+			case '4':
+				$('#securityQ').attr('value', 'What was your first telephone number?');
+				break;
+		}
 		uName = getCookie("userName");
 		pWord = $('#newPassword').val();
 		cWord = $('#confirmPassword').val();

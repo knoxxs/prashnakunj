@@ -272,7 +272,7 @@ jQuery(document).ready(function($){
 	var result= {};
 	result['type']="timestamp";
 	result['number']=10;
-	result['latestQuestionTime']="2014-01-01 00:00:00";
+	result['latestQuestionTime']= -1;
 	result['scroll']="after";
 	$.get( 
              "/qcorner/questions",

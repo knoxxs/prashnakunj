@@ -57,7 +57,7 @@ var uName, pWord, eMail, secQ, secQA;
 					setCookie('affiliation', data.body.affiliation, 1);
 					setCookie('reviewer', data.body.isReviewer, 1);
 					alert("Success");
-					window.location = 'homepage.html';
+					window.location = 'index.html';
 				}
 				else
 					alert("Wrong username or password");*/
@@ -182,7 +182,7 @@ var uName, pWord, eMail, secQ, secQA;
              function(data) {
 				if(data.head.status==201)
 				{
-					window.location = 'homepage.html';
+					window.location = 'index.html';
 				}
 				else
 					alert("There was some error. Please check your data and try again!");

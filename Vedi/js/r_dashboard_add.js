@@ -86,7 +86,7 @@ function postQuestion() {
              "/qcorner/question/post",
 			 result,
              function(data) {
-				
+				location.reload();
 			 },
 			 "json"
 	);
@@ -179,4 +179,16 @@ function vote(e, f)
 			},
 		"json"
 		);
+}
+
+function searchClick(){
+	var tag = jQuery('#s').val();
+	setCookie('tag', tag, 1);
+	var saved_tag = getCookie('username');
+	if(undefined != saved_tag)
+	{
+		window.location = 'tag_signed.html';
 	}
+	else
+		window.location = 'tag_unsigned.html';
+}

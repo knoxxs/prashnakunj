@@ -413,4 +413,9 @@ class User extends Base{
 		return $db->query("INSERT INTO Watch VALUES('$QID', '$this->userName')");
 	}
 
+	public function addToHistory($QID){
+		$db = $this->getDb();
+		return $db->query("INSERT INTO Views VALUES('$QID', '$this->userName')");
+	}
+
 }

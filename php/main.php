@@ -346,6 +346,23 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 			}
 			break;
 
+		case 'addHistory':
+			if( sizeof($_GET) == 1 ){
+				require_once __DIR__.'/includes/user.php';
+				require_once __DIR__.'/includes/reviewer.php';
+				if($base->validateVar($_GET['QID'])){
+					if(@unserialize($_SESSION['user'])->addToHistory($_GET['QID'])){
+						$result = array("head" => array('status' => 200, 'message'=>''), 'body' => $result);
+						$result = json_encode($result);
+					}
+				}else{
+					$result = json_encode( array('head' => array('status' => 206, 'message'=>'Incomplete field'), 'body' => '') );
+				}
+			}else{
+				$result = json_encode( array('head' => array('status' => 206, 'message'=>'Received 0 fields expected 1'), 'body' => '') );
+			}
+			break;
+
 		case 'forgotpwd':
 			if( isset($regMatches[1][1]) && ( !empty($regMatches[1][1]) ) ){
 				switch ($regMatches[1][1]) {

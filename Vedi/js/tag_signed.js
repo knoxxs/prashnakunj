@@ -19,6 +19,7 @@ function tag_display(){
 	saved_tag = getCookie('tag');
 	if(undefined != saved_tag)
 		{
+			alert(saved_tag);
 			var result = {};
 			result['tag'] = saved_tag;
 			jQuery.get( "/qcorner/search",result,function(data) {
@@ -64,7 +65,7 @@ function tag_display(){
              },"json");
 		}
 	else
-		
+		{}
 }
 function quesClick(e)
 {
