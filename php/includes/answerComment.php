@@ -76,6 +76,7 @@ class AnswerComment extends Base
 	{
 		$db = (new Database())->connectToDatabase();
 		$status = $db->query("INSERT INTO AnswerCommentVotes (QID, reviewerID, answerTimeStamp, answerCommentTimeStamp, commentUserName, userName, nature) VALUES (?,?,?,?,?,?,?)", $data);
+		
 		return $status;
 	}
 
