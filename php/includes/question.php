@@ -192,13 +192,13 @@ class Question extends Base
 			if(is_null($lastQuestionTime)){
 				$db->query("SELECT * FROM Question ORDER BY $type DESC LIMIT 0,$num");
 			}else{
-				$db->query("SELECT * FROM Question WHERE timestamp $condition $lastQuestionTime ORDER BY $type DESC LIMIT 0,$num");
+				$db->query("SELECT * FROM Question WHERE timestamp $condition '$lastQuestionTime' ORDER BY $type DESC LIMIT 0,$num");
 			}
 		}else{
 			if(is_null($lastQuestionTime)){
 				$db = query("SELECT * FROM Question");
 			}else{
-				$db = query("SELECT * FROM Question WHERE timestamp $condition $lastQuestionTime");
+				$db = query("SELECT * FROM Question WHERE timestamp $condition '$lastQuestionTime'");
 			}
 		}
 
