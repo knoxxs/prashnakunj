@@ -492,7 +492,7 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 			break;
 
 		case 'reviewLock':
-			if(sizeof($_GET) == 3){
+			if((sizeof($_GET) == 3) || (sizeof($_GET) == 1)){
 				require_once __DIR__.'/includes/reviewer.php';
 				//if( $base->validateVar($_GET['QID']) && $base->validateVar($_GET['suggestionUserName']) && $base->validateVar($_GET['suggestionTimeStamp']) ){
 				if( ($base->validateVar($_GET['QID']) && empty($_GET['suggestionUserName']) && empty($_GET['suggestionTimeStamp']) )  ||  ($base->validateVar($_GET['QID']) && $base->validateVar($_GET['suggestionUserName']) && $base->validateVar($_GET['suggestionTimeStamp']) )){
