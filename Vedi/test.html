@@ -1,0 +1,40 @@
+<html>
+<head>
+ 
+<script type="text/javascript" src="jquery-1.4.2.min.js"></script>
+ 
+</head>
+<body>
+  <h1>Check if "enter" is pressed with jQuery</h1>
+ 
+<label>TextBox : </label>
+<input type="button" id="button" value="Click" onClick="click()"/>
+ 
+<script type="text/javascript">
+ $('#button').click(function(event){
+		uName = "uname6";
+		pWord = "password";
+		var result = {};
+		result['userName']=uName;
+		result['password']=pWord;
+		$.post( 
+             "http://54.249.240.120/qcorner/login",
+			 result,
+             function(data) {
+				if(data.head.status==200)
+				{
+					setCookie('username', uName, 1);
+					alert("Success");
+					window.location = 'file:///E:/Workspace/Vedi/homepage.html';
+				}
+				else
+					alert("Wrong username or password");
+             },
+			 "json"
+
+          );
+ 
+});
+</script>
+</body>
+</html>
