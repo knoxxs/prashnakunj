@@ -70,13 +70,13 @@ class Reviewer extends User{
 		$len = count($this->toBeReviewList);
 
 		$db = $this->getDb();
-		$db->query("SELECT QID,timeStamp,userName FROM Question WHERE reviewer IS NULL ORDER BY timeStamp DESC LIMIT " . $len . "," . $num , array($this->userName));
+		$db->query("SELECT QID,timeStamp,userName FROM Question WHERE locked=0 AND reviewer IS NULL ORDER BY timeStamp DESC LIMIT " . $len . "," . $num , array($this->userName));
 		$records = $db->fetch_assoc_all();
 		foreach ($records as $key => $value){
 			array_push($this->toBeReviewList, new Review( $value['QID']) );
 		}
 	
-		$db->query("SELECT QID,userName,timeStamp FROM Suggestion WHERE reviewerId IS NULL ORDER BY timeStamp DESC LIMIT " . $len . "," . $num , array($this->userName));
+		$db->query("SELECT QID,userName,timeStamp FROM Suggestion WHERE locked=0 AND reviewerId IS NULL ORDER BY timeStamp DESC LIMIT " . $len . "," . $num , array($this->userName));
 		$records = $db->fetch_assoc_all();
 		foreach ($records as $key => $value){
 			array_push($this->toBeReviewList, new Review( $value['QID'], $value['userName'], $value['timeStamp']) );

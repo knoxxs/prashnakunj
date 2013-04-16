@@ -402,4 +402,15 @@ class User extends Base{
 	public static function del($userName){
 		return (new Database())->connectToDatabase()->query('DELETE FROM User WHERE userName=?',array($userName));
 	}
+
+	public function addToFavourite($QID){
+		$db = $this->getDb();
+		return $db->query("INSERT INTO Favourites VALUES('$QID', '$this->userName')");
+	}
+
+	public function addToWatchLater($QID){
+		$db = $this->getDb();
+		return $db->query("INSERT INTO Watch VALUES('$QID', '$this->userName')");
+	}
+
 }
