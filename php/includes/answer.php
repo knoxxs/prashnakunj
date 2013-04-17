@@ -209,5 +209,21 @@ class Answer  extends Base
 		$status = $db->query("UPDATE AnswerVotes SET nature=$nature WHERE QID=? AND reviewer=? AND userName=?", $data);
 		return $status;
 	}
+
+	public static function getAnswer($QID){
+		$db = (new Database())->connectToDatabase();
+		$db->query("SELECT * FROM Answer WHERE QID='$QID'");
+		$records = $db->fetch_assoc_all();
+		$answers = array();
+		foreach ($records as $key => $value) {
+			array_push($answers, new Answer($value['QID'], $value['string'], $value['timeStamp'], $value['reviewerId']));
+		}
+		$body = array();
+		foreach ($answers as $key => $value) {
+			array_push($body, $value->toArray());
+		}
+		$result = array('head' => array('status' => 200, 'message'=>''), 'body' => $body);
+		return $result;
+	}
 }
 ?>

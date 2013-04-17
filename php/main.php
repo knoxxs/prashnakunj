@@ -312,6 +312,18 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 			}
 			break;
 
+		case 'getAnswer':
+			if( sizeof($_GET) == 1 ){
+				require_once __DIR__.'/includes/answer.php';
+				if($base->validateVar($_GET['QID'])){					
+						$result = Answer::getAnswer($_GET['QID']);
+						$result = json_encode($result);
+				}
+			}else{
+				$result = json_encode( array('head' => array('status' => 206, 'message'=>'Received 0 fields expected 1'), 'body' => '') );
+			}
+			break;
+
 		case 'addFavourite':
 			if( sizeof($_GET) == 1 ){
 				require_once __DIR__.'/includes/user.php';
