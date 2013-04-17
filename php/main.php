@@ -317,9 +317,21 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 				require_once __DIR__.'/includes/user.php';
 				require_once __DIR__.'/includes/reviewer.php';
 				if($base->validateVar($_GET['QID'])){
-					if(@unserialize($_SESSION['user'])->addToFavourite($_GET['QID'])){
-						$result = array("head" => array('status' => 200, 'message'=>''), 'body' => $result);
-						$result = json_encode($result);
+					$user = unserialize($_SESSION['user']);
+					$uname = $user->getUsername();
+					$check = User::alreadyExistsFavourite($uname, $_GET['QID']);
+					if ($check == 'yes') {
+						$result = json_encode( array('head' => array('status' => 409, 'message'=>'Already a entry'), 'body' => '') );
+					}else
+					{
+						if(@unserialize($_SESSION['user'])->addToFavourite($_GET['QID'])){
+							$result = array("head" => array('status' => 200, 'message'=>''), 'body' => $result);
+							$result = json_encode($result);
+						}
+						else
+						{
+							$result = json_encode( array('head' => array('status' => 500, 'message'=>'Internal Error'), 'body' => '') );
+						}
 					}
 				}else{
 					$result = json_encode( array('head' => array('status' => 206, 'message'=>'Incomplete field'), 'body' => '') );
@@ -334,10 +346,21 @@ if( isset($regMatches[1][0]) && ( !empty($regMatches[1][0]) ) ){
 				require_once __DIR__.'/includes/user.php';
 				require_once __DIR__.'/includes/reviewer.php';
 				if($base->validateVar($_GET['QID'])){
-					if(@unserialize($_SESSION['user'])->addToWatchLater($_GET['QID'])){
-						$result = array("head" => array('status' => 200, 'message'=>''), 'body' => $result);
-						$result = json_encode($result);
-					}
+					$user = unserialize($_SESSION['user']);
+					$uname = $user->getUsername();
+					$check = User::alreadyExistsWatchLater($uname, $_GET['QID']);
+					if ($check == 'yes') {
+						$result = json_encode( array('head' => array('status' => 409, 'message'=>'Already a entry'), 'body' => '') );
+					}else
+					{
+						if(@unserialize($_SESSION['user'])->addToWatchLater($_GET['QID'])){
+							$result = array("head" => array('status' => 200, 'message'=>''), 'body' => $result);
+							$result = json_encode($result);
+						}
+						else{
+							$result = json_encode( array('head' => array('status' => 500, 'message'=>'Internal Error'), 'body' => '') );
+						}
+					}	
 				}else{
 					$result = json_encode( array('head' => array('status' => 206, 'message'=>'Incomplete field'), 'body' => '') );
 				}

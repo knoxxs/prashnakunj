@@ -413,4 +413,44 @@ class User extends Base{
 		return $db->query("INSERT INTO Watch VALUES('$QID', '$this->userName')");
 	}
 
+	public static function alreadyExistsFavourite($uname, $QID)
+	{
+		$db = (new Database())->connectToDatabase();
+		$db->query("SELECT * FROM Favourites WHERE QID='$QID' AND userName='$uname'");
+		if($db->returned_rows > 0){
+			$name = $db->fetch_assoc_all()[0]['userName'];
+			$ID = $db->fetch_assoc_all()[0]['QID'];
+			if ($name == $uname && $ID == $QID) {
+				$val = 'yes';
+			}
+			else{
+				$val = 'no';
+			}
+		}
+		else{
+			$val = 'no';
+		}
+		return $val;
+	}
+
+	public static function alreadyExistsWatchLater($uname, $QID)
+	{
+		$db = (new Database())->connectToDatabase();
+		$db->query("SELECT * FROM Watch WHERE QID='$QID' AND userName='$uname'");
+		if($db->returned_rows > 0){
+			$name = $db->fetch_assoc_all()[0]['userName'];
+			$ID = $db->fetch_assoc_all()[0]['QID'];
+			if ($name == $uname && $ID == $QID) {
+				$val = 'yes';
+			}
+			else{
+				$val = 'no';
+			}
+		}
+		else{
+			$val = 'no';
+		}
+		return $val;
+	}
+
 }
