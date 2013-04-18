@@ -2,8 +2,8 @@ function moreAfterClick() {
 	var result= {};
 	result['type']="timestamp";
 	result['number']=15;
-	result['latestQuestionTime']=getCookie('latestQuestionTime');
-	result['scroll']="after";
+	result['latestQuestionTime']=getCookie('oldestQuestionTime');
+	result['scroll']="before";
 	jQuery.get( 
              "/qcorner/questions/timestamp",
 			 result,
@@ -24,7 +24,7 @@ function moreAfterClick() {
 				var answerString;
 				for (var j=9;j<19;j++)
 				{
-					$('#best_answer_' + j).after('<br><h4 class="entry-title"> <span class="title"><a href="single.html" id="question_' + (j+1) + '">'+data[j-9].question.string+'</a></span><span class="entry-commentsn"><a href="#" title="Upvotes" class="poshytip">'+data[j-9].question.voteUp+'</a></span><span class="entry-commentsq"><a href="#" title="Downvotes" class="poshytip">'+data[j-9].question.voteDown+'</a></span><span class="entry-commentsp"><a href="#" title="Report abuse" class="poshytip">23</a></span></h4><div class="entry-excerpt" id="best_answer_'+(j+1)+'">'+answers[j-9]+'</div>');	
+					$('#best_answer_' + j).after('<br><h4 class="entry-title"><span class="title"><a href="single.html" id="question_' + (j+1) + '">'+data[j-9].question.string+'</a></span><span class="entry-commentsn"><a href="#" title="Upvotes" class="poshytip">'+data[j-9].question.voteUp+'</a></span><span class="entry-commentsq"><a href="#" title="Downvotes" class="poshytip">'+data[j-9].question.voteDown+'</a></span><span class="entry-commentsp"><a href="#" title="Report abuse" class="poshytip">23</a></span></h4><div class="entry-excerpt" id="best_answer_'+(j+1)+'">'+answers[j-9]+'</div>');	
 				}
 				},
 			 "json"

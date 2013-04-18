@@ -397,6 +397,19 @@ function listClick(e)
 			setCookie('list', 'qvh', 1);
 			window.location = "list.html";
 			break;
+		case 'con':
+			setCookie('list', 'con', 1);
+			window.location = "list.html";
+			break;
+		case 'sub':
+			setCookie('list', 'sub', 1);
+			window.location = "list.html";
+			break;
+		case 'myq':
+			setCookie('list', 'myq', 1);
+			window.location = "list.html";
+			break;
+
 	}
 }
 function logout(){
