@@ -1,5 +1,5 @@
 <?php
 
-mail('201001101@webmail.com', 'test', 'This is my mail');
+mail('201001101@daiict.ac.in', 'test', 'This is my mail');
 
 ?>
