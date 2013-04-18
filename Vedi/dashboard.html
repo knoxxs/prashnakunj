@@ -83,15 +83,15 @@
 						<div class="cancel-comment-reply"><a rel="nofollow" id="cancel-comment-reply-link" href="#respond" style="display:none;">Cancel reply</a></div>
 							<form action="single.html" method="post" id="commentform">
 								<h4 class="s-title" style="color: rgb(249,249,238); margin-top: 10px">Write Your Question Here:</h4>
-								<textarea name="comment" id="questionString"  tabindex="4" style="height:125px; width:550px"></textarea>
+								<textarea name="comment" id="questionString"  tabindex="4" style="height:125px; width:500px"></textarea>
                                 <h6 style="color: rgb(249,249,238); padding: 10px">Include Tags:</h6>
 								<form action="" style="padding: 10px">
 									&nbsp&nbsp&nbsp
-									<select name="Tag 1" id="tag_1">
-									<option value="Engineering">Engineering</option>
-									<option value="Commerce">Commerce</option>
-									<option value="Medical">Medical</option>
-									<option value="Law">Law</option>
+									<select name="Tag 1" id="tag_1" onchange="optionCheck()">
+									<option id="11" value="Engineering">Engineering</option>
+									<option id="12" value="Commerce" >Commerce</option>
+									<option id="13" value="Medical" >Medical</option>
+									<option id="14" value="Law" >Law</option>
 									</select>
 									
 								   
@@ -148,55 +148,55 @@
               
 			</div>
 			
-			<nav>
+			<nav style="overflow:hidden;">
 				<ul id="nav" class="sf-menu">
 					
                     <li><a href="#">Notifications<span class="notif" id="notif_number"> 2 </span><span class="subheader">My notifications</span></a>
 						<ul id="notifications">
-							<li><a href="#"><span class="notifon" id="notif_0">No notifications.</span></a></li>
+							<li><span><span class="notifon" id="notif_0">No notifications.</span></span></li>
 						</ul>
 					</li>
                     
-					<li><a href="#" onClick="listClick(this)" id="fav">Favorites<span class="subheader">My favorite questions</span></a>
+					<li><a onClick="listClick(this)" id="fav">Favorites<span class="subheader">My favorite questions</span></a>
 						<ul id="fav_list">
-							<li><a href="#" id="favorite_0">No questions available</a></li>
+							<li><span id="favorite_0" style="max-width:50px">No questions available</span></li>
 							<!--<li><span id="favorite_0">No questions available</span></li>-->
 							
 							<!--<li><a href="#">Question 2</a></li>-->
 							<!--<li><a href="#">Question 3</a></li>-->
 						</ul>
 					</li>
-					<li><a href="#" onClick="listClick(this)" id="fav">Later<span class="subheader">Questions I will visit later</span></a>
+					<li><a onClick="listClick(this)" id="lat">Later<span class="subheader">Questions I will visit later</span></a>
 						<ul id='wl_list'>
-							<li><a href="#" id="wl_0">No questions available</a></li>
+							<li><span id="wl_0">No questions available</span></li>
 							<!--<li><a href="#">Question 2</a></li>
 							<li><a href="#">Question 3</a></li>-->
 						</ul>
 					</li>
-					<li><a href="#" onClick="listClick(this)" id="fav">Subscriptions<span class="subheader">Tags I subscribed to</span></a>
+					<li><a onClick="listClick(this)" id="sub">Subscriptions<span class="subheader">Tags I subscribed to</span></a>
 						<ul id="sub_list">
-							<li><a href="#" id="subtag_0">No tags subscribed</a></li>
+							<li><span id="subtag_0">No tags subscribed</span></li>
 							<!--<li><a href="#">Question 2</a></li>
 							<li><a href="#">Question 3</a></li>-->
 						</ul>
 					</li>
-					<li><a href="#" onClick="listClick(this)" id="fav">Contributed<span class="subheader">Questions I contributed to</span></a>
+					<li><a onClick="listClick(this)" id="con">Contributed<span class="subheader">Questions I contributed to</span></a>
 						<ul id="contributed">
-							<li><a href="#" id="contributed_0">No contributions</a></li>
+							<li><span id="contributed_0">No contributions</span></li>
 							<!--<li><a href="#">Question 2</a></li>
 							<li><a href="#">Question 3</a></li>-->
 						</ul>
 					</li>
-					<li><a href="#" onClick="listClick(this)" id="fav">My Questions<span class="subheader">Questions I posted</span></a>
+					<li><a onClick="listClick(this)" id="myq">My Questions<span class="subheader">Questions I posted</span></a>
 						<ul id="myquestions">
-							<li><a href="#" id="myquestions_0">No questions posted</a></li>
+							<li><span id="myquestions_0">No questions posted</span></li>
 							<!--<li><a href="#">Question 2</a></li>
 							<li><a href="#">Question 3</a></li>-->
 						</ul>
 					</li>
-					<li><a href="#" onClick="listClick(this)" id="fav">Question View History<span class="subheader">My history</span></a>
+					<li><a onClick="listClick(this)" id="qvh">Question View History<span class="subheader">My history</span></a>
 						<ul id='view_history'>
-							<li><a href="#" id="history_0">No questions available</a></li>
+							<li><span id="history_0">No questions available</span></li>
 							<!--<li><a href="#">Question 2</a></li>
 							<li><a href="#">Question 3</a></li>-->
 						</ul>
@@ -232,15 +232,13 @@
 				<div id="posts">
 						<div id="navigation" align="center">
 							<ul>
-								<li><a href="#" id="questions_world">Questions for the world</a></li>
+								<li><span id="questions_world">Questions for the world</span></li>
 							</ul>
 						</div><!-- navigation -->
 						
-						<br>
-						<button style="color: rgb(249,249,238); background-color: rgb(72,72,72); border: 0px; width: 700px; font-size: 18px; padding: 5px; border-radius: 5px" type="submit" id="moreBefore">More</button>
-						
+					<br>	
 					<br>
-						<button style="color: rgb(249,249,238); background-color: rgb(72,72,72); border: 0px; width: 700px; font-size: 18px; padding: 5px; border-radius: 5px" id="after_more" onClick="moreBeforeClick()">
+						<button style="color: rgb(249,249,238); background-color: rgb(72,72,72); border: 0px; width: 700px; font-size: 18px; padding: 5px; border-radius: 5px" id="after_more" onClick="moreAfterClick()">
 						More</button>
 					<br><br>
 					
@@ -253,16 +251,17 @@
 			
 		
 			
-			<div id="sidebar-dock">
+			<div id="sidebar-dock" style="overflow:hidden">
 				<ul id="sidebar">
 					
 					<li>
 						<h6 class="accordion-trigger"><span id="s_first">First</span><span id="s_last">Last</span></h6>		
 						<ul class="accordion-container">
-							<li class="cat-item"><p><strong>Lives in:  </strong><span id="s_city">City</span></p></li>
-							<li class="cat-item"><p><strong>Works at:  </strong><span id="s_affili">abc.com</span></p></li>
-							<li class="cat-item"><p><strong>Reputation:  </strong><span id="s_rep">undf<span></p></li>
-							<li class="cat-item"><p><strong>Reviewer:  </strong><span id="s_rev">True</span></p></li>
+							<li class="cat-item"><p><strong>Lives in:  </br></strong></br><span id="s_city">City</span></p></li>
+							<li class="cat-item"><p><strong>Works at:  </br></strong></br><span style id="s_affili">abc.com</span></p></li>
+							<li class="cat-item"><p><strong>Reputation: </br> </strong></br><span id="s_rep">undf<span></p></li>
+							<li class="cat-item"><p><strong>Reviewer:  </br></strong></br><span id="s_rev">True</span></p></li>
+							<li class="cat-item"><p><strong>Reviewer:  </br></strong></br><span id="s_rev">True</span></p></li>
 						</ul>
 					</li>
 					

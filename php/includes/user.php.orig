@@ -413,25 +413,11 @@ class User extends Base{
 		return $db->query("INSERT INTO Watch VALUES('$QID', '$this->userName')");
 	}
 
-	public function addTag($tag){
-		$db = $this->getDb();
-		$db->query("SELECT * FROM Subscribe WHERE userName='$this->userName' AND tagName='$tag'");
-		if($db->returned_rows == 0){
-			$db->query("SELECT * FROM Tags WHERE name='$tag'");
-			if($db->returned_rows == 0){
-				$db->query("INSERT INTO Tags VALUES('$tag', '$this->userName')");
-			}
-			return $db->query("INSERT INTO Subscribe VALUES('$this->userName','$tag')");
-		}else{
-			return false;
-		}
-	}
-
+<<<<<<< HEAD
 	public function addToHistory($QID){
 		$db = $this->getDb();
 		return $db->query("INSERT INTO Views VALUES('$QID', '$this->userName')");
-	}
-
+=======
 	public static function alreadyExistsFavourite($uname, $QID)
 	{
 		$db = (new Database())->connectToDatabase();
@@ -470,6 +456,7 @@ class User extends Base{
 			$val = 'no';
 		}
 		return $val;
+>>>>>>> 612c641fb592240cd5553188a86486a3aa49bce1
 	}
 
 }

@@ -496,7 +496,7 @@ nav{
 	display: block;
 	width: 30px;
 	height: 30px;
-	background: url(../img/new_favorite.png) no-repeat center center;
+	background: url(../img/favorite.png) no-repeat center center;
 	color: #c0f70c;
 	text-align:  center;
 	line-height: 24px;

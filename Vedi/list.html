@@ -5,7 +5,7 @@
 		<title>List</title>
 	
 	<!-- CSS -->
-		<link rel="stylesheet" href="css/new_style.css" type="text/css" media="screen" />
+		<link rel="stylesheet" href="css/r_new_style.css" type="text/css" media="screen" />
 		<link rel="stylesheet" href="css/social-icons.css" type="text/css" media="screen" />
 
 		<!-- JS -->
@@ -72,57 +72,67 @@
 				<a><img src="img/QCorner_BW.png" alt="QCorner" id="logo" /></a>
 			</div>
 			
-			<nav>
+			<nav style="overflow:hidden;">
 				<ul id="nav" class="sf-menu">
-					<li><a href="#" onClick="listClick(this)" id="fav">Favorites<span class="subheader">my favorite questions</span></a>
-						<ul>
-							<li><a href="#">Question 1</a></li>
-							<li><a href="#">Question 2</a></li>
-							<li><a href="#">Question 3</a></li>
+					<li><a href="#">Notifications<span class="notif" id="notif_number"> 2 </span><span class="subheader">My notifications</span></a>
+						<ul id="notifications">
+							<li><span><span class="notifon" id="notif_0">No notifications.</span></span></li>
 						</ul>
 					</li>
-					<li><a href="#" onClick="listClick(this)" id="lat">Later<span class="subheader">questions I will visit later</span></a>
-						<ul>
-							<li><a href="#">Question 1</a></li>
-							<li><a href="#">Question 2</a></li>
-							<li><a href="#">Question 3</a></li>
+                    
+					<li><a onClick="listClick(this)" id="fav">Favorites<span class="subheader">My favorite questions</span></a>
+						<ul id="fav_list">
+							<li><span id="favorite_0">No questions available</span></li>
+							<!--<li><span id="favorite_0">No questions available</span></li>-->
+							
+							<!--<li><a href="#">Question 2</a></li>-->
+							<!--<li><a href="#">Question 3</a></li>-->
 						</ul>
 					</li>
-					<li><a href="#" onClick="listClick(this)" id="sub">Subscriptions<span class="subheader">tags I subscribed to</span></a>
-						<ul>
-							<li><a href="#">Question 1</a></li>
-							<li><a href="#">Question 2</a></li>
-							<li><a href="#">Question 3</a></li>
+					<li><a onClick="listClick(this)" id="lat">Later<span class="subheader">Questions I will visit later</span></a>
+						<ul id='wl_list'>
+							<li><span id="wl_0">No questions available</span></li>
+							<!--<li><a href="#">Question 2</a></li>
+							<li><a href="#">Question 3</a></li>-->
 						</ul>
 					</li>
-					<li><a href="#" onClick="listClick(this)" id="con">Contributed<span class="subheader">questions I contributed to</span></a>
-						<ul>
-							<li><a href="#">Question 1</a></li>
-							<li><a href="#">Question 2</a></li>
-							<li><a href="#">Question 3</a></li>
+					<li><a onClick="listClick(this)" id="sub">Subscriptions<span class="subheader">Tags I subscribed to</span></a>
+						<ul id="sub_list">
+							<li><span id="subtag_0">No tags subscribed</span></li>
+							<!--<li><a href="#">Question 2</a></li>
+							<li><a href="#">Question 3</a></li>-->
 						</ul>
 					</li>
-					<li><a href="#" onClick="listClick(this)" id="myq">My Questions<span class="subheader">questions I posted</span></a>
-						<ul>
-							<li><a href="#">Question 1</a></li>
-							<li><a href="#">Question 2</a></li>
-							<li><a href="#">Question 3</a></li>
+					<li><a onClick="listClick(this)" id="con">Contributed<span class="subheader">Questions I contributed to</span></a>
+						<ul id="contributed">
+							<li><span id="contributed_0">No contributions</span></li>
+							<!--<li><a href="#">Question 2</a></li>
+							<li><a href="#">Question 3</a></li>-->
 						</ul>
 					</li>
-					<li><a href="#" onClick="listClick(this)" id="qvh">Question View History<span class="subheader">my history</span></a>
-						<ul>
-							<li><a href="#">Question 1</a></li>
-							<li><a href="#">Question 2</a></li>
-							<li><a href="#">Question 3</a></li>
+					<li><a onClick="listClick(this)" id="myq">My Questions<span class="subheader">Questions I posted</span></a>
+						<ul id="myquestions">
+							<li><span id="myquestions_0">No questions posted</span></li>
+							<!--<li><a href="#">Question 2</a></li>
+							<li><a href="#">Question 3</a></li>-->
+						</ul>
+					</li>
+					<li><a onClick="listClick(this)" id="qvh">Question View History<span class="subheader">My history</span></a>
+						<ul id='view_history'>
+							<li><span id="history_0">No questions available</span></li>
+							<!--<li><a href="#">Question 2</a></li>
+							<li><a href="#">Question 3</a></li>-->
 						</ul>
 					</li>
 				</ul>
+				
+		
 				
 				<!-- search -->
 				<div class="top-search" id="searchform">
 					<div>
 							<input type="text" name="s" id="s" placeholder="Search" /><br><br>
-							<button id="search_button" onClick="searchClick()" style="color: rgb(249,249,238); background-color: rgb(72,72,72); border: 0px; width: 160px; font-size: 15px; padding: 5px; border-radius: 5px; margin: 10px 0px 0px 0px">
+							<button id="search_button" onClick="buttonClick()" style="color: rgb(249,249,238); background-color: rgb(72,72,72); border: 0px; width: 160px; font-size: 15px; padding: 5px; border-radius: 5px; margin: 10px 0px 0px 0px">
 							Search</button>
 					</div>
 				</div>
@@ -142,11 +152,6 @@
 					List Empty.
 					</h1>
 					<br>
-					
-					<br>
-					<button id="moreButton" style="color: rgb(249,249,238); background-color: rgb(72,72,72); border: 0px; width: 700px; font-size: 18px; padding: 5px; border-radius: 5px" type="submit">
-					More</button>
-					<br><br>
 				</div>
 				<!-- ENDS posts -->
 				

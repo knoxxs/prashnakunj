@@ -1,4 +1,4 @@
-function moreBeforeClick() {
+function moreAfterClick() {
 	var result= {};
 	result['type']="timestamp";
 	result['number']=15;
@@ -8,6 +8,7 @@ function moreBeforeClick() {
              "/qcorner/questions/timestamp",
 			 result,
              function(data) {
+				alert(JSON.stringify(data));
 				var answers = new Array();
 				for(var i=0;i<data.length;i++)
 				{
@@ -81,11 +82,18 @@ function postQuestion() {
 	result['questionString']=questionString;
 	result['tags']=transferTag;
 	result['difficultyLevel']=dln;
-	
 	$.post( 
              "/qcorner/question/post",
 			 result,
              function(data) {
+				alert(data);
+				if(data.head.status == 200)
+					alert("The question has been put up for review");
+				else if (data.head.status == 409)
+					alert("Invalid tags");
+				else 
+					alert("There was an error");
+				//$('#bodyslider').toggle;
 				location.reload();
 			 },
 			 "json"
@@ -129,6 +137,7 @@ function logout(){
 
 function listClick(e)
 {
+	alert(e.id);
 	switch(e.id)
 	{
 		case 'fav':
@@ -143,11 +152,25 @@ function listClick(e)
 			setCookie('list', 'qvh', 1);
 			window.location = "list.html";
 			break;
+		case 'con':
+			setCookie('list', 'con', 1);
+			window.location = "list.html";
+			break;
+		case 'myq':
+			setCookie('list', 'myq', 1);
+			window.location = "list.html";
+			break;
+		case 'sub':
+			setCookie('list', 'sub', 1);
+			window.location = "list.html";
+			break;
+
 	}
 }
 
 function quesClick(e)
 {
+	alert(e.id);
 	setCookie('questionID', e.id, 1);
 	var username = getCookie('username');
 	var reviewer = getCookie('reviewer');
@@ -163,6 +186,59 @@ function quesClick(e)
 			window.location = 'question_unsigned.html';
 	}
 }
+
+function visitLater(e)
+{
+	alert("Ghussa");
+	var result= {};
+	result['QID']=e;
+	$.get( 
+             "/qcorner/addWatchLater",
+			 result,
+             function(data) {
+				alert(data.head.status);
+				if(data.head.status == 200) {
+					alert("Added successfully");
+					location.reload();	
+				}
+				else if (data.head.status == 409)
+					alert("Already added");
+				else if (data.head.status == 500)
+					alert("Internal server error");
+				else if (data.head.status == 206)
+					alert("System error");
+					
+			 },
+			 "json"
+	);
+}
+
+function addToFavorites(e)
+{
+	var result= {};
+	result['QID']=e;
+	$.get( 
+             "/qcorner/addFavourite",
+			 result,
+             function(data) {
+				alert(data.head.status);
+				if(data.head.status == 200) {
+					alert("Added successfully");
+					location.reload();	
+				}
+				else if (data.head.status == 409)
+					alert("Already added");
+				else if (data.head.status == 500)
+					alert("Internal server error");
+				else if (data.head.status == 206)
+					alert("System error");
+					
+			 },
+			 "json"
+	);
+}
+
+
 function vote(e, f)
 {
 	var result = {};
@@ -181,14 +257,16 @@ function vote(e, f)
 		);
 }
 
-function searchClick(){
-	var tag = jQuery('#s').val();
-	setCookie('tag', tag, 1);
-	var saved_tag = getCookie('username');
-	if(undefined != saved_tag)
-	{
-		window.location = 'tag_signed.html';
-	}
-	else
-		window.location = 'tag_unsigned.html';
+
+function tag1Click(e)
+{
+	alert(e.id);
+}
+
+optionCheck()
+{
+	alert("Yo");
+	var option = document.getElementById("11").value;
+	if(option == "Engineering")
+		document.getElementById("12").innerhtml="Girish";
 }

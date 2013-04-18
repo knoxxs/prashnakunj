@@ -11,12 +11,14 @@
         <link rel="stylesheet" type="text/css" href="css/r_demo.css" />
         <link rel="stylesheet" type="text/css" href="css/r_new_login_style.css" />
 		<link rel="stylesheet" type="text/css" href="css/r_animate-custom.css" />
+	<!--	<link rel="stylesheet" type="text/css" href="css/popup.css" />	-->
     </head>
     <body>
           
 		  <script type="text/javascript" src="js/jquery-1.9.1.js"></script>
 		  <script type="text/javascript" src="js/r_cookie.js"></script>
 		  <script type="text/javascript" src="js/r_login.js"></script>
+		  <script type="text/javascript" src="js/jquery.validate.js"></script>
 	      
             <section>				
                 <div id="container_demo" >
@@ -30,12 +32,12 @@
                             <form id="loginform" autocomplete="on"> 
                                 <h1>Log in</h1> 
                                 <p> 
-                                    <label for="username" class="uname" data-icon="u" > Your email or username </label>
-                                    <input id="login_username" name="username" required="required" type="text" placeholder="username or mail@example.com"/>
+                                    <label for="username" class="uname" data-icon="u" > Your username </label>
+                                    <input id="login_username" minlength="5" maxlength="20" class="required" name="username" required="required" type="text" placeholder="username"/>
                                 </p>
                                 <p> 
                                     <label for="password" class="youpasswd" data-icon="p"> Your password </label>
-                                    <input id="login_password" name="password" required="required" type="password" placeholder="eg. X8df!90EO" /> 
+                                    <input id="login_password" minlength="6" maxlength="30" class="required" name="password" required="required" type="password" placeholder="eg. X8df!90EO" /> 
                                 </p>
 								
                                 <div id="navcontainer">
@@ -67,7 +69,7 @@
                                 <h1>Forgot Password</h1> 
                                 <p> 
                                     <label for="forgotpass" class="fpass" data-icon="u" > Username </label>
-                                    <input id="forgotp_username" name="forgotpass" required="required" type="text" placeholder="username"/>
+                                    <input id="forgotp_username" maxlength="20" class="required" name="forgotpass" required="required" type="text" placeholder="username"/>
                                 </p>
                              
 								<div id="navcontainer">
@@ -98,19 +100,19 @@
                                 <h1>Reset Password</h1> 
                                 <p> 
                                     <label for="newPassword" class="newPassword" data-icon="p"> Enter new password </label>
-                                    <input id="newPassword" name="newPassword"  required type="password" /> 
+                                    <input id="newPassword" minlength="6" maxlength="30" class="required" name="newPassword"  required type="password" /> 
                                 </p>
 								<p> 
                                     <label for="newPassword" class="newPassword" data-icon="p"> Confirm password </label>
-                                    <input id="confirmPassword" name="newPassword"  required type="password" /> 
+                                    <input id="confirmPassword" minlength="6" maxlength="30" class="required" equalTo="#newPassword" name="newPassword"  required type="password" /> 
                                 </p>
 								<p> 
-                                    <label for="securityQ" class="secQ" data-icon="p"> Your Security Question </label>
-                                    <input id="securityQ" name="securityQ" type="text"></input>
+                                    <label for="securityQ" class="secQ"> Your Security Question </label>
+                                    <br><label id="securityQ" class="required" name="securityQ"></label>
                                 </p>
 								<p> 
                                     <label for="securityQA" class="secQA" data-icon="a"> Your Answer </label>
-                                    <input id="securityQA" required name="securityQA" type="text" /> 
+                                    <input id="securityQA" maxlength="30" class="required" required name="securityQA" type="text" /> 
                                 </p>
                              
 								<div id="navcontainer">
@@ -135,7 +137,7 @@
                                 <h1>Forgot Username</h1> 
                                 <p> 
                                     <label for="forgotusername" class="funame" data-icon="u" > Your email </label>
-                                    <input id="forgotusername_email" required name="forgotusername" required="required" type="text" placeholder="mail@example.com"/>
+                                    <input id="forgotusername_email" maxlength="30" class="required email" required name="forgotusername" required="required" type="text" placeholder="mail@example.com"/>
                                 </p>
                                 <div id="navcontainer">
 									<ul>
@@ -164,34 +166,34 @@
                             <form id="registerform" autocomplete="on"> 
                                 <h1> Sign up </h1> 
 								<label data-icon="u">First Name: </label>
-								<input name="su_fname" type="text" tabindex="1" width="100px" required placeholder="First Name" autocomplete="off">
+								<input name="su_fname" id="su_fname" minlength="2" maxlength="15" class="required" type="text" tabindex="1" required placeholder="First Name" autocomplete="off">
 								<br><br>
 								<label data-icon="u">Last Name: </label>
-								<input name="su_lname" type="text" tabindex="2" required placeholder="Last Name" autocomplete="off">
+								<input name="su_lname" id="su_lname" class="required" minlength="2" maxlength="15" type="text" tabindex="2" required placeholder="Last Name" autocomplete="off">
 								<br><br>
 								<label data-icon="u">Username: </label>
 							
-								<input name="su_uname" type="text" tabindex="3" required placeholder="Username" autocomplete="off">
+								<input name="su_uname" id="su_uname" minlength="5" maxlength="20" class="required" type="text" tabindex="3" required placeholder="Username" autocomplete="off">
 								<br><br>
 								<label data-icon="p">Password: </label>
 								
-								<input name="su_pass" type="password" tabindex="4" required placeholder="Password" autocomplete="off">
+								<input name="su_pass" id="su_pass" minlength="6" maxlength="30" class="required" type="password" tabindex="4" required placeholder="Password" autocomplete="off">
 								<br><br>
 								<label data-icon="p">Confirm Password: </label>
 								
-								<input name="su_confirmpass" type="password" tabindex="20" required placeholder="Password" autocomplete="off">
+								<input name="su_confirmpass" id="su_confirmpass" minlength="6" maxlength="30" class="required" equalTo="#su_pass" type="password" tabindex="20" required placeholder="Password" autocomplete="off">
 								<br><br>
 								<label data-icon="e">Email: </label>
 								
-								<input name="su_email" type="email" tabindex="6" required placeholder="mail@example.com" autocomplete="off">
+								<input name="su_email" id="su_email" maxlength="30" class="required email" type="email" tabindex="6" required placeholder="mail@example.com" autocomplete="off">
 								<br><br>
 								<label data-icon="u">Phone No: </label>
 								
-								<input name="su_phone" type="tel" required placeholder="123456789" autocomplete="off" pattern="d{10}" tabindex="7">
+								<input name="su_phone" id="su_phone" minlength="10" maxlength="15" type="tel" required placeholder="123456789" autocomplete="off" class="required NumbersOnly" tabindex="7">
 								<br><br>
 								<label>Date of Birth: </label>
 								
-								<input name="su_dob" type="text" tabindex="8" required placeholder="yyyy-mm-dd" autocomplete="off">
+								<input name="su_dob" id="su_dob" minlength="10" maxlength="10" type="text" class="required DatesOnly" tabindex="8" required placeholder="yyyy-mm-dd" autocomplete="off">
 								<br><br>
 								
 								<label>Gender: </label>
@@ -203,7 +205,7 @@
 								<br><br>
 								<label>Interests: </label>
 								
-								<input id="su_intrst" name="interest" type="text" tabindex="10" required placeholder="Enter comma-separated values" autocomplete="off">
+								<input id="su_intrst" id="su_intrst" maxlength="40" name="interest" class="required" type="text" tabindex="10" required placeholder="Enter comma-separated values" autocomplete="off">
 								<br><br>
 								<label>Country: </label>
 								
@@ -461,27 +463,27 @@
 								<br><br>
 								<label>City: </label>
 								
-								<input id="su_city" name="city" type="text" tabindex="12" required placeholder="City" autocomplete="off">
+								<input id="su_city" id="su_city" minlength="2" maxlength="20" name="city" type="text" class="required" tabindex="12" required placeholder="City" autocomplete="off">
 								<br><br>
 								<label>State: </label>
 								
-								<input id="su_state" name="state" type="text" tabindex="13" placeholder="State" autocomplete="off">
+								<input id="su_state" id="su_state" maxlength="20" name="state" type="text" class="required" tabindex="13" required placeholder="State" autocomplete="off">
 								<br><br>
 								<label data-icon="u">Qualification: </label>
 								
-								<input id="su_qual" name="quali" type="text" tabindex="14" placeholder="Qualification" autocomplete="off">
+								<input id="su_qual" maxlength="18" name="quali" type="text" tabindex="14" class="required" placeholder="Qualification" autocomplete="off">
 								<br><br>
 								<label data-icon="u">Affiliation: </label>
 								
-								<input id="su_affili" name="affili" type="text" tabindex="15" placeholder="Affiliation" autocomplete="off">
+								<input id="su_affili" name="affili" maxlength="30" type="text" tabindex="15" class="required" placeholder="Affiliation" autocomplete="off">
 								<br><br>
 								<label data-icon="u">Areas of Expertise: </label>
 								
-								<input id="su_aoe"name="aoe" type="text" tabindex="16" placeholder="Enter comma-separated values" autocomplete="off">
+								<input id="su_aoe"name="aoe" type="text" tabindex="16" maxlength="30" class="required" placeholder="Enter comma-separated values" autocomplete="off">
 								<br><br>
 								<label>Security Question ID: </label>
 								
-								<select name="su_secques" id="su_secques" required tabindex="17">
+								<select name="su_secques" class="required" id="su_secques" required tabindex="17">
 									<option value="1">Whats your mother's maiden name?</option>
 									<option value="2">Where did you first attend school?</option>
 									<option value="3">What was the name of your first pet?</option>
@@ -490,7 +492,7 @@
 								<br><br>
 								<label>Security Answer: </label>
 								
-								<input id="su_secA" name="sa" type="text" tabindex="18" required placeholder="Security Answer" autocomplete="off">
+								<input id="su_secA" id="su_secA" name="sa" maxlength="30" class="required" type="text" tabindex="18" placeholder="Security Answer" autocomplete="off">
 								<br><br>
 								<label data-icon="p">Reviewer Key: (if any) </label>
 								

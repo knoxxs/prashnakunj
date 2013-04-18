@@ -1,4 +1,5 @@
 // Custom jquery without conflict
+var forvar;
 $.noConflict();
 jQuery(document).ready(function($){
 
@@ -231,31 +232,6 @@ jQuery(document).ready(function($){
 		$comments_holder.slideToggle();
 	});
 
-	var result = {};
-	result['userName']=getCookie("username");
-	result['password']=getCookie("password");
-	$.post( 
-         "/qcorner/login",
-		 result,
-         function(data) {
-			if(data.head.status==200)
-			{
-				setCookie('username', uName, 1);
-				setCookie('firstname', data.body.firstName, 1);
-				setCookie('lastname', data.body.lastName, 1);
-				setCookie('reputation', data.body.reputation, 1);
-				setCookie('city', data.body.city, 1);
-				setCookie('affiliation', data.body.affiliation, 1);
-				setCookie('reviewer', data.body.isReviewer, 1);
-				window.location = 'dashboard.html';
-			}
-			else
-				alert("Wrong username or password");
-         },
-		 "json"
-
-      );
-
 	var first = getCookie('firstname');
 	var last = getCookie('lastname');
 	var rep = getCookie('reputation');
@@ -272,7 +248,7 @@ jQuery(document).ready(function($){
 	var result= {};
 	result['type']="timestamp";
 	result['number']=10;
-	result['latestQuestionTime']= -1;
+	result['latestQuestionTime']=-1;
 	result['scroll']="after";
 	$.get( 
              "/qcorner/questions",
@@ -291,10 +267,10 @@ jQuery(document).ready(function($){
 					}
 				}
 				var answerString;
-				$('#moreBefore').after('<br><h4 class="entry-title"><span class="title"><a onClick="quesClick(this)" id="' + data[0].question.QID + '">'+data[0].question.string+'</a></span><span class="entry-commentsn"><a href="#" title="Upvotes" class="poshytip" onClick="vote('+data[0].question.QID+', 1)">'+data[0].question.voteUp+'</a></span><span class="entry-commentsq"><a href="#" title="Downvotes" class="poshytip" onClick="vote('+data[0].question.QID+', -1)">'+data[0].question.voteDown+'</a></span><span class="entry-commentsp"><a href="#" title="Report abuse" class="poshytip">23</a></span></h4><div class="entry-excerpt" id="best_answer_1">'+answers[0]+'</div>');	
+				$('#questions_world').after('<br><h4 class="entry-title"><span class="title" style="text-align:left"><a onClick="quesClick(this)" id="' + data[0].question.QID + '">'+data[0].question.string+'</a></span><br><br><span class="entry-commentsn"><a href="#" title="Upvotes" class="poshytip" onClick="vote('+data[0].question.QID+', 1)">'+data[0].question.voteUp+'</a></span><span class="entry-commentsq"><a href="#" title="Downvotes" class="poshytip" onClick="vote('+data[0].question.QID+', -1)">'+data[0].question.voteDown+'</a></span><span class="entry-commentfav"><a href="#" title="Add to Favorites" class="poshytip" onClick="addToFavorites('+data[0].question.QID+')">*</a></span><span class="entry-commentsv"><a href="#" title="Visit later" class="poshytip" onClick="visitLater('+data[0].question.QID+')">*</a></span></h4><div class="entry-excerpt" id="best_answer_1" style="text-align:left">'+answers[0]+'</div>');	
 				for (var j=1;j<10;j++)
 				{
-					$('#best_answer_' + j).after('<br><h4 class="entry-title"><span class="title"><a onClick="quesClick(this)" id="' + data[j].question.QID + '">'+data[j].question.string+'</a></span><span class="entry-commentsn"><a href="#" title="Upvotes" class="poshytip" onClick="vote('+data[j].question.QID+', 1)">'+data[j].question.voteUp+'</a></span><span class="entry-commentsq"><a href="#" title="Downvotes" class="poshytip" onClick="vote('+data[j].question.QID+', -1)">'+data[j].question.voteDown+'</a></span><span class="entry-commentsp"><a href="#" title="Report abuse" class="poshytip">23</a></span></h4><div class="entry-excerpt" id="best_answer_'+(j+1)+'">'+answers[j]+'</div>');	
+					$('#best_answer_' + j).after('<br><h4 class="entry-title"><span class="title" style="text-align:left"><a onClick="quesClick(this)" id="' + data[j].question.QID + '">'+data[j].question.string+'</a></span><br><br><span class="entry-commentsn"><a href="#" title="Upvotes" class="poshytip" onClick="vote('+data[j].question.QID+', 1)">'+data[j].question.voteUp+'</a></span><span class="entry-commentsq"><a href="#" title="Downvotes" class="poshytip" onClick="vote('+data[j].question.QID+', -1)">'+data[j].question.voteDown+'</a></span><span class="entry-commentfav"><a href="#" title="Add to Favorites" class="poshytip" onClick="addToFavorites('+data[j].question.QID+')">*</a></span><span class="entry-commentsv"><a href="#" title="Visit later" class="poshytip" onClick="visitLater('+data[j].question.QID+')">*</a></span></h4><div class="entry-excerpt" id="best_answer_'+(j+1)+'" style="text-align:left">'+answers[j]+'</div>');	
 				}
 				setCookie('oldestQuestionTime', data[9].question.timeStamp, 1);
 				setCookie('latestQuestionTime', data[0].question.timeStamp, 1);
@@ -308,9 +284,13 @@ jQuery(document).ready(function($){
 				if(data.body.length != 0)
 				{
 					document.getElementById('favorite_0').innerHTML=data.body[0].string;
-					for (var i=1;i<data.body.length;i++)
+					if(data.body.length < 3)
+						forvar = data.body.length;
+					else if (data.body.length >= 3)
+						forvar = 3;
+					for (var i=1;i<forvar;i++)
 					{ 
-						jQuery('#fav_list').append('<li><a href="#" id="favorite_'+(i)+'">'+data.body[i].string+'</a></li>');
+						jQuery('#fav_list').append('<li><span id="favorite_'+(i)+'">'+data.body[i].string+'</span></li>');
 					}
 				}
 				
@@ -327,7 +307,7 @@ $.get(
 					document.getElementById('notif_0').innerHTML=data.body[0].string;
 					for (var i=1;i<data.body.length;i++)
 					{ 
-						jQuery('#notifications').append('<li><a href="#"><span class="notifon" id="notif_'+(i)+'">'+data.body[i].string+'</span></a></li>');
+						jQuery('#notifications').append('<li><span><span class="notifon" id="notif_'+(i)+'">'+data.body[i].string+'</span></span></li>');
 					}
 				}
 				
@@ -343,10 +323,13 @@ $.get(
 				if(data.body.length!=0)
 				{	
 					document.getElementById('subtag_0').innerHTML=data.body[0];
-					
-					for (var i=1;i<data.body.length;i++)
+					if(data.body.length < 3)
+						forvar = data.body.length;
+					else if (data.body.length >= 3)
+						forvar = 3;
+					for (var i=1;i<forvar;i++)
 					{ 
-						jQuery('#sub_list').append('<li><a href="#" id="subtag_'+i+'">'+ data.body[i] +'</a></li>');	
+						jQuery('#sub_list').append('<li><span id="subtag_'+i+'">'+ data.body[i] +'</span></li>');	
 					}
 				}
 				
@@ -362,10 +345,13 @@ $.get(
 				if(data.body.length!=0)
 				{	
 					document.getElementById('contributed_0').innerHTML=data.body[0].string;
-					
-					for (var i=1;i<data.body.length;i++)
+					if(data.body.length < 3)
+						forvar = data.body.length;
+					else if (data.body.length >= 3)
+						forvar = 3;
+					for (var i=1;i<forvar;i++)
 					{ 
-						jQuery('#contributed').append('<li><a href="#" id="contributed_'+i+'">'+ data.body[i].string +'</a></li>');	
+						jQuery('#contributed').append('<li><span id="contributed_'+i+'">'+ data.body[i].string +'</span></li>');	
 					}
 				}
 				
@@ -380,10 +366,13 @@ $.get(
 				if(data.body.length!=0)
 				{	
 					document.getElementById('myquestions_0').innerHTML=data.body[0].string;
-					
-					for (var i=1;i<data.body.length;i++)
+					if(data.body.length < 3)
+						forvar = data.body.length;
+					else if (data.body.length >= 3)
+						forvar = 3;
+					for (var i=1;i<forvar;i++)
 					{ 
-						jQuery('#myquestions').append('<li><a href="#" id="myquestions_'+i+'">'+ data.body[i].string +'</a></li>');	
+						jQuery('#myquestions').append('<li><span id="myquestions_'+i+'">'+ data.body[i].string +'</span></li>');	
 					}
 				}
 				
@@ -398,9 +387,13 @@ $.get(
 				if(data.body.length != 0)
 				{
 					document.getElementById('wl_0').innerHTML=data.body[0].string;
-					for (var i=1;i<data.body.length;i++)
+					if(data.body.length < 3)
+						forvar = data.body.length;
+					else if (data.body.length >= 3)
+						forvar = 3;
+					for (var i=1;i<forvar;i++)
 					{ 
-						jQuery('#wl_list').append('<li><a href="#" id="wl_'+(i)+'">'+data.body[i].string+'</a></li>');
+						jQuery('#wl_list').append('<li><span id="wl_'+(i)+'">'+data.body[i].string+'</span></li>');
 					}
 				}
 				
@@ -415,9 +408,13 @@ $.get(
 				if(data.body.length != 0)
 				{
 					document.getElementById('history_0').innerHTML=data.body[0].string;
-					for (var i=1;i<data.body.length;i++)
+					if(data.body.length < 3)
+						forvar = data.body.length;
+					else if (data.body.length >= 3)
+						forvar = 3;
+					for (var i=1;i<forvar;i++)
 					{ 
-						jQuery('#view_history').append('<li><a href="#" id="history_'+(i)+'">'+data.body[i].string+'</a></li>');
+						jQuery('#view_history').append('<li><span id="history_'+i+'">'+data.body[i].string+'</span></li>');
 					}
 				}
 				
@@ -431,11 +428,11 @@ $.get(
 	var city=getCookie('city');
 	var reputation=getCookie('reputation');
 	
-	document.getElementById('firstName_lastName').innerHTML=firstName+lastName;
+	/*document.getElementById('firstName_lastName').innerHTML=firstName+lastName;
 	document.getElementById('city').innerHTML=city;
 	document.getElementById('affiliation').innerHTML=affiliation;
 	document.getElementById('reputation').innerHTML="Reputation: " + reputation;
-					
+	*/				
 
 }); // close jquery
 

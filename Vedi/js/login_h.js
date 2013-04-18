@@ -4,15 +4,14 @@ var uName, pWord, eMail, secQ, secQA;
 	  $("#login_button").click(function(event){
 	  	uName = $('#login_username').val();
 		pWord = $('#login_password').val();
-		var temp;
-		temp = $("#loginform").valid();
+		
+		$("#loginform").valid();
 		if(uName!="")
 		{	
 		if(pWord!=""){}
 			else login_password.focus();
 		}	else login_username.focus();
-	
-		if(temp) { 
+			
 		var result = {};
 		result['userName']=uName;
 		result['password']=pWord;
@@ -36,14 +35,13 @@ var uName, pWord, eMail, secQ, secQA;
              },
 			 "json"
 
-          ); }
+          );
       });
 	  $("#forgotp_un_button").click(function(event){
 		uName = $('#forgotp_username').val();
-		var temp1 = $("#forgotpform").valid();
+		$("#forgotpform").valid();
 		var result = {};
 		result['userName']=uName;
-		if(temp1) {
 		$.post( 
              "/qcorner/forgotpwd/checkuname",
 			 result,
@@ -52,43 +50,37 @@ var uName, pWord, eMail, secQ, secQA;
 						window.location = 'login.html#torp';
 						setCookie('userName', uName, 1);
 						setCookie('securityQuestionNumber', data.body, 1);
-						alert("Hey");
-						alert(data.body);
+						
 						if (data.body == 0)	{
-							jQuery('#securityQ').html("What is your mother's maiden name?");
+							document.getElementById('securityQ').innerHTML="What is your mother's maiden name?";
 						} else if (data.body == 1) {
-							jQuery('#securityQ').html("Where did you first attend school?");
+							document.getElementById('securityQ').innerHTML="Where did you first attend school?";
 						} else if (data.body == 2) {
-							jQuery('#securityQ').html("What was the name of your first pet?");
+							document.getElementById('securityQ').innerHTML="What was the name of your first pet?";
 						} else if (data.body == 3) {
-							jQuery('#securityQ').html("What was yur first telephone number?");
-						} else {
-							jQuery('#securityQ').html("Incorrect data from backend.");
+							document.getElementById('securityQ').innerHTML="What was your first telephone number?";
 						}
 					}
 					else
-						{
-							alert("That username doesn't exist. Please try again!");
-						}
+						{}
              },
 			 "json"
-          ); }
+          );
 	  });
 	  $("#resetp_button").click(function(event){
-	  	//alert(getCookie('securityQuestionNumber'));
 		switch(getCookie('securityQuestionNumber'))
 		{
-			case '0':
-				$('#securityQ').html('What is your mother\'s maiden name?');
-				break;
 			case '1':
-				$('#securityQ').html('Where did you first attend school?');
+				$('#securityQ').attr('value', 'What\'s your mother\'s maiden name?');
 				break;
 			case '2':
-				$('#securityQ').html('What was the name for your first pet?');
+				$('#securityQ').attr('value', 'Where did you first attend school?');
 				break;
 			case '3':
-				$('#securityQ').html('What was your first telephone number?');
+				$('#securityQ').attr('value', 'What was the name for your first pet?');
+				break;
+			case '4':
+				$('#securityQ').attr('value', 'What was your first telephone number?');
 				break;
 		}
 		uName = getCookie("userName");
@@ -96,64 +88,55 @@ var uName, pWord, eMail, secQ, secQA;
 		cWord = $('#confirmPassword').val();
 		secQA = $('#securityQA').val();
 		
-		var temp2 = $("#resetpform").valid();
+		$("#resetpform").valid();
 		if(pWord!="")
 		{	
-		if(secQA=="")
-			 securityQA.focus();
-		}	else newPassword.focus();
-			
+		if(seQA!=""){}
+			else securityQA.focus();
+		}	else confirmPassword.focus();
+		
 		var result = {};
 		result['userName']=uName;
 		result['newPassword']=pWord;
 		//"securityQuestionID":"",
 		result['securityAnswer']=secQA;
 		result['securityQuestionNumber']=getCookie('securityQuestionNumber');
-		if(temp2) {
 		$.post( 
              "/qcorner/forgotpwd/updatepwd",
-			 result,
-             function(data) {
-					if(data.head.status == 200)
-					{
-						alert("Password changed successfully!");
-						setCookie('username', uName, 1);
-						window.location = 'dashboard.html';
-					}
-					else
-						alert("Authentication failed!")
-             },
-			 "json"
-
-          ); }
-	  });
-	  $("#forgotusername_button").click(function(event){
-		eMail = $('#forgotusername_email').val();
-		var temp4 = $("#forgotuform").valid();
-		var result = {};
-		result['email']=eMail;
-		if(temp4) {
-		$.post( 
-             "/qcorner/",
 			 result,
              function(data) {
 				
              },
 			 "json"
 
-          ); }
+          );
 	  });
+	  $("#forgotusername_button").click(function(event){
+		eMail = $('#forgotusername_email').val();
+		$("#forgotuform").valid();
+		var result = {};
+		result['email']=eMail;
+		$.post( 
+             "http://54.249.240.120/qcorner/",
+			 result,
+             function(data) {
+				
+             },
+			 "json"
+
+          );
+	  });
+	  
+	  
+	  $("#registerform").validate();
+	  
 	  $("#signup_button").click(function(event){
+
 		var fName = $('#su_fname').val();
 		var lName = $('#su_lname').val();
 		var uName = $('#su_uname').val();
 		var pWord = $('#su_pass').val();
 		var cWord = $('#su_confirmpass').val();
-		
-		if(pWord != cWord) {
-			
-		}
-		
 		var eMail = $('#su_email').val();
 		var phone = $('#su_phone').val();
 		var dob = $('#su_dob').val();
@@ -170,9 +153,17 @@ var uName, pWord, eMail, secQ, secQA;
 		var secQues = $('#su_secques').val();
 		var secA = $('#su_secA').val();
 		var rKey = $('#su_rkey').val();
-		if(rKey=="")
+		if(rKey==="")
 			rKey = -1;
+		/*var numbererror="Cant Give Numbers";
 		
+		var invalidChars = /[^0-9]/gi;
+		if(invalidChars.test(fName)
+		{
+			alert("here");
+			//$('#fname').after(numbererror);
+			//'#fName'.after('<span>'+numbererror+'</span>');
+		}*/
 		
 		
 		
@@ -182,9 +173,6 @@ var uName, pWord, eMail, secQ, secQA;
 			return this.optional(element) || /^[?+\-0-9]+$/i.test(value);}
 			, "Phone must contain only numbers, + and -.");
 			
-		$.validator.addMethod("DatesOnly", function(value, element){
-			return this.optional(element) || /^[?\0-9]+$/i.test(value);}
-			, "Dates must follow the format yyyy/mm/dd");
 		/*$.validator.addMethod("onlytext", function(value, element){
 			return this.optional(element) || /^[a-zA-z]+$/i.test(value);}
 			, "This must contain only letters");
@@ -192,7 +180,7 @@ var uName, pWord, eMail, secQ, secQA;
 		var check_username=/^[a-zA-Z0-9_]+$/;
 		var check_text=/^[a-zA-Z]+$/;
 		
-		var temp10 = 	$("#registerform").valid();
+			$("#registerform").valid();
 		
 			
 		//text
@@ -262,6 +250,21 @@ var uName, pWord, eMail, secQ, secQA;
 			}else{alert("Input Only Text in First Name");
 			su_fname.focus();}
 	
+		/*$("#registerform").validate({
+			rules: {
+						su_fname: {
+							maxlength: 10,
+							minlength: 2,
+							}
+					},
+			messages : {
+				su_fname : {
+					required : " City must be  filled in",
+					minlength : "At least 3 characters long",
+					maxlength : "Should not exceed 30 characters",
+						}
+			}
+			});*/
 		
 		var result = {};
 		result['firstName']=fName;
@@ -282,22 +285,24 @@ var uName, pWord, eMail, secQ, secQA;
 		result['securityQuestionID']=secQues;
 		result['securityAnswer']=secA;
 		result['reviewerKey']=rKey;
-		setCookie('username', uName, 1);
-		setCookie('firstname', fName, 1);
-		setCookie('lastname', lName, 1);
-		setCookie('reputation', 0, 1);
-		setCookie('city', city, 1);
-		setCookie('affiliation', affili, 1);
-		setCookie('reviewer', false, 1);
-		if(temp10) {
+		
 		$.post( 
-             "/qcorner/",
+             "http://54.249.240.120/qcorner/",
 			 result,
              function(data) {
-				window.location = 'dashboard.html';
+			
              },
 			 "json"
 
-          ); }
+          );
 	  });
 });
+
+
+
+
+
+
+		
+		
+		

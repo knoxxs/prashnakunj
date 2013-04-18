@@ -5,7 +5,7 @@
 		<title>Question</title>
 		
 		<!-- CSS -->
-		<link rel="stylesheet" href="css/henal_new_style.css" type="text/css" media="screen" />
+		<link rel="stylesheet" href="css/r_new_style.css" type="text/css" media="screen" />
 		<link rel="stylesheet" href="css/social-icons.css" type="text/css" media="screen" />
 
 		<!-- JS -->
@@ -71,65 +71,81 @@
 				<a><img src="img/QCorner_BW.png" alt="QCorner" id="logo" /></a>
 			</div>
 			
-			<nav>
+						<nav style="overflow:hidden;">
 				<ul id="nav" class="sf-menu">
-					<li><a href="#" onClick="listClick(this)" id="fav">Favorites<span class="subheader">my favorite questions</span></a>
-						<ul>
-							<li><a href="#">Question 1</a></li>
-							<li><a href="#">Question 2</a></li>
-							<li><a href="#">Question 3</a></li>
+					
+                    <li><a href="#">Notifications<span class="notif" id="notif_number"> 2 </span><span class="subheader">My notifications</span></a>
+						<ul id="notifications">
+							<li><span><span class="notifon" id="notif_0">No notifications.</span></span></li>
 						</ul>
 					</li>
-					<li><a href="#" onClick="listClick(this)" id="lat">Later<span class="subheader">questions I will visit later</span></a>
-						<ul>
-							<li><a href="#">Question 1</a></li>
-							<li><a href="#">Question 2</a></li>
-							<li><a href="#">Question 3</a></li>
+                    
+					<li><a onClick="listClick(this)" id="fav">Favorites<span class="subheader">My favorite questions</span></a>
+						<ul id="fav_list">
+							<li><span id="favorite_0">No questions available</span></li>
+							<!--<li><span id="favorite_0">No questions available</span></li>-->
+							
+							<!--<li><a href="#">Question 2</a></li>-->
+							<!--<li><a href="#">Question 3</a></li>-->
 						</ul>
 					</li>
-					<li><a href="#" onClick="listClick(this)" id="sub">Subscriptions<span class="subheader">tags I subscribed to</span></a>
-						<ul>
-							<li><a href="#">Question 1</a></li>
-							<li><a href="#">Question 2</a></li>
-							<li><a href="#">Question 3</a></li>
+					<li><a onClick="listClick(this)" id="lat">Later<span class="subheader">Questions I will visit later</span></a>
+						<ul id='wl_list'>
+							<li><span id="wl_0">No questions available</span></li>
+							<!--<li><a href="#">Question 2</a></li>
+							<li><a href="#">Question 3</a></li>-->
 						</ul>
 					</li>
-					<li><a href="#" onClick="listClick(this)" id="con">Contributed<span class="subheader">questions I contributed to</span></a>
-						<ul>
-							<li><a href="#">Question 1</a></li>
-							<li><a href="#">Question 2</a></li>
-							<li><a href="#">Question 3</a></li>
+					<li><a onClick="listClick(this)" id="sub">Subscriptions<span class="subheader">Tags I subscribed to</span></a>
+						<ul id="sub_list">
+							<li><span id="subtag_0">No tags subscribed</span></li>
+							<!--<li><a href="#">Question 2</a></li>
+							<li><a href="#">Question 3</a></li>-->
 						</ul>
 					</li>
-					<li><a href="#" onClick="listClick(this)" id="myq">My Questions<span class="subheader">questions I posted</span></a>
-						<ul>
-							<li><a href="#">Question 1</a></li>
-							<li><a href="#">Question 2</a></li>
-							<li><a href="#">Question 3</a></li>
+					<li><a onClick="listClick(this)" id="con">Contributed<span class="subheader">Questions I contributed to</span></a>
+						<ul id="contributed">
+							<li><span id="contributed_0">No contributions</span></li>
+							<!--<li><a href="#">Question 2</a></li>
+							<li><a href="#">Question 3</a></li>-->
 						</ul>
 					</li>
-					<li><a href="#" onClick="listClick(this)" id="qvh">Question View History<span class="subheader">my history</span></a>
-						<ul>
-							<li><a href="#">Question 1</a></li>
-							<li><a href="#">Question 2</a></li>
-							<li><a href="#">Question 3</a></li>
+					<li><a onClick="listClick(this)" id="myq">My Questions<span class="subheader">Questions I posted</span></a>
+						<ul id="myquestions">
+							<li><span id="myquestions_0">No questions posted</span></li>
+							<!--<li><a href="#">Question 2</a></li>
+							<li><a href="#">Question 3</a></li>-->
+						</ul>
+					</li>
+					<li><a onClick="listClick(this)" id="qvh">Question View History<span class="subheader">My history</span></a>
+						<ul id='view_history'>
+							<li><span id="history_0">No questions available</span></li>
+							<!--<li><a href="#">Question 2</a></li>
+							<li><a href="#">Question 3</a></li>-->
 						</ul>
 					</li>
 				</ul>
+				
+		
 				
 				<!-- search -->
 				<div class="top-search" id="searchform">
 					<div>
 							<input type="text" name="s" id="s" placeholder="Search" /><br><br>
-							<button id="search_button" onClick="searchClick()" style="color: rgb(249,249,238); background-color: rgb(72,72,72); border: 0px; width: 160px; font-size: 15px; padding: 5px; border-radius: 5px; margin: 10px 0px 0px 0px">
+							<button id="search_button" onClick="buttonClick()" style="color: rgb(249,249,238); background-color: rgb(72,72,72); border: 0px; width: 160px; font-size: 15px; padding: 5px; border-radius: 5px; margin: 10px 0px 0px 0px">
 							Search</button>
 					</div>
 				</div>
 				<!-- ENDS search -->
-				<!-- ENDS search -->
 				
+				<!-- social -->
+				<!--<ul id="social-bar">
+					<li><a href="http://www.facebook.com" class="poshytip facebook" title="Become a fan"></a></li>
+					<li><a href="http://www.twitter.com" class="poshytip twitter" title="Follow my tweets"></a></li>
+					<li><a href="#" class="poshytip rss" title="RSS Feed"></a></li>
+				</ul>
+				<!- ENDS social -->
 			</nav>
-
 			<div id="sidebar-opener">Personal Details</div>
 			
 			
@@ -141,13 +157,12 @@
                         
                     <h4 class="entry-title">
 							<span>
-							<span class="title" id="quesTitle">Question not found. Please try again!</span><br><br>
-							<span class="entry-commentsn"><a href="#" id="quesUpVotes" title="Upvotes" class="poshytip">23</a></span>
-							<span class="entry-commentsq"><a href="#" id="quesDownVotes" title="Downvotes" class="poshytip">23</a></span>
-							<span class="entry-commentsp" ><a href="#" title="Reported abuses: 23" class="poshytip">23</a></span>
-                            <span class="entry-commentsf" id="quesFav"><a href="#" title="Add to Favorites" class="poshytip"><div style="visibility: hidden">230</div></a></span>
-							<span class="entry-commentsv" ><a href="#" title="View Later" class="poshytip"><div style="visibility: hidden">230</div></a></span>
-							</span>
+							<span class="title" id="quesTitle" style="text-align:left">Question not found. Please try again!</span><br><br>
+						<!--	<span class="entry-commentsn"><a href="#" id="quesUpVotes" title="Upvotes" class="poshytip">23</a></span>
+							<span class="entry-commentsq"><a href="#" id="quesDownVotes" title="Downvotes" class="poshytip">23</a></span>	-->
+							<!--<span class="entry-commentsf" id="quesFav"><a href="#" title="Add to Favorites" class="poshytip"><div style="visibility: hidden">230</div></a></span>-->
+		<!--					<span class="entry-commentfav"><a href="#" title="Add to Favorites" class="poshytip" id="fav">*</a></span>
+							<span class="entry-commentsv"><a href="#" title="Visit later" class="poshytip" id="lat">*</a></span>	-->
 					</h4>
                      <ul id="quesTags"></ul>
                   
