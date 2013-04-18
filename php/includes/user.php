@@ -483,13 +483,15 @@ class User extends Base{
 			$headers = 'From: admin@QCorner.com' . "\r\n" . 'Reply-To: From: admin@QCorner.com' . '\r\n';
 			if(mail($to, $subject, $message, $headers)){
 				$result =array('head' => array('status' => 200, 'message'=>''), 'body' => '') ;
+				return $result;
 			}else{
 				$result =array('head' => array('status' => 500, 'message'=>'Error sending mail'), 'body' => '') ;
+				return $result;
 			}
 
 		}else{
 			$result =array('head' => array('status' => 400, 'message'=>'No user with this email exists.'), 'body' => '') ;
-			return flase;
+			return $result;
 		}
 
 	}
