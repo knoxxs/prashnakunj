@@ -22,7 +22,7 @@ class Register extends Base{
 		$this->state = $state;
 		$this->qualification = serialize($qualification);
 		$this->affiliation = $affiliation;
-		$this->areasOfExpertise = $areasOfExpertise;
+		$this->areasOfExpertise = serialize($areasOfExpertise);
 		$this->securityQuestionID = $securityQuestionID;
 		$this->securityAnswer = $securityAnswer;
 		$this->reviewerKey = $reviewerKey;
