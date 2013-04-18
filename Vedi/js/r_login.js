@@ -32,7 +32,7 @@ var uName, pWord, eMail, secQ, secQA;
 					window.location = 'dashboard.html';
 				}
 				else
-					alert("Wrong username or password");
+					alert(data.head.message);
              },
 			 "json"
 
@@ -52,7 +52,6 @@ var uName, pWord, eMail, secQ, secQA;
 						window.location = 'login.html#torp';
 						setCookie('userName', uName, 1);
 						setCookie('securityQuestionNumber', data.body, 1);
-						alert("Hey");
 						alert(data.body);
 						if (data.body == 0)	{
 							jQuery('#securityQ').html("What is your mother's maiden name?");
@@ -174,10 +173,6 @@ var uName, pWord, eMail, secQ, secQA;
 			rKey = -1;
 		
 		
-		
-		
-		
-		
 		$.validator.addMethod("NumbersOnly", function(value, element){
 			return this.optional(element) || /^[?+\-0-9]+$/i.test(value);}
 			, "Phone must contain only numbers, + and -.");
@@ -185,15 +180,10 @@ var uName, pWord, eMail, secQ, secQA;
 		$.validator.addMethod("DatesOnly", function(value, element){
 			return this.optional(element) || /^[?\0-9]+$/i.test(value);}
 			, "Dates must follow the format yyyy/mm/dd");
-		/*$.validator.addMethod("onlytext", function(value, element){
-			return this.optional(element) || /^[a-zA-z]+$/i.test(value);}
-			, "This must contain only letters");
-		*/
 		var check_username=/^[a-zA-Z0-9_]+$/;
 		var check_text=/^[a-zA-Z]+$/;
 		
-		var temp10 = 	$("#registerform").valid();
-		
+		var temp10 = $("#registerform").valid();
 			
 		//text
 		if(check_text.test(fName) == true)
@@ -261,6 +251,81 @@ var uName, pWord, eMail, secQ, secQA;
 			su_lname.focus();}
 			}else{alert("Input Only Text in First Name");
 			su_fname.focus();}
+
+			var x=dob.split("-");
+                var year=x[0];
+                var month=x[1];
+                var day=x[2];
+                
+                var today=new Date();
+                var to_year=today.getFullYear();
+                var flag;
+                var max;
+                if(year%4==0)
+                        flag=1;
+                else
+                        flag=0;
+                        
+                if(year.length==4)
+                {
+                        if(month.length<=2)
+                        {
+                                if(day.length<=2)
+                                {
+                                        if(year<=(to_year-5))
+                                        {
+                                                if(month>0 && month<=12)
+                                                {
+                                                        if(flag==1 && month==2)
+                                                        {
+                                                                if(day>0 && day<=29)
+                                                                {}
+                                                                else
+                                                                        {alert("day not valid");}
+                                                        }
+                                                        if(flag==0 && month==2)
+                                                        {
+                                                                if(day>0 && day<=28)
+                                                                {}
+                                                                else{alert("day not valid");}
+                                                        }
+                                                        if(flag!=1 && month%2==0)
+                                                        {
+                                                                if(day>0 && day<=30)
+                                                                {}
+                                                                else{alert("day not valid");}
+                                                        }
+                                                        if(flag!=1 && month%2!=0)
+                                                        {
+                                                                if(day>0 && day<=31)
+                                                                {}
+                                                                else{alert("day not valid");}
+                                                        }
+                                                } 
+                                                else 
+                                                {
+                                                        alert("Month is not valid");
+                                                }
+                                        }
+                                        else
+                                        {
+                                                alert("Too young to be a member");
+                                        }
+                                }
+                                else
+                                {
+                                        alert("Day length not valid");
+                                }
+                        }
+                        else
+                        {
+                                alert("Month length not valid");
+                        }
+                }
+                else
+                {
+                        alert("Year length not valid");
+                }
 	
 		
 		var result = {};
@@ -272,7 +337,7 @@ var uName, pWord, eMail, secQ, secQA;
 		result['phone']=phone;
 		result['dob']=dob;
 		result['gender']=gender;
-		result['interest']=newIntrst;
+		result['interests']=newIntrst;
 		result['country']=country;
 		result['city']=city;
 		result['state']=state;
@@ -290,14 +355,46 @@ var uName, pWord, eMail, secQ, secQA;
 		setCookie('affiliation', affili, 1);
 		setCookie('reviewer', false, 1);
 		if(temp10) {
+			
 		$.post( 
-             "/qcorner/",
+             "/qcorner/register",
 			 result,
              function(data) {
-				window.location = 'dashboard.html';
-             },
-			 "json"
+				if(data.head.status == 201)
+				{
+					rx = {};
+					rx['userName'] = uName;
+					rx['password'] = pWord;
+					$.post( 
+		             "/qcorner/login",
+					 rx,
+		             function(data) 
+		            {
+						if(data.head.status==200)
+						{
+							setCookie('username', uName, 1);
+							setCookie('firstname', data.body.firstName, 1);
+							setCookie('lastname', data.body.lastName, 1);
+							setCookie('reputation', data.body.reputation, 1);
+							setCookie('city', data.body.city, 1);
+							setCookie('affiliation', data.body.affiliation, 1);
+							setCookie('reviewer', data.body.isReviewer, 1);
+							window.location = 'dashboard.html';
+						}
+						else{
+							alert(data.head.message);
+							window.location = 'login.html';
+						}
+					}, "json" );	
+				}
+				else
+					alert(data.head.message);
+			}
+			,"json"
 
-          ); }
+          );
+		}
+
+            
 	  });
 });

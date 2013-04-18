@@ -331,7 +331,6 @@ function buttonClick(){
 
 function visitLater(e)
 {
-	alert("Ghussa");
 	var result= {};
 	result['QID']=e;
 	jQuery.get( 
@@ -357,8 +356,6 @@ function visitLater(e)
 
 function addToFavorites(e)
 {
-	alert("Ghussa");
-	
 	var result= {};
 	result['QID']=e;
 	jQuery.get( 

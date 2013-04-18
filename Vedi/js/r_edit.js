@@ -1,5 +1,4 @@
 function edit_button_click() {
-alert("here");
 	var firstName = document.getElementById('fname').value;
 	var lastName = document.getElementById('lname').value;
 	var email = document.getElementById('email').value;
@@ -177,3 +176,4 @@ function buttonClick(){
 	else
 		window.location = 'tag_unsigned.html';
 }
+

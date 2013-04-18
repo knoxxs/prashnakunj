@@ -8,7 +8,6 @@ function moreAfterClick() {
              "/qcorner/questions/timestamp",
 			 result,
              function(data) {
-				alert(JSON.stringify(data));
 				var answers = new Array();
 				for(var i=0;i<data.length;i++)
 				{
@@ -24,7 +23,7 @@ function moreAfterClick() {
 				var answerString;
 				for (var j=9;j<19;j++)
 				{
-					$('#best_answer_' + j).after('<br><h4 class="entry-title"><span class="title"><a href="single.html" id="question_' + (j+1) + '">'+data[j-9].question.string+'</a></span><span class="entry-commentsn"><a href="#" title="Upvotes" class="poshytip">'+data[j-9].question.voteUp+'</a></span><span class="entry-commentsq"><a href="#" title="Downvotes" class="poshytip">'+data[j-9].question.voteDown+'</a></span><span class="entry-commentsp"><a href="#" title="Report abuse" class="poshytip">23</a></span></h4><div class="entry-excerpt" id="best_answer_'+(j+1)+'">'+answers[j-9]+'</div>');	
+					$('#best_answer_' + j).after('<br><h4 class="entry-title"><span class="title" style="text-align:left"><a href="single.html" id="question_' + (j+1) + '">'+data[j-9].question.string+'</a></span><br><br><span class="entry-commentsn"><a href="#" title="Upvotes" class="poshytip">'+data[j-9].question.voteUp+'</a></span><span class="entry-commentsq"><a href="#" title="Downvotes" class="poshytip">'+data[j-9].question.voteDown+'</a></span><span class="entry-commentfav"><a href="#" title="Add to Favorites" class="poshytip" onClick="addToFavorites('+data[j-9].question.QID+')">*</a></span><span class="entry-commentsv"><a href="#" title="Visit later" class="poshytip" onClick="visitLater('+data[j-9].question.QID+')">*</a></span></h4><div class="entry-excerpt" id="best_answer_'+(j+1)+'" style="text-align:left">'+answers[j-9]+'</div>');	
 				}
 				},
 			 "json"
@@ -86,7 +85,6 @@ function postQuestion() {
              "/qcorner/question/post",
 			 result,
              function(data) {
-				alert(data);
 				if(data.head.status == 200)
 					alert("The question has been put up for review");
 				else if (data.head.status == 409)
@@ -137,7 +135,6 @@ function logout(){
 
 function listClick(e)
 {
-	alert(e.id);
 	switch(e.id)
 	{
 		case 'fav':
@@ -170,7 +167,6 @@ function listClick(e)
 
 function quesClick(e)
 {
-	alert(e.id);
 	setCookie('questionID', e.id, 1);
 	var username = getCookie('username');
 	var reviewer = getCookie('reviewer');
@@ -189,14 +185,12 @@ function quesClick(e)
 
 function visitLater(e)
 {
-	alert("Ghussa");
 	var result= {};
 	result['QID']=e;
 	$.get( 
              "/qcorner/addWatchLater",
 			 result,
              function(data) {
-				alert(data.head.status);
 				if(data.head.status == 200) {
 					alert("Added successfully");
 					location.reload();	
@@ -221,7 +215,6 @@ function addToFavorites(e)
              "/qcorner/addFavourite",
 			 result,
              function(data) {
-				alert(data.head.status);
 				if(data.head.status == 200) {
 					alert("Added successfully");
 					location.reload();	
@@ -255,18 +248,4 @@ function vote(e, f)
 			},
 		"json"
 		);
-}
-
-
-function tag1Click(e)
-{
-	alert(e.id);
-}
-
-optionCheck()
-{
-	alert("Yo");
-	var option = document.getElementById("11").value;
-	if(option == "Engineering")
-		document.getElementById("12").innerhtml="Girish";
 }

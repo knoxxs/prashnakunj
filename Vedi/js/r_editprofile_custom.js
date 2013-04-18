@@ -1,4 +1,5 @@
 // Custom jquery without conflict
+var forvar;
 $.noConflict();
 
 jQuery(document).ready(function($){
@@ -232,6 +233,151 @@ jQuery(document).ready(function($){
 		$comments_holder.slideToggle();
 	});
 
+
+
+	jQuery.get( 
+             "/qcorner/list/favourite/timestamp",
+             function(data) {
+				if(data.body.length != 0)
+				{
+					document.getElementById('favorite_0').innerHTML=data.body[0].string;
+					if(data.body.length < 3)
+						forvar = data.body.length;
+					else if (data.body.length >= 3)
+						forvar = 3;
+					for (var i=1;i<forvar;i++)
+					{ 
+						jQuery('#fav_list').append('<li><span id="favorite_'+(i)+'">'+data.body[i].string+'</span></li>');
+					}
+				}
+				
+			 },
+			 "json"
+	);
+
+jQuery.get( 
+             "/qcorner/notifications",
+             function(data) {
+				document.getElementById('notif_number').innerHTML=data.body.length;
+				if(data.body.length != 0)
+				{
+					document.getElementById('notif_0').innerHTML=data.body[0].string;
+					for (var i=1;i<data.body.length;i++)
+					{ 
+						jQuery('#notifications').append('<li><span><span class="notifon" id="notif_'+(i)+'">'+data.body[i].string+'</span></span></li>');
+					}
+				}
+				
+			 },
+			 "json"
+	);
+
+
+
+jQuery.get( 
+             "/qcorner/list/subscriptionList",
+             function(data) {
+				if(data.body.length!=0)
+				{	
+					document.getElementById('subtag_0').innerHTML=data.body[0];
+					if(data.body.length < 3)
+						forvar = data.body.length;
+					else if (data.body.length >= 3)
+						forvar = 3;
+					for (var i=1;i<forvar;i++)
+					{ 
+						jQuery('#sub_list').append('<li><span id="subtag_'+i+'">'+ data.body[i] +'</span></li>');	
+					}
+				}
+				
+			 },
+			 "json"
+	);
+
+
+
+jQuery.get( 
+             "/qcorner/list/myContributions",
+             function(data) {
+				if(data.body.length!=0)
+				{	
+					document.getElementById('contributed_0').innerHTML=data.body[0].string;
+					if(data.body.length < 3)
+						forvar = data.body.length;
+					else if (data.body.length >= 3)
+						forvar = 3;
+					for (var i=1;i<forvar;i++)
+					{ 
+						jQuery('#contributed').append('<li><span id="contributed_'+i+'">'+ data.body[i].string +'</span></li>');	
+					}
+				}
+				
+			 },
+			 "json"
+	);
+
+
+	jQuery.get( 
+             "/qcorner/list/myQuestions",
+             function(data) {
+				if(data.body.length!=0)
+				{	
+					document.getElementById('myquestions_0').innerHTML=data.body[0].string;
+					if(data.body.length < 3)
+						forvar = data.body.length;
+					else if (data.body.length >= 3)
+						forvar = 3;
+					for (var i=1;i<forvar;i++)
+					{ 
+						jQuery('#myquestions').append('<li><span id="myquestions_'+i+'">'+ data.body[i].string +'</span></li>');	
+					}
+				}
+				
+			 },
+			 "json"
+	);
+
+
+	jQuery.get( 
+             "/qcorner/list/watchLater/timestamp",
+             function(data) {
+				if(data.body.length != 0)
+				{
+					document.getElementById('wl_0').innerHTML=data.body[0].string;
+					if(data.body.length < 3)
+						forvar = data.body.length;
+					else if (data.body.length >= 3)
+						forvar = 3;
+					for (var i=1;i<forvar;i++)
+					{ 
+						jQuery('#wl_list').append('<li><span id="wl_'+(i)+'">'+data.body[i].string+'</span></li>');
+					}
+				}
+				
+			 },
+			 "json"
+	);
+	
+	
+	jQuery.get( 
+             "/qcorner/list/history/timestamp",
+             function(data) {
+				if(data.body.length != 0)
+				{
+					document.getElementById('history_0').innerHTML=data.body[0].string;
+					if(data.body.length < 3)
+						forvar = data.body.length;
+					else if (data.body.length >= 3)
+						forvar = 3;
+					for (var i=1;i<forvar;i++)
+					{ 
+						jQuery('#view_history').append('<li><span id="history_'+i+'">'+data.body[i].string+'</span></li>');
+					}
+				}
+				
+			 },
+			 "json"
+	);
 	
 	var first = getCookie('firstname');
 	var last = getCookie('lastname');

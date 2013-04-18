@@ -144,7 +144,7 @@ jQuery.get(
 	);
 	
 	
-	$.get( 
+	jQuery.get( 
              "/qcorner/list/history/timestamp",
              function(data) {
 				if(data.body.length != 0)
@@ -286,10 +286,10 @@ function listDisplay(x){
 							jQuery('#list_header').html("Subscriptions");
 							if(data.body.length != 0)
 							{
-								jQuery('#list_header').after('<div id="list_question_0"><br><h4 class="entry-title"><span class="title"><a class="question" onClick="quesClick(this)" id="' + data.body[0].QID + '">'+ data.body[0].string +'</a></span><span class="entry-commentsn"><a href="single.html#comments" title="Upvotes" class="poshytip">' + data.body[0].voteUp + '</a></span><span class="entry-commentsq"><a href="single.html#comments" title="Downvotes" class="poshytip">' + data.body[0].voteDown + '</a></span></h4></div>');
+								jQuery('#list_header').after('<div id="tag_0"><br><h4 class="entry-title"><span class="title"><span class="question"  id="' + 12 + '">'+ data.body[0] +'</span></span></h4></div>');
 								for(var i=1; i<data.body.length; i++)
 								{
-									jQuery('#list_question_' + (i-1)).after('<div id="list_question_' + i + '"><br><h4 class="entry-title"><span class="title"><a class="question" onClick="quesClick(this)" id="'+ data.body[i].QID +'"">'+ data.body[i].string +'</a></span><span class="entry-commentsn"><a href="single.html#comments" title="Upvotes" class="poshytip">' + data.body[i].voteUp + '</a></span><span class="entry-commentsq"><a href="single.html#comments" title="Downvotes" class="poshytip">' + data.body[i].voteDown + '</a></span></h4></div>');
+									jQuery('#tag_' + (i-1)).after('<div id="tag_' + i + '"><br><h4 class="entry-title"><span class="title"><span class="question" id="'+ (i+12) +'"">'+ data.body[i] +'</span></span></h4></div>');
 								}
 							}
 							else

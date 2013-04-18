@@ -209,7 +209,7 @@ function quesDisplay()
 						{
 							for(var j=0;j<data.suggestions[i].commentList.length;j++)
 							{
-								jQuery('#sug_com_list_' + i).append('<li style="border-bottom: 4px solid rgb(72,72,72); border-top: 4px solid rgb(72,72,72); margin-left: 100px" class="comment-body" id="li-sug-com-'+i+'"><div id="sug-com-div_'+i+'" class="comment-body clearfix"><img src="http://0.gravatar.com/avatar/4f64c9f81bb0d4ee969aaf7b4a5a6f40?s=35&amp;d=&amp;r=G" class="avatar avatar-35 photo" height="35" width="35" /><div class="comment-author vcard">'+data.suggestions[i].commentList[j].userName+'</div><div class="comment-meta commentmetadata"><span class="comment-date">'+data.suggestions[i].commentList[j].timeStamp+'</span></div><h4 class="entry-title"><span class="entry-commentsn"><a href="single.html#comments" title="Upvotes" class="poshytip">'+data.suggestions[i].commentList[j].voteUp+'</a></span><span class="entry-commentsq"><a href="single.html#comments" title="Downvotes" class="poshytip">'+data.suggestions[i].commentList[j].voteDown+'</a></span><span class="entry-commentsp"><a href="single.html#comments" title="Report abuse" class="poshytip">23</a></span></h4><div class="comment-inner"><p>'+data.suggestions[i].commentList[j].string+'</p></div><br/></div></div>');
+								jQuery('#sug_com_list_' + i).append('<li style="border-bottom: 4px solid rgb(72,72,72); border-top: 4px solid rgb(72,72,72); margin-left: 100px" class="comment-body" id="li-sug-com-'+i+'"><div id="sug-com-div_'+i+'" class="comment-body clearfix"><img src="http://0.gravatar.com/avatar/4f64c9f81bb0d4ee969aaf7b4a5a6f40?s=35&amp;d=&amp;r=G" class="avatar avatar-35 photo" height="35" width="35" /><div class="comment-author vcard">'+data.suggestions[i].commentList[j].userName+'</div><div class="comment-meta commentmetadata"><span class="comment-date">'+data.suggestions[i].commentList[j].timeStamp+'</span></div><h4 class="entry-title"><span class="entry-commentsn"><a title="Upvotes" class="poshytip">'+data.suggestions[i].commentList[j].voteUp+'</a></span><span class="entry-commentsq"><a title="Downvotes" class="poshytip">'+data.suggestions[i].commentList[j].voteDown+'</a></span><span class="entry-commentsp"><a title="Report abuse" class="poshytip">23</a></span></h4><div class="comment-inner"><p>'+data.suggestions[i].commentList[j].string+'</p></div><br/></div></div>');
 							}
 						}
 
@@ -344,7 +344,6 @@ function buttonClick(){
 
 function visitLater(e)
 {
-	alert("Ghussa");
 	var result= {};
 	result['QID']=e;
 	jQuery.get( 
@@ -370,8 +369,6 @@ function visitLater(e)
 
 function addToFavorites(e)
 {
-	alert("Ghussa");
-	
 	var result= {};
 	result['QID']=e;
 	jQuery.get( 
