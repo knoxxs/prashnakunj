@@ -20,13 +20,13 @@ class Register extends Base{
 		$this->country = $country;
 		$this->city = $city;
 		$this->state = $state;
-		$this->qualification = $qualification;
+		$this->qualification = serialize($qualification);
 		$this->affiliation = $affiliation;
 		$this->areasOfExpertise = $areasOfExpertise;
 		$this->securityQuestionID = $securityQuestionID;
 		$this->securityAnswer = $securityAnswer;
 		$this->reviewerKey = $reviewerKey;
-		$this->interests = $interests;
+		$this->interests = serialize($interests);
 		$this->reputation = 0;
 
 	}
