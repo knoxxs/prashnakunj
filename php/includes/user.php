@@ -472,4 +472,26 @@ class User extends Base{
 		return $val;
 	}
 
+	public function forgetUserName($email){
+		$db = $this->getDb();
+		$db->query("SELECT * FROM User WHERE email='$email");
+		if($db->returned_rows == 1){
+			$records = $db->fetch_assoc_all();
+			$to      = $email;
+			$subject = 'Forgot UserName Request';
+			$message = 'Your UserName: '. $records[0]['userName'];
+			$headers = 'From: admin@QCorner.com' . "\r\n" . 'Reply-To: From: admin@QCorner.com' . '\r\n';
+			if(mail($to, $subject, $message, $headers)){
+				$result =array('head' => array('status' => 200, 'message'=>''), 'body' => '') ;
+			}else{
+				$result =array('head' => array('status' => 500, 'message'=>'Error sending mail'), 'body' => '') ;
+			}
+
+		}else{
+			$result =array('head' => array('status' => 400, 'message'=>'No user with this email exists.'), 'body' => '') ;
+			return flase;
+		}
+
+	}
+
 }
