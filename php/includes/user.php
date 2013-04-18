@@ -474,7 +474,7 @@ class User extends Base{
 
 	public function forgetUserName($email){
 		$db = $this->getDb();
-		$db->query("SELECT * FROM User WHERE email='$email");
+		$db->query("SELECT * FROM User WHERE email='$email'");
 		if($db->returned_rows == 1){
 			$records = $db->fetch_assoc_all();
 			$to      = $email;
